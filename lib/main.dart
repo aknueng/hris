@@ -4,7 +4,10 @@ import 'package:hris/components/login.dart';
 import 'package:hris/components/lvrecord.dart';
 import 'package:hris/components/medical.dart';
 import 'package:hris/components/otrecord.dart';
+import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_menu.dart';
+import 'package:hris/res/stringTH.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'HRIS',
+      title: AppStringTH.titleMain,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -48,6 +51,44 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  String? code, shortName, fullName, tFullName, posit, joinDate, token;
+  MAccount? oAccount;
+
+  @override
+  void initState() {
+    super.initState();
+    getValidateAccount().whenComplete(() async {
+      //if (oAccount!.code == '' || oAccount!.code == null) {
+      if (oAccount == null) {
+        Navigator.pushNamed(context, '/login');
+      } else {
+        //Navigator.pushNamed(context, '/');
+      }
+    });
+  }
+
+  Future getValidateAccount() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      oAccount = MAccount(
+          code: prefs.getString('code') ?? '',
+          name: prefs.getString('name') ?? '',
+          surn: prefs.getString('surn') ?? '',
+          shortName: prefs.getString('shortName') ?? '',
+          fullName: prefs.getString('fullName') ?? '',
+          tName: prefs.getString('tName') ?? '',
+          tSurn: prefs.getString('tSurn') ?? '',
+          joinDate: DateTime.parse(prefs.getString('joinDate').toString()) ?? DateTime.now(),
+          tFullName: prefs.getString('tFullName') ?? '',
+          posit: prefs.getString('posit') ?? '',
+          token: prefs.getString('token') ?? '',
+          logInDate: DateTime.parse(prefs.getString('logInDate').toString()) ??
+              DateTime.now());
+    });
+  }
+
   List<MainMenu> oAryMenu = [
     MainMenu(FontAwesomeIcons.clock, 'ตรวจสอบโอที', 'OT CHECK', 'OT'),
     MainMenu(FontAwesomeIcons.personSkiing, 'วันลาพักร้อน', 'HOLIDAY', 'HOL'),
@@ -77,7 +118,7 @@ class _MainPageState extends State<MainPage> {
     );
     return Scaffold(
       appBar: AppBar(
-        title: const Text('HRIS'),
+        title: Text(AppStringTH.titleMain),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.surface,
       ),
@@ -112,15 +153,15 @@ class _MainPageState extends State<MainPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            const UserAccountsDrawerHeader(
-                currentAccountPicture: CircleAvatar(
+            UserAccountsDrawerHeader(
+                currentAccountPicture: const CircleAvatar(
                   backgroundImage: NetworkImage(
                     'http://dcidmc.dci.daikin.co.jp/PICTURE/40865.jpg',
                   ),
                   backgroundColor: Colors.white,
                 ),
-                accountName: Text('Aukit Karoon'),
-                accountEmail: Text('aukit14@gmail.com')),
+                accountName: Text(oAccount!.fullName),
+                accountEmail: Text('Position ${oAccount!.posit}')),
             const Divider(),
             Expanded(
                 child: Align(
@@ -136,9 +177,37 @@ class _MainPageState extends State<MainPage> {
                     style: TextStyle(color: Colors.white),
                   ),
                   onTap: () async {
-                    //Navigator.of(context).pop();
-                    setState(() {});
-                    Navigator.pushNamed(context, '/login');
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.remove('code');
+                    prefs.remove('name');
+                    prefs.remove('surn');
+                    prefs.remove('shortName');
+                    prefs.remove('fullName');
+                    prefs.remove('tName');
+                    prefs.remove('tSurn');
+                    prefs.remove('joinDate');
+                    prefs.remove('tFullName');
+                    prefs.remove('posit');
+                    prefs.remove('token');
+                    prefs.remove('logInDate');
+                    setState(() {
+                      oAccount = MAccount(
+                          code: '',
+                          name: '',
+                          surn: '',
+                          shortName: '',
+                          fullName: '',
+                          tName: '',
+                          tSurn: '',
+                          joinDate: DateTime.now(),
+                          tFullName: '',
+                          posit: '',
+                          token: '',
+                          logInDate: DateTime.now());
+                    });
+
+                    if(context.mounted) Navigator.pushNamed(context, '/login');
                   },
                 ),
               ),

@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -14,6 +15,8 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
+  // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   // Initially password is obscure
   bool _obscureText = true;
   String _password = '';
@@ -38,12 +41,26 @@ class _LogInScreenState extends State<LogInScreen> {
     setState(() {
       oAccount = fetchData();
 
-      oAccount.then((acc) => {
-            if (acc.code != '' && acc.code != null)
-              {Navigator.pushNamed(context, '/')}
-            else
-              {}
-          });
+      oAccount.then((acc) async {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        if (acc.code != '' && acc.code != null) {
+          prefs.setString('code', acc.code);
+          prefs.setString('name', acc.name);
+          prefs.setString('surn', acc.surn);
+          prefs.setString('shortName', acc.shortName);
+          prefs.setString('fullName', acc.fullName);
+          prefs.setString('tName', acc.tName);
+          prefs.setString('tSurn', acc.tSurn);          
+          prefs.setString('joinDate', acc.joinDate.toString());
+          prefs.setString('tFullName', acc.tFullName);
+          prefs.setString('posit', acc.posit);          
+          prefs.setString('token', acc.token);
+          prefs.setString('logInDate', acc.logInDate.toString());
+
+          if(context.mounted) Navigator.pushNamed(context, '/');
+        } else {}
+      });
     });
   }
 
