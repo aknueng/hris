@@ -4,9 +4,9 @@ import 'package:hris/components/login.dart';
 import 'package:hris/components/lvrecord.dart';
 import 'package:hris/components/medical.dart';
 import 'package:hris/components/otrecord.dart';
+import 'package:hris/lang/lang_th.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_menu.dart';
-import 'package:hris/res/stringTH.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: AppStringTH.titleMain,
+      title: LangTH.titleMain,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -80,12 +80,13 @@ class _MainPageState extends State<MainPage> {
           fullName: prefs.getString('fullName') ?? '',
           tName: prefs.getString('tName') ?? '',
           tSurn: prefs.getString('tSurn') ?? '',
-          joinDate: DateTime.parse(prefs.getString('joinDate').toString()) ?? DateTime.now(),
+          joinDate: DateTime.parse(
+              prefs.getString('joinDate') ?? DateTime.now().toString()),
           tFullName: prefs.getString('tFullName') ?? '',
           posit: prefs.getString('posit') ?? '',
           token: prefs.getString('token') ?? '',
-          logInDate: DateTime.parse(prefs.getString('logInDate').toString()) ??
-              DateTime.now());
+          logInDate: DateTime.parse(
+              prefs.getString('logInDate') ?? DateTime.now().toString()));
     });
   }
 
@@ -118,7 +119,7 @@ class _MainPageState extends State<MainPage> {
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppStringTH.titleMain),
+        title: Text(LangTH.titleMain),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.surface,
       ),
@@ -207,7 +208,7 @@ class _MainPageState extends State<MainPage> {
                           logInDate: DateTime.now());
                     });
 
-                    if(context.mounted) Navigator.pushNamed(context, '/login');
+                    if (context.mounted) Navigator.pushNamed(context, '/login');
                   },
                 ),
               ),

@@ -51,13 +51,13 @@ class _MedicalScreenState extends State<MedicalScreen> {
           fullName: prefs.getString('fullName') ?? '',
           tName: prefs.getString('tName') ?? '',
           tSurn: prefs.getString('tSurn') ?? '',
-          joinDate: DateTime.parse(prefs.getString('joinDate').toString()) ??
-              DateTime.now(),
+          joinDate: DateTime.parse(
+              prefs.getString('joinDate') ?? DateTime.now().toString()),
           tFullName: prefs.getString('tFullName') ?? '',
           posit: prefs.getString('posit') ?? '',
           token: prefs.getString('token') ?? '',
-          logInDate: DateTime.parse(prefs.getString('logInDate').toString()) ??
-              DateTime.now());
+          logInDate: DateTime.parse(
+              prefs.getString('logInDate') ?? DateTime.now().toString()));
     });
   }
 
@@ -95,7 +95,7 @@ class _MedicalScreenState extends State<MedicalScreen> {
       fontWeight: FontWeight.bold,
     );
     final styleFontDetail = TextStyle(
-      color: Colors.black,
+      color: Colors.brown[900],
       fontSize: 14,
       fontWeight: FontWeight.bold,
     );
