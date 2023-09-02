@@ -51,15 +51,27 @@ class _LogInScreenState extends State<LogInScreen> {
           prefs.setString('shortName', acc.shortName);
           prefs.setString('fullName', acc.fullName);
           prefs.setString('tName', acc.tName);
-          prefs.setString('tSurn', acc.tSurn);          
+          prefs.setString('tSurn', acc.tSurn);
           prefs.setString('joinDate', acc.joinDate.toString());
           prefs.setString('tFullName', acc.tFullName);
-          prefs.setString('posit', acc.posit);          
+          prefs.setString('posit', acc.posit);
           prefs.setString('token', acc.token);
           prefs.setString('logInDate', acc.logInDate.toString());
 
-          if(context.mounted) Navigator.pushNamed(context, '/');
-        } else {}
+          if (context.mounted) Navigator.pushNamed(context, '/');
+        } else {
+          if (context.mounted) {
+            formKey.currentState!.validate();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('user & password faild'),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.all(30),
+              ),
+            );
+          }
+        }
       });
     });
   }
@@ -118,22 +130,28 @@ class _LogInScreenState extends State<LogInScreen> {
                   onSaved: (usr) {
                     _username = usr.toString();
                   },
+                  maxLength: 5,
                   decoration: InputDecoration(
                     hintText: 'รหัสพนักงาน',
+                    labelText: 'รหัสพนักงาน',
                     fillColor: Colors.lime[50],
                     filled: true,
+                    counterText: '',
                     contentPadding: const EdgeInsets.all(10),
                     prefixIcon: const Padding(
                       padding: EdgeInsets.all(10),
                       child: Icon(FontAwesomeIcons.user),
                     ),
                     suffixIcon: const Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Icon(FontAwesomeIcons.starOfLife),
+                      padding: EdgeInsets.only(left: 0, right: 25),
+                      child: Icon(
+                        FontAwesomeIcons.starOfLife,
+                        size: 10,
+                      ),
                     ),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide.none),
+                        borderSide: const BorderSide(color: Colors.black45)),
                   ),
                 ),
               ),
@@ -154,27 +172,37 @@ class _LogInScreenState extends State<LogInScreen> {
                     onSaved: (pwd) {
                       _password = pwd.toString();
                     },
+                    maxLength: 20,
                     obscureText: _obscureText,
                     decoration: InputDecoration(
                         hintText: 'รหัสผ่าน',
+                        labelText: 'รหัสผ่าน',
                         fillColor: Colors.lime[50],
                         filled: true,
+                        counterText: '',
                         contentPadding: const EdgeInsets.all(10),
                         prefixIcon: const Padding(
                             padding: EdgeInsets.all(10),
                             child: Icon(FontAwesomeIcons.key)),
                         suffixIcon: Padding(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.only(right: 15),
                             child: IconButton(
                                 onPressed: () {
                                   _toggle();
                                 },
                                 icon: (_obscureText)
-                                    ? const Icon(FontAwesomeIcons.starOfLife)
-                                    : const Icon(FontAwesomeIcons.eye))),
+                                    ? const Icon(
+                                        FontAwesomeIcons.starOfLife,
+                                        size: 10,
+                                      )
+                                    : const Icon(
+                                        FontAwesomeIcons.eye,
+                                        size: 10,
+                                      ))),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide.none))),
+                            borderSide:
+                                const BorderSide(color: Colors.black45)))),
               ),
               // ElevatedButton(
               //     onPressed: () async {
@@ -200,15 +228,19 @@ class _LogInScreenState extends State<LogInScreen> {
                         ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     } else {
-                      return ElevatedButton(
-                          onPressed: () async {
-                            if (formKey.currentState!.validate()) {
-                              formKey.currentState!.save();
-                              checkLogin();
-                            }
-                            //formKey.currentState!.reset();
-                          },
-                          child: const Text('Login'));
+                      return SizedBox(
+                        width: 200,
+                        height: 40,
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              if (formKey.currentState!.validate()) {
+                                formKey.currentState!.save();
+                                checkLogin();
+                              }
+                              //formKey.currentState!.reset();
+                            },
+                            child: const Text('Login')),
+                      );
                     }
                   }),
             ],

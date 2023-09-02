@@ -105,7 +105,7 @@ class _MedicalScreenState extends State<MedicalScreen> {
       fontWeight: FontWeight.bold,
     );
     String tilte = 'นาย';
-    String idno = '114799-00071-20-9';
+    String idno = '1-4799-00071-20-9';
 
     return Scaffold(
         appBar: AppBar(
@@ -152,8 +152,19 @@ class _MedicalScreenState extends State<MedicalScreen> {
                                 alignment: Alignment.centerLeft,
                                 margin: const EdgeInsets.only(top: 10),
                                 padding: const EdgeInsets.all(10),
-                                child: Text(
-                                    'ผู้ป่วยนอก (ไม่เกิน ${snapshot.data!.oPDAllow} บาท/ปี)')),
+                                child: Row(
+                                  children: [
+                                    const Text('ผู้ป่วยนอก '),
+                                    Text(
+                                      '(ไม่เกิน ${snapshot.data!.oPDAllow} บาท/ปี)',
+                                      style: styleFontInfo,
+                                    ),
+                                  ],
+                                )),
+                            const Divider(
+                              height: 2,
+                              color: Colors.orange,
+                            ),
                             ListTile(
                               title: const Text('ตนเอง คู่สมรส บุตร'),
                               subtitle: Text(
@@ -183,7 +194,10 @@ class _MedicalScreenState extends State<MedicalScreen> {
                                 style: styleFontDetail,
                               ),
                             ),
-                            const Divider(),
+                            const Divider(
+                              height: 2,
+                              color: Colors.orange,
+                            ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
@@ -227,8 +241,17 @@ class _MedicalScreenState extends State<MedicalScreen> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                  'ผู้ป่วยใน\n(ไม่เกิน ${snapshot.data!.iPDAllow} บาท/ปี)\nตนเอง คู่สมรส บุตร พ่อ แม่'),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('ผู้ป่วยใน'),
+                                  Text(
+                                    '(ไม่เกิน ${snapshot.data!.iPDAllow} บาท/ปี)',
+                                    style: styleFontInfo,
+                                  ),
+                                  const Text('ตนเอง คู่สมรส บุตร พ่อ แม่'),
+                                ],
+                              ),
                               Column(
                                 children: [
                                   const Text('ใช้'),
@@ -262,8 +285,16 @@ class _MedicalScreenState extends State<MedicalScreen> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                  'รวมค่ารักษาพยาบาล\n(ไม่เกิน ${snapshot.data!.medicalAllow} บาท/ปี)'),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('รวมค่ารักษาพยาบาล'),
+                                  Text(
+                                    '(ไม่เกิน ${snapshot.data!.medicalAllow} บาท/ปี)',
+                                    style: styleFontInfo,
+                                  ),
+                                ],
+                              ),
                               Column(
                                 children: [
                                   const Text('ใช้'),
@@ -285,7 +316,10 @@ class _MedicalScreenState extends State<MedicalScreen> {
                             ],
                           ),
                         ),
-                      )
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                     ],
                   );
                 } else if (snapshot.hasError) {
