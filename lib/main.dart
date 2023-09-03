@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hris/components/login.dart';
 import 'package:hris/components/lvrecord.dart';
+import 'package:hris/components/lvrequest.dart';
 import 'package:hris/components/medical.dart';
 import 'package:hris/components/otrecord.dart';
+import 'package:hris/components/slip.dart';
+import 'package:hris/components/trainning.dart';
 import 'package:hris/lang/lang_th.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_menu.dart';
@@ -37,6 +40,9 @@ class MyApp extends StatelessWidget {
         '/lv': (context) => const LeaveScreen(),
         '/med': (context) => const MedicalScreen(),
         '/login': (context) => const LogInScreen(),
+        '/slip': (context) => const SlipScreen(),
+        '/train': (context) => const TrainingScreen(),
+        '/lvreq': (context) => const LVRequestScreen(),
       },
       home: const MainPage(),
     );
@@ -60,7 +66,7 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     getValidateAccount().whenComplete(() async {
       //if (oAccount!.code == '' || oAccount!.code == null) {
-      if (oAccount == null) {
+      if (oAccount == null || oAccount!.code == '') {
         Navigator.pushNamed(context, '/login');
       } else {
         //Navigator.pushNamed(context, '/');
@@ -91,13 +97,14 @@ class _MainPageState extends State<MainPage> {
   }
 
   List<MainMenu> oAryMenu = [
-    MainMenu(FontAwesomeIcons.clock, 'ตรวจสอบโอที', 'OT CHECK', 'OT'),
-    MainMenu(FontAwesomeIcons.personSkiing, 'วันลาพักร้อน', 'HOLIDAY', 'HOL'),
+    MainMenu(FontAwesomeIcons.clock, Colors.orange, 'รายการทำโอที', 'OVERTIME', 'OT'),
+    MainMenu(FontAwesomeIcons.personSkiing, Colors.purple, 'วันลาพักร้อน', 'HOLIDAY', 'HOL'),
     MainMenu(
-        FontAwesomeIcons.briefcaseMedical, 'ค่ารักษาพยาบาล', 'MEDICAL', 'MED'),
-    MainMenu(FontAwesomeIcons.userSlash, 'ขาด ลา มาสาย', 'LEAV RECORD', 'LV'),
-    MainMenu(FontAwesomeIcons.moneyBillTrendUp, 'สลิปเงินเดือน', 'E-PAY SLIP',
-        'SLIP')
+        FontAwesomeIcons.briefcaseMedical, Colors.amber, 'ค่ารักษาพยาบาล', 'MEDICAL', 'MED'),
+    MainMenu(FontAwesomeIcons.userSlash, Colors.red, 'ขาด ลา มาสาย', 'LEAVE RECORD', 'LV'),
+    MainMenu(FontAwesomeIcons.moneyBillTrendUp, Colors.green, 'สลิปเงินเดือน', 'E-PAY SLIP',
+        'SLIP'),
+    MainMenu(FontAwesomeIcons.bookTanakh, Colors.blue, 'ฝึกอบรม', 'TRAINING', 'TRAIN')
   ];
 
   void loadScreen(String selectedScreen) {
@@ -108,7 +115,13 @@ class _MainPageState extends State<MainPage> {
       Navigator.pushNamed(context, '/med');
     } else if (selectedScreen == 'LV') {
       Navigator.pushNamed(context, '/lv');
-    } else if (selectedScreen == 'SLIP') {}
+    } else if (selectedScreen == 'SLIP') {
+      Navigator.pushNamed(context, '/slip');
+    } else if (selectedScreen == 'TRAIN') {
+      Navigator.pushNamed(context, '/train');
+    } else if (selectedScreen == 'LVREQ') {
+      Navigator.pushNamed(context, '/lvreq');
+    }
   }
 
   @override
@@ -124,15 +137,23 @@ class _MainPageState extends State<MainPage> {
         foregroundColor: theme.colorScheme.surface,
       ),
       body: ListView.builder(
+        padding: const EdgeInsets.only(top: 10, left: 30, right: 30),
           itemCount: oAryMenu.length,
           itemBuilder: (BuildContext context, int index) {
             return Card(
-              color: theme.colorScheme.inversePrimary,
-              margin: const EdgeInsets.all(5),
+              elevation: 10,
+              shadowColor: Colors.black,
+              color: Colors.white,
+              margin: const EdgeInsets.all(7),
               child: ListTile(
-                leading: Icon(
-                  oAryMenu[index].mnIcon,
-                  color: theme.colorScheme.surface,
+                leading: Container(
+                  height: 60,
+                  width: 60,
+                  color: oAryMenu[index].mColor,
+                  child: Icon(
+                    oAryMenu[index].mnIcon,
+                    color: theme.colorScheme.surface,
+                  ),
                 ),
                 title: Text(
                   oAryMenu[index].mnTitle,

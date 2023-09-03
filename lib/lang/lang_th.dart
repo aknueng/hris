@@ -1,6 +1,6 @@
 class LangTH{
   
-  static String titleMain = 'HRIS';
+  static String titleMain = 'DCI - ระบบงานบุคคล (HRMS) ';
 
 
 

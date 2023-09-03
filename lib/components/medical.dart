@@ -24,7 +24,7 @@ class _MedicalScreenState extends State<MedicalScreen> {
   void initState() {
     super.initState();
     getValidateAccount().whenComplete(() async {
-      if (oAccount == null) {
+      if (oAccount == null || oAccount!.code == '') {
         Navigator.pushNamed(context, '/login');
       }
 
@@ -326,7 +326,9 @@ class _MedicalScreenState extends State<MedicalScreen> {
                   return Text('Err: ${snapshot.error} ');
                 }
 
-                return const CircularProgressIndicator();
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
               }),
         ));
   }
