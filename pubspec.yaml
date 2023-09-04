@@ -42,6 +42,12 @@ dependencies:
   flutter_svg: ^2.0.7
   shared_preferences: ^2.2.0
   intl: ^0.18.1
+<<<<<<< HEAD
+=======
+  get: ^4.6.5
+
+
+>>>>>>> 516ab37e97223dcabfa302d4c9f2a504da6c869d
 
 
 dev_dependencies:

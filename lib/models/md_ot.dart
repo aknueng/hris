@@ -1,3 +1,5 @@
+// import 'package:http/testing.dart';
+
 class MOtInfo {
   final String? otStart;
   final String? otEnd;
@@ -49,6 +51,40 @@ class MOtInfo {
         otRate1Str: json['otRate1Str'],
         otRate15Str: json['otRate15Str'],
         otRate2Str: json['otRate2Str'],
-        otRate3Str: json['otRate3Str)']);
+        otRate3Str: json['otRate3Str']);
   }
+}
+
+class MOtReq {
+  final String empCode;
+  final String empShortName;
+  final String otDate;
+  final String otType;
+  final String otJob;
+  final String empWType;
+
+  MOtReq({
+    required this.empCode,
+    required this.empShortName,
+    required this.otDate,
+    required this.otType,
+    required this.otJob,
+    required this.empWType,
+  });
+}
+
+class MOTJob {
+  final String dataValue;
+  final String dataDisplay;
+  MOTJob({required this.dataValue, required this.dataDisplay});
+
+  factory MOTJob.fromJsom(Map<String, dynamic> json) {
+    return MOTJob(
+        dataValue: json['dataValue'], dataDisplay: json['dataDisplay']);
+  }
+
+  Map<String, dynamic> toJson() => {
+        "dataValue": dataValue,
+        "dataDisplay": dataDisplay,
+      };
 }

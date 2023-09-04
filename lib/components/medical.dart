@@ -24,7 +24,7 @@ class _MedicalScreenState extends State<MedicalScreen> {
   void initState() {
     super.initState();
     getValidateAccount().whenComplete(() async {
-      if (oAccount == null) {
+      if (oAccount == null || oAccount!.code == '') {
         Navigator.pushNamed(context, '/login');
       }
 
@@ -44,21 +44,20 @@ class _MedicalScreenState extends State<MedicalScreen> {
 
     setState(() {
       oAccount = MAccount(
-        code: prefs.getString('code') ?? '',
-        name: prefs.getString('name') ?? '',
-        surn: prefs.getString('surn') ?? '',
-        shortName: prefs.getString('shortName') ?? '',
-        fullName: prefs.getString('fullName') ?? '',
-        tName: prefs.getString('tName') ?? '',
-        tSurn: prefs.getString('tSurn') ?? '',
-        joinDate: DateTime.parse(
-            prefs.getString('joinDate') ?? DateTime.now().toString()),
-        tFullName: prefs.getString('tFullName') ?? '',
-        posit: prefs.getString('posit') ?? '',
-        token: prefs.getString('token') ?? '',
-        logInDate: DateTime.parse(
-            prefs.getString('logInDate') ?? DateTime.now().toString()),
-      );
+          code: prefs.getString('code') ?? '',
+          name: prefs.getString('name') ?? '',
+          surn: prefs.getString('surn') ?? '',
+          shortName: prefs.getString('shortName') ?? '',
+          fullName: prefs.getString('fullName') ?? '',
+          tName: prefs.getString('tName') ?? '',
+          tSurn: prefs.getString('tSurn') ?? '',
+          joinDate: DateTime.parse(
+              prefs.getString('joinDate') ?? DateTime.now().toString()),
+          tFullName: prefs.getString('tFullName') ?? '',
+          posit: prefs.getString('posit') ?? '',
+          token: prefs.getString('token') ?? '',
+          logInDate: DateTime.parse(
+              prefs.getString('logInDate') ?? DateTime.now().toString()));
     });
   }
 
@@ -327,7 +326,9 @@ class _MedicalScreenState extends State<MedicalScreen> {
                   return Text('Err: ${snapshot.error} ');
                 }
 
-                return const CircularProgressIndicator();
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
               }),
         ));
   }

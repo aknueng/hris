@@ -44,7 +44,7 @@ class _LogInScreenState extends State<LogInScreen> {
       oAccount.then((acc) async {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-        if (acc.code != '' && acc.code != null) {
+        if (acc.code != '' && acc.code.isNotEmpty) {
           prefs.setString('code', acc.code);
           prefs.setString('name', acc.name);
           prefs.setString('surn', acc.surn);
@@ -114,12 +114,15 @@ class _LogInScreenState extends State<LogInScreen> {
           key: formKey,
           child: Column(
             children: [
+              const SizedBox(
+                height: 100,
+              ),
               Container(
                 margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
                 decoration: BoxDecoration(boxShadow: [
                   BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 40,
+                      color: Colors.black38.withOpacity(0.2),
+                      blurRadius: 10,
                       spreadRadius: 0)
                 ]),
                 child: TextFormField(
@@ -151,7 +154,7 @@ class _LogInScreenState extends State<LogInScreen> {
                     ),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
-                        borderSide: const BorderSide(color: Colors.black45)),
+                        borderSide: const BorderSide(color: Colors.orangeAccent)),
                   ),
                 ),
               ),
@@ -159,8 +162,8 @@ class _LogInScreenState extends State<LogInScreen> {
                 margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
                 decoration: BoxDecoration(boxShadow: [
                   BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 40,
+                      color: Colors.black38.withOpacity(0.2),
+                      blurRadius: 10,
                       spreadRadius: 0)
                 ]),
                 child: TextFormField(
@@ -202,7 +205,7 @@ class _LogInScreenState extends State<LogInScreen> {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                             borderSide:
-                                const BorderSide(color: Colors.black45)))),
+                                const BorderSide(color: Colors.orangeAccent)))),
               ),
               // ElevatedButton(
               //     onPressed: () async {
@@ -213,6 +216,18 @@ class _LogInScreenState extends State<LogInScreen> {
               //       //formKey.currentState!.reset();
               //     },
               //     child: Text('Login')),
+
+              Container(
+                  alignment: Alignment.centerLeft,
+                  margin: const EdgeInsets.only(
+                    left: 40,
+                  ),
+                  child: TextButton(
+                      onPressed: () {},
+                      child: const Text(
+                        'ไม่สามารถเข้าได้, ลืมรหัสผ่าน?',
+                        style: TextStyle(decoration: TextDecoration.underline),
+                      ))),
               const SizedBox(
                 height: 30,
               ),
