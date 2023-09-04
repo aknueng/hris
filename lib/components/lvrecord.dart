@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:isolate';
 //import 'dart:ui_web';
 
 import 'package:flutter/foundation.dart';
@@ -138,14 +139,45 @@ class _LeaveScreenState extends State<LeaveScreen> {
         }));
 
     if (response.statusCode == 200) {
-      Future<List<MLVInfo>> data =
-          compute((message) => parseLVList(response.body), response.body);
+
+      // on success, parse the JSON in the response body
+      final parser = GetLeaveResultsParser(response.body);
+      // return parser.parseInBackground();
+      Future<List<MLVInfo>> data = parser.parseInBackground();
       data.then((value) => value.sort((a, b) => b.cDate.compareTo(a.cDate)));
       return data;
+
     } else {
       throw ('failed to load data');
     }
   }
+
+  // Future<List<MLVInfo>> fetchLVData() async {
+  //   final response = await http.post(
+  //       Uri.parse('https://scm.dci.co.th/hrisapi/api/emp/getlv'),
+  //       headers: <String, String>{
+  //         'Content-Type': 'application/json; charset=UTF-8',
+  //         'Authorization': 'Bearer ${oAccount!.token}',
+  //       },
+  //       body: jsonEncode(<String, String>{
+  //         'empCode': oAccount!.code,
+  //         'dateStart': formatYMD
+  //             .format(DateTime.now().subtract(const Duration(days: 90))),
+  //         'dateEnd':
+  //             formatYMD.format(DateTime.now().add(const Duration(days: 30)))
+  //       }));
+
+  //   if (response.statusCode == 200) {
+  //     Future<List<MLVInfo>> data =
+  //         compute((message) => parseLVList(response.body), response.body);
+  //     data.then((value) => value.sort((a, b) => b.cDate.compareTo(a.cDate)));
+  //     return data;
+
+  //     // return compute((message) => parseLVList(response.body), response.body);
+  //   } else {
+  //     throw ('failed to load data');
+  //   }
+  // }
 
   List<MLVInfo> parseLVList(String responseBody) {
     final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
@@ -278,5 +310,34 @@ class _LeaveScreenState extends State<LeaveScreen> {
         ),
       ),
     );
+  }
+}
+
+
+
+class GetLeaveResultsParser {
+  // 1. pass the encoded json as a constructor argument
+  GetLeaveResultsParser(this.encodedJson);
+  final String encodedJson;
+
+  // 2. public method that does the parsing in the background
+  Future<List<MLVInfo>> parseInBackground() async {
+    // create a port
+    final p = ReceivePort();
+    // spawn the isolate and wait for it to complete
+    await Isolate.spawn(_decodeAndParseJson, p.sendPort);
+    // get and return the result data
+    return await p.first;
+  }
+
+  // 3. json parsing
+  Future<void> _decodeAndParseJson(SendPort p) async {
+    // decode and parse the json
+    final jsonData = jsonDecode(encodedJson);
+    //final resultsJson = jsonData['results'] as List<dynamic>;
+    final resultsJson = jsonData as List<dynamic>;
+    final results = resultsJson.map((json) => MLVInfo.fromJson(json)).toList();
+    // return the result data via Isolate.exit()
+    Isolate.exit(p, results);
   }
 }

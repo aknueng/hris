@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -27,10 +29,12 @@ class _SlipScreenState extends State<SlipScreen> {
   @override
   void initState() {
     super.initState();
+
     getValidateAccount().whenComplete(() {
       if (oAccount == null || oAccount!.code == '') {
         Navigator.pushNamed(context, '/login');
       }
+
       oArySlip = fetchDataSlip();
     });
   }
@@ -74,8 +78,13 @@ class _SlipScreenState extends State<SlipScreen> {
 
     if (response.statusCode == 200) {
       _obscureText = [];
-      Future<List<MSlipInfo>> data =
-          compute((message) => parseSlipList(response.body), response.body);
+
+      // on success, parse the JSON in the response body
+       final parser = GetSlipResultsParser(response.body);
+      Future<List<MSlipInfo>> data = parser.parseInBackground();
+
+      // Future<List<MSlipInfo>> data = compute(parseSlipList, response.body);
+
       data.then(
         (value) {
           for (var i = 0; i < value.length; i++) {
@@ -87,13 +96,19 @@ class _SlipScreenState extends State<SlipScreen> {
       data.then((value) => value.sort(
             (a, b) => b.reqDate!.compareTo(a.reqDate!),
           ));
-
       return data;
       //return compute((message) => parseSlipList(response.body), response.body);
     } else {
       throw ('failed to load data slip');
     }
   }
+
+  // List<MSlipInfo> parseSlipList(String responseBody) {
+  //   final jsonData = jsonDecode(responseBody);
+  //   //final resultsJson = jsonData['results'] as List<dynamic>;
+  //   final resultsJson = jsonData as List<dynamic>;
+  //   return resultsJson.map((json) => MSlipInfo.fromJson(json)).toList();
+  // }
 
   List<MSlipInfo> parseSlipList(String responseBody) {
     final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
@@ -124,9 +139,9 @@ class _SlipScreenState extends State<SlipScreen> {
                     ? Expanded(
                         child: ListView.separated(
                             itemBuilder: (context, index) {
-                              String display = formatDMY.format(
+                              String display = formatDMY.format(DateTime.parse(
                                   snapshot.data![index].reqDate ??
-                                      DateTime.now());
+                                      DateTime.now().toString()));
                               return ListTile(
                                 title: Row(
                                   children: [
@@ -184,8 +199,8 @@ class _SlipScreenState extends State<SlipScreen> {
                                       //https://www.dci.co.th/hris/pdfviewer.aspx?f=dist/Slip/202308\40865_HR042308-0050.pdf&fn=202308\40865_HR042308-0050.pdf
                                     },
                                     icon:
-                                        const Icon(FontAwesomeIcons.paperclip),
-                                    label: const Text('โหลดสลิป')),
+                                        const Icon(FontAwesomeIcons.paperclip, size: 20,),
+                                    label: const Text('ดูสลิป')),
                               );
                             },
                             separatorBuilder: (context, index) => const Divider(
@@ -206,5 +221,33 @@ class _SlipScreenState extends State<SlipScreen> {
         },
       ),
     );
+  }
+}
+
+class GetSlipResultsParser {
+  // 1. pass the encoded json as a constructor argument
+  GetSlipResultsParser(this.encodedJson);
+  final String encodedJson;
+
+  // 2. public method that does the parsing in the background
+  Future<List<MSlipInfo>> parseInBackground() async {
+    // create a port
+    final p = ReceivePort();
+    // spawn the isolate and wait for it to complete
+    await Isolate.spawn(_decodeAndParseJson, p.sendPort);
+    // get and return the result data
+    return await p.first;
+  }
+
+  // 3. json parsing
+  Future<void> _decodeAndParseJson(SendPort p) async {
+    // decode and parse the json
+    final jsonData = jsonDecode(encodedJson);
+    //final resultsJson = jsonData['results'] as List<dynamic>;
+    final resultsJson = jsonData as List<dynamic>;
+    final results =
+        resultsJson.map((json) => MSlipInfo.fromJson(json)).toList();
+    // return the result data via Isolate.exit()
+    Isolate.exit(p, results);
   }
 }

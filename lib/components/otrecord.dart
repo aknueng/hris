@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -34,19 +35,30 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
 
   List<DropdownMenuItem<String>> oAryOTJob = [
     const DropdownMenuItem<String>(value: '', child: Text('เลือกงาน')),
-    const DropdownMenuItem<String>(value: 'A', child: Text('A : งานเอกสาร')),
-    const DropdownMenuItem<String>(
-        value: 'B', child: Text('B : กิจกรรมตามแผน')),
-    const DropdownMenuItem<String>(
-        value: 'C', child: Text('C : กิจกรรมที่ไม่ตามแผน')),
-    const DropdownMenuItem<String>(
-        value: 'D', child: Text('D : Rework,Sorting')),
-    const DropdownMenuItem<String>(
-        value: 'E', child: Text('E : Support Production')),
-    const DropdownMenuItem<String>(value: 'F', child: Text('F : Kaizen')),
-    const DropdownMenuItem<String>(value: 'G', child: Text('G : ซ่อมสร้าง')),
-    const DropdownMenuItem<String>(value: 'H', child: Text('H : วิศวกรรม')),
+    const DropdownMenuItem<String>(value: 'A', child: Text('A')),
+    const DropdownMenuItem<String>(value: 'B', child: Text('B')),
+    const DropdownMenuItem<String>(value: 'C', child: Text('C')),
+    const DropdownMenuItem<String>(value: 'D', child: Text('D')),
+    const DropdownMenuItem<String>(value: 'E', child: Text('E')),
+    const DropdownMenuItem<String>(value: 'F', child: Text('F')),
+    const DropdownMenuItem<String>(value: 'G', child: Text('G')),
+    const DropdownMenuItem<String>(value: 'H', child: Text('H')),
   ];
+  // List<DropdownMenuItem<String>> oAryOTJob = [
+  //   const DropdownMenuItem<String>(value: '', child: Text('เลือกงาน')),
+  //   const DropdownMenuItem<String>(value: 'A', child: Text('A : งานเอกสาร')),
+  //   const DropdownMenuItem<String>(
+  //       value: 'B', child: Text('B : กิจกรรมตามแผน')),
+  //   const DropdownMenuItem<String>(
+  //       value: 'C', child: Text('C : กิจกรรมที่ไม่ตามแผน')),
+  //   const DropdownMenuItem<String>(
+  //       value: 'D', child: Text('D : Rework,Sorting')),
+  //   const DropdownMenuItem<String>(
+  //       value: 'E', child: Text('E : Support Production')),
+  //   const DropdownMenuItem<String>(value: 'F', child: Text('F : Kaizen')),
+  //   const DropdownMenuItem<String>(value: 'G', child: Text('G : ซ่อมสร้าง')),
+  //   const DropdownMenuItem<String>(value: 'H', child: Text('H : วิศวกรรม')),
+  // ];
 
   @override
   void initState() {
@@ -184,8 +196,11 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
     if (response.statusCode == 200) {
       _selectOTJob = [];
 
-      Future<List<MOtInfo>> data =
-          compute((message) => parseOTList(response.body), response.body);
+      // on success, parse the JSON in the response body
+      final parser = GetOTResultsParser(response.body);
+      Future<List<MOtInfo>> data = parser.parseInBackground();
+      //Future<List<MOtInfo>> data = compute(parseOTList, response.body);
+
       data.then((value) {
         for (var i = 0; i < value.length; i++) {
           _selectOTJob!.add('');
@@ -314,12 +329,11 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                                           (snapshot.data![index].status == "" &&
                                                   canRequest)
                                               ? Expanded(
-                                                  child: Align(
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    child: DropdownButton(
-                                                      value:
-                                                          _selectOTJob![index],
+                                                child: Align(
+                                                  alignment: Alignment.centerRight,
+                                                  child: DropdownButton(
+                                                      isExpanded: false,
+                                                      value: _selectOTJob![index],
                                                       items: oAryOTJob,
                                                       onChanged: (value) {
                                                         setState(() {
@@ -330,8 +344,8 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                                                         });
                                                       },
                                                     ),
-                                                  ),
-                                                )
+                                                ),
+                                              )
                                               : const Text('')
                                         ],
                                       ),
@@ -363,16 +377,16 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                                                   onPressed: () {
                                                     if (_selectOTJob![index] !=
                                                         '') {
-                                                      requestOT(
-                                                          formatYMD.format(
-                                                              snapshot
-                                                                      .data![
-                                                                          index]
-                                                                      .otDate ??
-                                                                  DateTime
-                                                                      .now()),
-                                                          otType,
-                                                          _selectOTJob![index]);
+                                                      // requestOT(
+                                                      //     formatYMD.format(
+                                                      //         snapshot
+                                                      //                 .data![
+                                                      //                     index]
+                                                      //                 .otDate ??
+                                                      //             DateTime
+                                                      //                 .now()),
+                                                      //     otType,
+                                                      //     _selectOTJob![index]);
                                                     } else {
                                                       ScaffoldMessenger.of(
                                                               context)
@@ -443,5 +457,32 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
       //   child: const Icon(FontAwesomeIcons.rotate),
       // ),
     );
+  }
+}
+
+class GetOTResultsParser {
+  // 1. pass the encoded json as a constructor argument
+  GetOTResultsParser(this.encodedJson);
+  final String encodedJson;
+
+  // 2. public method that does the parsing in the background
+  Future<List<MOtInfo>> parseInBackground() async {
+    // create a port
+    final p = ReceivePort();
+    // spawn the isolate and wait for it to complete
+    await Isolate.spawn(_decodeAndParseJson, p.sendPort);
+    // get and return the result data
+    return await p.first;
+  }
+
+  // 3. json parsing
+  Future<void> _decodeAndParseJson(SendPort p) async {
+    // decode and parse the json
+    final jsonData = jsonDecode(encodedJson);
+    //final resultsJson = jsonData['results'] as List<dynamic>;
+    final resultsJson = jsonData as List<dynamic>;
+    final results = resultsJson.map((json) => MOtInfo.fromJson(json)).toList();
+    // return the result data via Isolate.exit()
+    Isolate.exit(p, results);
   }
 }
