@@ -6,6 +6,7 @@ import 'package:hris/components/lvrequest.dart';
 import 'package:hris/components/medical.dart';
 import 'package:hris/components/otrecord.dart';
 import 'package:hris/components/slip.dart';
+import 'package:hris/components/test.dart';
 import 'package:hris/components/trainning.dart';
 import 'package:hris/lang/lang_th.dart';
 import 'package:hris/models/md_account.dart';
@@ -27,8 +28,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 6, 85, 222)),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         // brightness: Brightness.light,
         // primaryColor: Colors.blueAccent[700],
         // // font
@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
         '/med': (context) => const MedicalScreen(),
         '/login': (context) => const LogInScreen(),
         '/slip': (context) => const SlipScreen(),
+        // '/slip': (context) => const MyStatefulWidget(),
         '/train': (context) => const TrainingScreen(),
         '/lvreq': (context) => const LVRequestScreen(),
       },
@@ -60,13 +61,14 @@ class _MainPageState extends State<MainPage> {
   // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   String? code, shortName, fullName, tFullName, posit, joinDate, token;
   MAccount? oAccount;
+  String nameEmp = '', positEmp = '';
 
   @override
   void initState() {
     super.initState();
     getValidateAccount().whenComplete(() async {
       //if (oAccount!.code == '' || oAccount!.code == null) {
-      if (oAccount == null || oAccount!.code == '') {
+      if (oAccount == null || oAccount!.code == '' || oAccount!.code.isEmpty) {
         Navigator.pushNamed(context, '/login');
       } else {
         //Navigator.pushNamed(context, '/');
@@ -93,18 +95,25 @@ class _MainPageState extends State<MainPage> {
           token: prefs.getString('token') ?? '',
           logInDate: DateTime.parse(
               prefs.getString('logInDate') ?? DateTime.now().toString()));
+
+      nameEmp = oAccount!.fullName;
+      positEmp = oAccount!.posit;
     });
   }
 
   List<MainMenu> oAryMenu = [
-    MainMenu(FontAwesomeIcons.clock, Colors.orange, 'รายการทำโอที', 'OVERTIME', 'OT'),
-    MainMenu(FontAwesomeIcons.personSkiing, Colors.purple, 'วันลาพักร้อน', 'HOLIDAY', 'HOL'),
-    MainMenu(
-        FontAwesomeIcons.briefcaseMedical, Colors.amber, 'ค่ารักษาพยาบาล', 'MEDICAL', 'MED'),
-    MainMenu(FontAwesomeIcons.userSlash, Colors.red, 'ขาด ลา มาสาย', 'LEAVE RECORD', 'LV'),
-    MainMenu(FontAwesomeIcons.moneyBillTrendUp, Colors.green, 'สลิปเงินเดือน', 'E-PAY SLIP',
-        'SLIP'),
-    MainMenu(FontAwesomeIcons.bookTanakh, Colors.blue, 'ฝึกอบรม', 'TRAINING', 'TRAIN')
+    MainMenu(FontAwesomeIcons.clock, Colors.orange, 'รายการทำโอที', 'OVERTIME',
+        'OT'),
+    MainMenu(FontAwesomeIcons.personSkiing, Colors.purple, 'วันลาพักร้อน',
+        'HOLIDAY', 'HOL'),
+    MainMenu(FontAwesomeIcons.briefcaseMedical, Colors.amber, 'ค่ารักษาพยาบาล',
+        'MEDICAL', 'MED'),
+    MainMenu(FontAwesomeIcons.userSlash, Colors.red, 'ขาด ลา มาสาย',
+        'LEAVE RECORD', 'LV'),
+    MainMenu(FontAwesomeIcons.moneyBillTrendUp, Colors.green, 'สลิปเงินเดือน',
+        'E-PAY SLIP', 'SLIP'),
+    MainMenu(FontAwesomeIcons.bookTanakh, Colors.blue, 'ฝึกอบรม', 'TRAINING',
+        'TRAIN')
   ];
 
   void loadScreen(String selectedScreen) {
@@ -137,7 +146,7 @@ class _MainPageState extends State<MainPage> {
         foregroundColor: theme.colorScheme.surface,
       ),
       body: ListView.builder(
-        padding: const EdgeInsets.only(top: 10, left: 30, right: 30),
+          padding: const EdgeInsets.only(top: 10, left: 30, right: 30),
           itemCount: oAryMenu.length,
           itemBuilder: (BuildContext context, int index) {
             return Card(
@@ -182,8 +191,8 @@ class _MainPageState extends State<MainPage> {
                   ),
                   backgroundColor: Colors.white,
                 ),
-                accountName: Text(oAccount!.fullName),
-                accountEmail: Text('Position ${oAccount!.posit}')),
+                accountName: Text(nameEmp),
+                accountEmail: Text('Position $positEmp')),
             const Divider(),
             Expanded(
                 child: Align(

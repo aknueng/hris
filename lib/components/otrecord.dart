@@ -34,13 +34,18 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
 
   List<DropdownMenuItem<String>> oAryOTJob = [
     const DropdownMenuItem<String>(value: '', child: Text('เลือกงาน')),
-    const DropdownMenuItem<String>(value: 'A', child: Text('A : งาน')),
-    const DropdownMenuItem<String>(value: 'B', child: Text('B : งาน')),
-    const DropdownMenuItem<String>(value: 'C', child: Text('C : งาน')),
-    const DropdownMenuItem<String>(value: 'D', child: Text('D : งาน')),
-    const DropdownMenuItem<String>(value: 'E', child: Text('E : งาน')),
-    const DropdownMenuItem<String>(value: 'F', child: Text('F : งาน')),
-    const DropdownMenuItem<String>(value: 'G', child: Text('G : งาน')),
+    const DropdownMenuItem<String>(value: 'A', child: Text('A : งานเอกสาร')),
+    const DropdownMenuItem<String>(
+        value: 'B', child: Text('B : กิจกรรมตามแผน')),
+    const DropdownMenuItem<String>(
+        value: 'C', child: Text('C : กิจกรรมที่ไม่ตามแผน')),
+    const DropdownMenuItem<String>(
+        value: 'D', child: Text('D : Rework,Sorting')),
+    const DropdownMenuItem<String>(
+        value: 'E', child: Text('E : Support Production')),
+    const DropdownMenuItem<String>(value: 'F', child: Text('F : Kaizen')),
+    const DropdownMenuItem<String>(value: 'G', child: Text('G : ซ่อมสร้าง')),
+    const DropdownMenuItem<String>(value: 'H', child: Text('H : วิศวกรรม')),
   ];
 
   @override
@@ -61,8 +66,7 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
     });
   }
 
-
-  showConfirmDialog(BuildContext contexxt, MOtInfo mOT ) {
+  showConfirmDialog(BuildContext contexxt, MOtInfo mOT) {
     Widget btnConfirm = ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
             // backgroundColor: Colors.red[100],
@@ -99,7 +103,8 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
         children: [
           const Text('ยกเลิกการร้องขอOT วันที่ '),
           Expanded(
-            child: Text('${mOT.strDate} ?',
+            child: Text(
+              '${mOT.strDate} ?',
               style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   decoration: TextDecoration.underline),
@@ -402,11 +407,13 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                                                           foregroundColor:
                                                               Colors.white,
                                                           padding:
-                                                              const EdgeInsets.all(
-                                                                  20)),
+                                                              const EdgeInsets
+                                                                  .all(20)),
                                                       onPressed: () {
-                                                        showConfirmDialog(context, snapshot.data![index] );
-
+                                                        showConfirmDialog(
+                                                            context,
+                                                            snapshot
+                                                                .data![index]);
                                                       },
                                                       child:
                                                           const Text('ยกเลิก OT'))

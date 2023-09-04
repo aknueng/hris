@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -83,7 +84,9 @@ class _SlipScreenState extends State<SlipScreen> {
         },
       );
 
-      data.then((value) => value.sort((a, b) => b.reqDate!.compareTo(a.reqDate!),));
+      data.then((value) => value.sort(
+            (a, b) => b.reqDate!.compareTo(a.reqDate!),
+          ));
 
       return data;
       //return compute((message) => parseSlipList(response.body), response.body);
@@ -174,7 +177,12 @@ class _SlipScreenState extends State<SlipScreen> {
                                   ],
                                 ),
                                 trailing: OutlinedButton.icon(
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      String UrlFile =
+                                          'https://www.dci.co.th/hris/pdfviewer.aspx?f=dist/Slip/${snapshot.data![index].docFile}';
+
+                                      //https://www.dci.co.th/hris/pdfviewer.aspx?f=dist/Slip/202308\40865_HR042308-0050.pdf&fn=202308\40865_HR042308-0050.pdf
+                                    },
                                     icon:
                                         const Icon(FontAwesomeIcons.paperclip),
                                     label: const Text('โหลดสลิป')),
