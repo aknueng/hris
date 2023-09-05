@@ -41,30 +41,29 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
     createFileOfPdfUrl().then((f) {
       setState(() {
-        print('before');
+        // print('before');
         remotePDFpath = f.path;
-        print('path $remotePDFpath ');
-        print('last');
+        // print('path $remotePDFpath ');
+        // print('last');
       });
     });
   }
 
   Future<File> createFileOfPdfUrl() async {
     Completer<File> completer = Completer();
-    print("Start download file from internet!");
+    // print("Start download file from internet!");
     try {
       // "https://berlin2017.droidcon.cod.newthinking.net/sites/global.droidcon.cod.newthinking.net/files/media/documents/Flutter%20-%2060FPS%20UI%20of%20the%20future%20%20-%20DroidconDE%2017.pdf";
       // final url = "https://pdfkit.org/docs/guide.pdf";
       //final url = "http://www.pdf995.com/samples/pdf.pdf";
-      final url =
-          'https://www.dci.co.th/hris/dist/Slip/202308/40865_HR042308-0050.pdf';
+      const url = 'https://www.dci.co.th/hris/dist/Slip/202308/40865_HR042308-0050.pdf';
       final filename = url.substring(url.lastIndexOf("/") + 1);
       var request = await HttpClient().getUrl(Uri.parse(url));
       var response = await request.close();
       var bytes = await consolidateHttpClientResponseBytes(response);
       var dir = await getApplicationDocumentsDirectory();
-      print("Download files");
-      print("${dir.path}/$filename");
+      // print("Download files");
+      // print("${dir.path}/$filename");
       File file = File("${dir.path}/$filename");
 
       await file.writeAsBytes(bytes, flush: true);
@@ -96,7 +95,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
-    String url = 'https://farmer.doae.go.th/farmerform.pdf';
+    // String url = 'https://farmer.doae.go.th/farmerform.pdf';
 
     return Scaffold(
       appBar: AppBar(
@@ -107,9 +106,9 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           return Column(
             children: <Widget>[
               TextButton(
-                child: Text("Open PDF"),
+                child: const Text("Open PDF"),
                 onPressed: () {
-                  print('open');
+                  // print('open');
                   if (pathPDF.isNotEmpty) {
                     Navigator.push(
                       context,
@@ -121,7 +120,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                 },
               ),
               TextButton(
-                child: Text("Open Landscape PDF"),
+                child: const Text("Open Landscape PDF"),
                 onPressed: () {
                   if (landscapePathPdf.isNotEmpty) {
                     Navigator.push(
@@ -134,14 +133,14 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                 },
               ),
               TextButton(
-                child: Text("Remote PDF"),
+                child: const Text("Remote PDF"),
                 onPressed: () {
                   createFileOfPdfUrl().then((f) {
                     setState(() {
-                      print('before');
+                      // print('before');
                       remotePDFpath = f.path;
-                      print('path $remotePDFpath ');
-                      print('last');
+                      // print('path $remotePDFpath ');
+                      // print('last');
                     });
                   });
 
@@ -156,7 +155,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
                 },
               ),
               TextButton(
-                child: Text("Open Corrupted PDF"),
+                child: const  Text("Open Corrupted PDF"),
                 onPressed: () {
                   if (pathPDF.isNotEmpty) {
                     Navigator.push(
@@ -179,7 +178,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 class PDFScreen extends StatefulWidget {
   final String? path;
 
-  PDFScreen({Key? key, this.path}) : super(key: key);
+  const PDFScreen({Key? key, this.path}) : super(key: key);
 
   _PDFScreenState createState() => _PDFScreenState();
 }
@@ -196,10 +195,10 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Document"),
+        title: const Text("Document"),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.share),
+            icon: const Icon(Icons.share),
             onPressed: () {},
           ),
         ],
@@ -228,22 +227,22 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
               setState(() {
                 errorMessage = error.toString();
               });
-              print(error.toString());
+              // print(error.toString());
             },
             onPageError: (page, error) {
               setState(() {
                 errorMessage = '$page: ${error.toString()}';
               });
-              print('$page: ${error.toString()}');
+              // print('$page: ${error.toString()}');
             },
             onViewCreated: (PDFViewController pdfViewController) {
               _controller.complete(pdfViewController);
             },
             onLinkHandler: (String? uri) {
-              print('goto uri: $uri');
+              // print('goto uri: $uri');
             },
             onPageChanged: (int? page, int? total) {
-              print('page change: $page/$total');
+              // print('page change: $page/$total');
               setState(() {
                 currentPage = page;
               });
@@ -251,7 +250,7 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
           ),
           errorMessage.isEmpty
               ? !isReady
-                  ? Center(
+                  ? const Center(
                       child: CircularProgressIndicator(),
                     )
                   : Container()

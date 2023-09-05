@@ -218,8 +218,7 @@ class _LVRequestScreenState extends State<LVRequestScreen>
 //======== Record Leave Data ============
   Future requestLV(DateTime paramLVDate, String paramLVType, String paramLVFrom,
       String paramLVTo, String paramReason) async {
-    print(
-        '>> ${formatYMD.format(paramLVDate)} $paramLVType $paramLVFrom $paramLVTo $paramReason');
+    // print('>> ${formatYMD.format(paramLVDate)} $paramLVType $paramLVFrom $paramLVTo $paramReason');
     final response = await http.post(
         Uri.parse('https://scm.dci.co.th/hrisapi/api/emp/reqlv'),
         headers: <String, String>{
@@ -308,7 +307,7 @@ class _LVRequestScreenState extends State<LVRequestScreen>
               onChanged: (value) {
                 setState(() {
                   selReason = value;
-                  print('$selReason | $value');
+                  // print('$selReason | $value');
                 });
               },
             ),

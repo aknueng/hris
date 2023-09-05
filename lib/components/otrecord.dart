@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:isolate';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hris/models/md_account.dart';
@@ -136,7 +135,7 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                 formatYMD.format(
                     DateTime.parse(mOT.otDate ?? DateTime.now().toString())),
                 otType,
-                selValue!);
+                selValue);
 
             //refreshData();
             Navigator.of(context).pop();
@@ -172,7 +171,6 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
             style: TextStyle(
                 color: Colors.red[900], fontWeight: FontWeight.bold)));
 
-    String selValue2;
     AlertDialog alDlg = AlertDialog(
       title: const Text('ยืนยันการร้องขอโอที'),
       backgroundColor: Colors.white,

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hris/components/datepkr.dart';
 import 'package:hris/components/login.dart';
 import 'package:hris/components/lvrecord.dart';
 import 'package:hris/components/lvrequest.dart';
 import 'package:hris/components/medical.dart';
 import 'package:hris/components/otrecord.dart';
 import 'package:hris/components/slip.dart';
-import 'package:hris/components/test.dart';
 import 'package:hris/components/trainning.dart';
 import 'package:hris/lang/lang_th.dart';
 import 'package:hris/models/md_account.dart';
@@ -239,8 +237,10 @@ class _MainPageState extends State<MainPage> {
                             logInDate: DateTime.now());
                       });
 
-                      if (context.mounted)
+                      if (context.mounted){
                         Navigator.pushNamed(context, '/login');
+                      }
+                        
                     },
                   ),
                 ),
