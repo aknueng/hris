@@ -105,7 +105,7 @@ class _MedicalScreenState extends State<MedicalScreen> {
       fontWeight: FontWeight.bold,
     );
     String tilte = 'นาย';
-    String idno = '1-4799-00071-20-9';
+    // String idno = '1-4799-00071-20-9';
 
     return Scaffold(
         appBar: AppBar(
@@ -138,7 +138,8 @@ class _MedicalScreenState extends State<MedicalScreen> {
                           padding: const EdgeInsets.only(
                               left: 25, top: 5, bottom: 5, right: 25),
                           child: Text(
-                            '$tilte ${oAccount!.tFullName}\nเลขที่บัตรประชาชน $idno ',
+                            '$tilte ${oAccount!.tFullName}',
+                            //'$tilte ${oAccount!.tFullName}\nเลขที่บัตรประชาชน $idno ',
                             style: const TextStyle(
                                 fontSize: 15, color: Colors.black),
                           ),

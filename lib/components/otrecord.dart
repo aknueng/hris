@@ -33,32 +33,21 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
   // ];
   List<String>? _selectOTJob;
 
-  List<DropdownMenuItem<String>> oAryOTJob = [
+  List<DropdownMenuItem<String>> oAryOTJobs = [
     const DropdownMenuItem<String>(value: '', child: Text('เลือกงาน')),
-    const DropdownMenuItem<String>(value: 'A', child: Text('A')),
-    const DropdownMenuItem<String>(value: 'B', child: Text('B')),
-    const DropdownMenuItem<String>(value: 'C', child: Text('C')),
-    const DropdownMenuItem<String>(value: 'D', child: Text('D')),
-    const DropdownMenuItem<String>(value: 'E', child: Text('E')),
-    const DropdownMenuItem<String>(value: 'F', child: Text('F')),
-    const DropdownMenuItem<String>(value: 'G', child: Text('G')),
-    const DropdownMenuItem<String>(value: 'H', child: Text('H')),
+    const DropdownMenuItem<String>(value: 'A', child: Text('A : งานเอกสาร')),
+    const DropdownMenuItem<String>(
+        value: 'B', child: Text('B : กิจกรรมตามแผน')),
+    const DropdownMenuItem<String>(
+        value: 'C', child: Text('C : กิจกรรมที่ไม่ตามแผน')),
+    const DropdownMenuItem<String>(
+        value: 'D', child: Text('D : Rework,Sorting')),
+    const DropdownMenuItem<String>(
+        value: 'E', child: Text('E : Support Production')),
+    const DropdownMenuItem<String>(value: 'F', child: Text('F : Kaizen')),
+    const DropdownMenuItem<String>(value: 'G', child: Text('G : ซ่อมสร้าง')),
+    const DropdownMenuItem<String>(value: 'H', child: Text('H : วิศวกรรม')),
   ];
-  // List<DropdownMenuItem<String>> oAryOTJob = [
-  //   const DropdownMenuItem<String>(value: '', child: Text('เลือกงาน')),
-  //   const DropdownMenuItem<String>(value: 'A', child: Text('A : งานเอกสาร')),
-  //   const DropdownMenuItem<String>(
-  //       value: 'B', child: Text('B : กิจกรรมตามแผน')),
-  //   const DropdownMenuItem<String>(
-  //       value: 'C', child: Text('C : กิจกรรมที่ไม่ตามแผน')),
-  //   const DropdownMenuItem<String>(
-  //       value: 'D', child: Text('D : Rework,Sorting')),
-  //   const DropdownMenuItem<String>(
-  //       value: 'E', child: Text('E : Support Production')),
-  //   const DropdownMenuItem<String>(value: 'F', child: Text('F : Kaizen')),
-  //   const DropdownMenuItem<String>(value: 'G', child: Text('G : ซ่อมสร้าง')),
-  //   const DropdownMenuItem<String>(value: 'H', child: Text('H : วิศวกรรม')),
-  // ];
 
   @override
   void initState() {
@@ -84,6 +73,11 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
             // backgroundColor: Colors.red[100],
             ),
         onPressed: () {
+          cancelOT(
+              formatYMD.format(
+                  DateTime.parse(mOT.otDate ?? DateTime.now().toString())),
+              'A',
+              'A');
           refreshData();
           Navigator.of(context).pop();
         },
@@ -136,6 +130,104 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
     );
   }
 
+  String selValue = '';
+  showRequestConfirmDialog(
+      BuildContext contexxt, MOtInfo mOT, String otType, String timePeriod) {
+    Widget btnConfirm = ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+            // backgroundColor: Colors.red[100],
+            ),
+        onPressed: () {
+          if (selValue != '') {
+            requestOT(
+                formatYMD.format(
+                    DateTime.parse(mOT.otDate ?? DateTime.now().toString())),
+                otType,
+                selValue!);
+
+            refreshData();
+            Navigator.of(context).pop();
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Center(
+                  child: Text('กรุณาเลือกงาน '),
+                ),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+                margin: EdgeInsets.all(30),
+              ),
+            );
+          }
+        },
+        icon: Icon(
+          FontAwesomeIcons.circleCheck,
+          color: Colors.blue[900],
+        ),
+        label: Text(
+          'ยืนยันการร้องขอ',
+          style:
+              TextStyle(color: Colors.blue[900], fontWeight: FontWeight.bold),
+        ));
+
+    Widget btnCancel = ElevatedButton.icon(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        icon: Icon(FontAwesomeIcons.circleXmark, color: Colors.red[900]),
+        label: Text('ปิด',
+            style: TextStyle(
+                color: Colors.red[900], fontWeight: FontWeight.bold)));
+
+    String selValue2;
+    AlertDialog alDlg = AlertDialog(
+      title: const Text('ยืนยันการร้องขอโอที'),
+      backgroundColor: Colors.white,
+      content: StatefulBuilder(
+        builder: (context, setState) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Text(' วันที่ '),
+                  Text(
+                    '${mOT.strDate} $timePeriod',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline),
+                  ),
+                  const Text(' ?'),
+                ],
+              ),
+              DropdownButton(
+                items: oAryOTJobs,
+                value: selValue,
+                dropdownColor: Colors.white,
+                onChanged: (value) {
+                  setState(() {
+                    selValue = value!;
+                  });
+                },
+              ),
+            ],
+          );
+        },
+      ),
+      actions: [btnConfirm, btnCancel],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alDlg;
+      },
+    );
+  }
+
   Future getValidateAccount() async {
     final SharedPreferences pers = await SharedPreferences.getInstance();
     setState(() {
@@ -167,11 +259,28 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
         },
         body: jsonEncode(<String, String>{
           'empCode': oAccount!.code,
-          'empShortName': oAccount!.shortName,
           'otDate': paramOTDate,
           'otType': paramOTType,
           'otJob': paramOTJob,
-          'empWType': 'S',
+        }));
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      refreshData();
+    }
+  }
+
+  Future cancelOT(
+      String paramOTDate, String paramOTType, String paramOTJob) async {
+    final response = await http.post(
+        Uri.parse('https://scm.dci.co.th/hrisapi/api/emp/cancelot'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ${oAccount!.token}',
+        },
+        body: jsonEncode(<String, String>{
+          'empCode': oAccount!.code,
+          'otDate': paramOTDate,
+          'otType': paramOTType,
+          'otJob': paramOTJob,
         }));
     if (response.statusCode == 200 || response.statusCode == 201) {
       refreshData();
@@ -326,27 +435,6 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                                             '${snapshot.data![index].strDate}',
                                             style: txtBold,
                                           ),
-                                          (snapshot.data![index].status == "" &&
-                                                  canRequest)
-                                              ? Expanded(
-                                                child: Align(
-                                                  alignment: Alignment.centerRight,
-                                                  child: DropdownButton(
-                                                      isExpanded: false,
-                                                      value: _selectOTJob![index],
-                                                      items: oAryOTJob,
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          _selectOTJob![index] =
-                                                              value!;
-                                                          // print(_selectOTJob![
-                                                          //     index]);
-                                                        });
-                                                      },
-                                                    ),
-                                                ),
-                                              )
-                                              : const Text('')
                                         ],
                                       ),
                                       subtitle: Padding(
@@ -375,38 +463,14 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                                                           const EdgeInsets.all(
                                                               20)),
                                                   onPressed: () {
-                                                    if (_selectOTJob![index] !=
-                                                        '') {
-                                                      // requestOT(
-                                                      //     formatYMD.format(
-                                                      //         snapshot
-                                                      //                 .data![
-                                                      //                     index]
-                                                      //                 .otDate ??
-                                                      //             DateTime
-                                                      //                 .now()),
-                                                      //     otType,
-                                                      //     _selectOTJob![index]);
-                                                    } else {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        const SnackBar(
-                                                          content: Center(
-                                                            child: Text(
-                                                                'กรุณาเลือกงาน ก่อนกดร้องขอ OT'),
-                                                          ),
-                                                          backgroundColor:
-                                                              Colors.red,
-                                                          behavior:
-                                                              SnackBarBehavior
-                                                                  .floating,
-                                                          margin:
-                                                              EdgeInsets.all(
-                                                                  30),
-                                                        ),
-                                                      );
-                                                    }
+                                                    setState(() {
+                                                      selValue = '';
+                                                    });
+                                                    showRequestConfirmDialog(
+                                                        context,
+                                                        snapshot.data![index],
+                                                        otType,
+                                                        timePeriod);
                                                   },
                                                   child:
                                                       const Text('ร้องขอ OT'))
@@ -421,8 +485,8 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                                                           foregroundColor:
                                                               Colors.white,
                                                           padding:
-                                                              const EdgeInsets
-                                                                  .all(20)),
+                                                              const EdgeInsets.all(
+                                                                  20)),
                                                       onPressed: () {
                                                         showConfirmDialog(
                                                             context,

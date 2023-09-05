@@ -49,3 +49,31 @@ class MLVInfo {
         'reQ_STATUS': reqSTATUS,
       };
 }
+
+class MLVReq {
+  final String empCode;
+  final String cDate;
+  final String lvType;
+  final String lvFrom;
+  final String lvTo;
+  final String lvReason;
+
+  MLVReq({
+    required this.empCode,
+    required this.cDate,
+    required this.lvType,
+    required this.lvFrom,
+    required this.lvTo,
+    required this.lvReason,
+  });
+
+  factory MLVReq.fromJson(Map<String, dynamic> json) {
+    return MLVReq(
+        empCode: json['empCode'].toString(),
+        cDate: json['cDate'].toString(),
+        lvType: json['lvType'].toString(),
+        lvFrom: json['lvFrom'].toString(),
+        lvTo: json['lvTo'].toString(),
+        lvReason: json['lvReason'].toString());
+  }
+}

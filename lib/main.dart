@@ -139,113 +139,119 @@ class _MainPageState extends State<MainPage> {
     final styleBody = theme.textTheme.bodyMedium!.copyWith(
       color: theme.colorScheme.onSurface,
     );
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(LangTH.titleMain),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.surface,
-      ),
-      body: ListView.builder(
-          padding: const EdgeInsets.only(top: 10, left: 30, right: 30),
-          itemCount: oAryMenu.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Card(
-              elevation: 10,
-              shadowColor: Colors.black,
-              color: Colors.white,
-              margin: const EdgeInsets.all(7),
-              child: ListTile(
-                leading: Container(
-                  height: 60,
-                  width: 60,
-                  color: oAryMenu[index].mColor,
-                  child: Icon(
-                    oAryMenu[index].mnIcon,
-                    color: theme.colorScheme.surface,
-                  ),
-                ),
-                title: Text(
-                  oAryMenu[index].mnTitle,
-                  style: styleBody,
-                ),
-                subtitle: Text(
-                  oAryMenu[index].mnSubTitle,
-                  style: styleBody,
-                ),
-                onTap: () {
-                  loadScreen(oAryMenu[index].mnSceen);
-                },
-              ),
-            );
-          }),
-      drawer: Drawer(
-        backgroundColor: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-                currentAccountPicture: const CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    'http://dcidmc.dci.daikin.co.jp/PICTURE/40865.jpg',
-                  ),
-                  backgroundColor: Colors.white,
-                ),
-                accountName: Text(nameEmp),
-                accountEmail: Text('Position $positEmp')),
-            const Divider(),
-            Expanded(
-                child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Card(
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(LangTH.titleMain),
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.surface,
+        ),
+        body: ListView.builder(
+            padding: const EdgeInsets.only(top: 10, left: 30, right: 30),
+            itemCount: oAryMenu.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Card(
+                elevation: 10,
+                shadowColor: Colors.black,
+                color: Colors.white,
+                margin: const EdgeInsets.all(7),
                 child: ListTile(
-                  tileColor: Colors.blueAccent,
-                  titleAlignment: ListTileTitleAlignment.center,
-                  leading: const Icon(FontAwesomeIcons.rightFromBracket,
-                      color: Colors.white),
-                  title: const Text(
-                    'LOG OUT',
-                    style: TextStyle(color: Colors.white),
+                  leading: Container(
+                    height: 60,
+                    width: 60,
+                    color: oAryMenu[index].mColor,
+                    child: Icon(
+                      oAryMenu[index].mnIcon,
+                      color: theme.colorScheme.surface,
+                    ),
                   ),
-                  onTap: () async {
-                    final SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    prefs.remove('code');
-                    prefs.remove('name');
-                    prefs.remove('surn');
-                    prefs.remove('shortName');
-                    prefs.remove('fullName');
-                    prefs.remove('tName');
-                    prefs.remove('tSurn');
-                    prefs.remove('joinDate');
-                    prefs.remove('tFullName');
-                    prefs.remove('posit');
-                    prefs.remove('token');
-                    prefs.remove('logInDate');
-                    setState(() {
-                      oAccount = MAccount(
-                          code: '',
-                          name: '',
-                          surn: '',
-                          shortName: '',
-                          fullName: '',
-                          tName: '',
-                          tSurn: '',
-                          joinDate: DateTime.now(),
-                          tFullName: '',
-                          posit: '',
-                          token: '',
-                          logInDate: DateTime.now());
-                    });
-
-                    if (context.mounted) Navigator.pushNamed(context, '/login');
+                  title: Text(
+                    oAryMenu[index].mnTitle,
+                    style: styleBody,
+                  ),
+                  subtitle: Text(
+                    oAryMenu[index].mnSubTitle,
+                    style: styleBody,
+                  ),
+                  onTap: () {
+                    loadScreen(oAryMenu[index].mnSceen);
                   },
                 ),
-              ),
-            ))
-          ],
+              );
+            }),
+        drawer: Drawer(
+          backgroundColor: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                  currentAccountPicture: const CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      'http://dcidmc.dci.daikin.co.jp/PICTURE/40865.jpg',
+                    ),
+                    backgroundColor: Colors.white,
+                  ),
+                  accountName: Text(nameEmp),
+                  accountEmail: Text('Position $positEmp')),
+              const Divider(),
+              Expanded(
+                  child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Card(
+                  child: ListTile(
+                    tileColor: Colors.blueAccent,
+                    titleAlignment: ListTileTitleAlignment.center,
+                    leading: const Icon(FontAwesomeIcons.rightFromBracket,
+                        color: Colors.white),
+                    title: const Text(
+                      'LOG OUT',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () async {
+                      final SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      prefs.remove('code');
+                      prefs.remove('name');
+                      prefs.remove('surn');
+                      prefs.remove('shortName');
+                      prefs.remove('fullName');
+                      prefs.remove('tName');
+                      prefs.remove('tSurn');
+                      prefs.remove('joinDate');
+                      prefs.remove('tFullName');
+                      prefs.remove('posit');
+                      prefs.remove('token');
+                      prefs.remove('logInDate');
+                      setState(() {
+                        oAccount = MAccount(
+                            code: '',
+                            name: '',
+                            surn: '',
+                            shortName: '',
+                            fullName: '',
+                            tName: '',
+                            tSurn: '',
+                            joinDate: DateTime.now(),
+                            tFullName: '',
+                            posit: '',
+                            token: '',
+                            logInDate: DateTime.now());
+                      });
+
+                      if (context.mounted)
+                        Navigator.pushNamed(context, '/login');
+                    },
+                  ),
+                ),
+              ))
+            ],
+          ),
         ),
       ),
+      onWillPop: () async {
+        return false;
+      },
     );
   }
 }
