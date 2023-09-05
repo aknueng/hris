@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hris/components/datepkr.dart';
 import 'package:hris/components/login.dart';
 import 'package:hris/components/lvrecord.dart';
 import 'package:hris/components/lvrequest.dart';
@@ -41,7 +42,6 @@ class MyApp extends StatelessWidget {
         '/med': (context) => const MedicalScreen(),
         '/login': (context) => const LogInScreen(),
         '/slip': (context) => const SlipScreen(),
-        // '/slip': (context) => const MyStatefulWidget(),
         '/train': (context) => const TrainingScreen(),
         '/lvreq': (context) => const LVRequestScreen(),
       },

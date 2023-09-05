@@ -44,7 +44,16 @@ class _LeaveScreenState extends State<LeaveScreen> {
             // backgroundColor: Colors.red[100],
             ),
         onPressed: () {
-          refreshData();
+// 0 1 2 3 4 5 6 7 8 9
+// 1 9 / 0 9 / 2 0 2 3
+          
+          // print(mLV.cDate);
+          // print('${int.parse(mLV.cDate.substring(6,10))}  ${int.parse(mLV.cDate.substring(3,5))}  ${int.parse(mLV.cDate.substring(0,2))}');
+          // print(formatYMD.format(DateTime(int.parse(mLV.cDate.substring(6,10)), int.parse(mLV.cDate.substring(3,5)), int.parse(mLV.cDate.substring(0,2)) )));
+          cancelLV(formatYMD.format(DateTime(int.parse(mLV.cDate.substring(6,10)), int.parse(mLV.cDate.substring(3,5)), int.parse(mLV.cDate.substring(0,2)) )), mLV.type,
+              mLV.lvFrom, mLV.lvTo, '');
+
+          //refreshData();
           Navigator.of(context).pop();
         },
         icon: Icon(
@@ -123,6 +132,39 @@ class _LeaveScreenState extends State<LeaveScreen> {
     });
   }
 
+  //======== Cancel Leave Data ============
+  Future cancelLV(String paramLVDate, String paramLVType, String paramLVFrom,
+      String paramLVTo, String paramReason) async {
+    // print('>> $paramLVDate $paramLVType $paramLVFrom $paramLVTo $paramReason');
+    final response = await http.post(
+        Uri.parse('https://scm.dci.co.th/hrisapi/api/emp/cancellv'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ${oAccount!.token}',
+        },
+        body: jsonEncode(<String, String>{
+          'EmpCode': oAccount!.code,
+          'CDate': paramLVDate,
+          'LvType': paramLVType,
+          'LvFrom': paramLVFrom,
+          'LvTo': paramLVTo,
+          'LVReason': ''
+        }));
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      refreshData();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('ยกเลิกการลาเรียบร้อยแล้ว'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(30),
+          ),
+        );
+      }
+    }
+  }
+
   Future<List<MLVInfo>> fetchLVData() async {
     final response = await http.post(
         Uri.parse('https://scm.dci.co.th/hrisapi/api/emp/getlv'),
@@ -139,45 +181,16 @@ class _LeaveScreenState extends State<LeaveScreen> {
         }));
 
     if (response.statusCode == 200) {
-
       // on success, parse the JSON in the response body
       final parser = GetLeaveResultsParser(response.body);
       // return parser.parseInBackground();
       Future<List<MLVInfo>> data = parser.parseInBackground();
       data.then((value) => value.sort((a, b) => b.cDate.compareTo(a.cDate)));
       return data;
-
     } else {
       throw ('failed to load data');
     }
   }
-
-  // Future<List<MLVInfo>> fetchLVData() async {
-  //   final response = await http.post(
-  //       Uri.parse('https://scm.dci.co.th/hrisapi/api/emp/getlv'),
-  //       headers: <String, String>{
-  //         'Content-Type': 'application/json; charset=UTF-8',
-  //         'Authorization': 'Bearer ${oAccount!.token}',
-  //       },
-  //       body: jsonEncode(<String, String>{
-  //         'empCode': oAccount!.code,
-  //         'dateStart': formatYMD
-  //             .format(DateTime.now().subtract(const Duration(days: 90))),
-  //         'dateEnd':
-  //             formatYMD.format(DateTime.now().add(const Duration(days: 30)))
-  //       }));
-
-  //   if (response.statusCode == 200) {
-  //     Future<List<MLVInfo>> data =
-  //         compute((message) => parseLVList(response.body), response.body);
-  //     data.then((value) => value.sort((a, b) => b.cDate.compareTo(a.cDate)));
-  //     return data;
-
-  //     // return compute((message) => parseLVList(response.body), response.body);
-  //   } else {
-  //     throw ('failed to load data');
-  //   }
-  // }
 
   List<MLVInfo> parseLVList(String responseBody) {
     final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
@@ -224,11 +237,11 @@ class _LeaveScreenState extends State<LeaveScreen> {
                           }
 
                           if (snapshot.data![index].reqSTATUS == "APPROVE") {
-                            lvStatus = 'อนุมัติแล้ว';
+                            lvStatus = 'อนุมัติ';
                             lvStatusCorlor = Colors.greenAccent[400]!;
                           } else if (snapshot.data![index].reqSTATUS ==
                               "REQUEST") {
-                            lvStatus = 'รอการอนุมัติ';
+                            lvStatus = 'รอ';
                             lvStatusCorlor = Colors.yellow[400]!;
                           } else if (snapshot.data![index].reqSTATUS ==
                               "REJECT") {
@@ -265,11 +278,10 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                 onPressed: () {
                                   if (snapshot.data![index].reqSTATUS ==
                                       "REQUEST") {
-                                  // confirm cancel leave
-                                  showConfirmDialog(
-                                      context, snapshot.data![index], lvtype);
+                                    // confirm cancel leave
+                                    showConfirmDialog(
+                                        context, snapshot.data![index], lvtype);
                                   }
-                                  
                                 },
                                 child: Text(
                                   lvStatus,
@@ -312,8 +324,6 @@ class _LeaveScreenState extends State<LeaveScreen> {
     );
   }
 }
-
-
 
 class GetLeaveResultsParser {
   // 1. pass the encoded json as a constructor argument

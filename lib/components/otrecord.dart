@@ -22,15 +22,8 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
   MAccount? oAccount;
 
   final formatYMD = DateFormat("yyyyMMdd");
-  // final List<MOTJob> oAryOTJob = [
-  //   MOTJob(dataValue: 'A', dataDisplay: 'A : งาน'),
-  //   MOTJob(dataValue: 'B', dataDisplay: 'B : งาน'),
-  //   MOTJob(dataValue: 'C', dataDisplay: 'C : งาน'),
-  //   MOTJob(dataValue: 'D', dataDisplay: 'D : งาน'),
-  //   MOTJob(dataValue: 'E', dataDisplay: 'E : งาน'),
-  //   MOTJob(dataValue: 'F', dataDisplay: 'F : งาน'),
-  //   MOTJob(dataValue: 'G', dataDisplay: 'G : งาน'),
-  // ];
+
+
   List<String>? _selectOTJob;
 
   List<DropdownMenuItem<String>> oAryOTJobs = [
@@ -78,7 +71,7 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                   DateTime.parse(mOT.otDate ?? DateTime.now().toString())),
               'A',
               'A');
-          refreshData();
+          //refreshData();
           Navigator.of(context).pop();
         },
         icon: Icon(
@@ -145,7 +138,7 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                 otType,
                 selValue!);
 
-            refreshData();
+            //refreshData();
             Navigator.of(context).pop();
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
