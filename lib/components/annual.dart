@@ -3,40 +3,37 @@ import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:hris/models/md_account.dart';
-import 'package:hris/models/md_training.dart';
+import 'package:hris/models/md_annual.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class TrainingScreen extends StatefulWidget {
-  const TrainingScreen({super.key});
+class AnnualScreen extends StatefulWidget {
+  const AnnualScreen({super.key});
 
   @override
-  State<TrainingScreen> createState() => _TrainingScreenState();
+  State<AnnualScreen> createState() => _AnnualScreenState();
 }
 
-class _TrainingScreenState extends State<TrainingScreen> {
+class _AnnualScreenState extends State<AnnualScreen> {
   final formatYMD = DateFormat("yyyyMMdd");
   String? code, shortName, fullName, tFullName, posit, joinDate, token;
   MAccount? oAccount;
-  Future<List<MTrainingInfo>>? oAryTraining;
+  Future<List<MAnnualInfo>>? oAryANN;
 
   @override
   void initState() {
     super.initState();
-    getValidateAccount().whenComplete(() {
-      if (oAccount == null || oAccount!.code == '') {
-        Navigator.pushNamed(context, '/login');
-      }
 
-      oAryTraining = fetchTraningData();
-    });
-  }
+    getValidateAccount().whenComplete(
+      () {
+        if (oAccount == null || oAccount!.code == '') {
+          Navigator.pushNamed(context, '/login');
+        }
 
-  void refreshData() {
-    setState(() {
-      oAryTraining = fetchTraningData();
-    });
+        oAryANN = fetchANNUALData();
+      },
+    );
   }
 
   Future getValidateAccount() async {
@@ -56,13 +53,19 @@ class _TrainingScreenState extends State<TrainingScreen> {
           posit: prefs.getString('posit') ?? '',
           token: prefs.getString('token') ?? '',
           logInDate: DateTime.parse(
-              prefs.getString('logInDate)') ?? DateTime.now().toString()));
+              prefs.getString('logInDate') ?? DateTime.now().toString()));
     });
   }
 
-  Future<List<MTrainingInfo>> fetchTraningData() async {
+  void refreshData() {
+    setState(() {
+      oAryANN = fetchANNUALData();
+    });
+  }
+
+  Future<List<MAnnualInfo>> fetchANNUALData() async {
     final response = await http.post(
-        Uri.parse('https://scm.dci.co.th/hrisapi/api/emp/getTrainning'),
+        Uri.parse('https://scm.dci.co.th/hrisapi/api/emp/getAnnual'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer ${oAccount!.token}',
@@ -71,27 +74,33 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
     if (response.statusCode == 200) {
       // on success, parse the JSON in the response body
-      final parser = GetTrainingResultsParser(response.body);
+      final parser = GetAnnualResultsParser(response.body);
       // return parser.parseInBackground();
-      Future<List<MTrainingInfo>> data = parser.parseInBackground();
+      Future<List<MAnnualInfo>> data = parser.parseInBackground();
       data.then((value) =>
-          value.sort((a, b) => b.scheduleStart.compareTo(a.scheduleStart)));
+          value.sort((a, b) => b.yearAnnual.compareTo(a.yearAnnual)));
       return data;
     } else {
       throw ('failed to load data');
     }
   }
 
+  // List<MAnnualInfo> parseANNList(String responseBody) {
+  //   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+  //   return parsed.map<MAnnualInfo>((json) => MAnnualInfo.fromJson(json)).toList();
+  // }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-          title: const Text('ฝึกอบรม (Training Record)'),
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: theme.colorScheme.surface),
-      body: FutureBuilder<List<MTrainingInfo>>(
-        future: oAryTraining,
+        title: const Text('วันลาพักร้อน (Annual)'),
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.surface,
+      ),
+      body: FutureBuilder<List<MAnnualInfo>>(
+        future: oAryANN,
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
@@ -105,50 +114,46 @@ class _TrainingScreenState extends State<TrainingScreen> {
                           return ListTile(
                               title: Row(
                                 children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${snapshot.data![index].courseCode} : ${snapshot.data![index].courseName}',
-                                      // style: const TextStyle(
-                                      //     fontWeight: FontWeight.bold),
-                                    ),
+                                  const Text('ปี '),
+                                  Text(
+                                    snapshot.data![index].yearAnnual,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
                               subtitle: Row(
                                 children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${snapshot.data![index].scheduleStart} - ${snapshot.data![index].scheduleEnd}',
-                                      // style: TextStyle(
-                                      //     fontSize: 14,
-                                      //     fontWeight: FontWeight.bold,
-                                      //     color: Colors.blue[900]),
-                                    ),
+                                  const Text('ได้รับ: '),
+                                  Text(
+                                    snapshot.data![index].totalText,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blue[900]),
                                   ),
-                                  // const Text(', ใช้ : '),
-                                  // Expanded(
-                                  //     child: Text(
-                                  //   snapshot.data![index].useText,
-                                  //   style: TextStyle(
-                                  //       fontSize: 14,
-                                  //       fontWeight: FontWeight.bold,
-                                  //       color: Colors.amber[700]),
-                                  // )),
+                                  const Text(', ใช้ : '),
+                                  Expanded(
+                                      child: Text(
+                                    snapshot.data![index].useText,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.amber[700]),
+                                  )),
                                 ],
                               ),
                               trailing: Column(
                                 children: [
-                                  (snapshot.data![index].evaluateResult == "P")
-                                      ? const Text('ผ่าน',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.green))
-                                      : const Text('ไม่ผ่าน',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.red))
+                                  const Text(
+                                    'คงเหลือ ',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  Text(snapshot.data![index].remainHr,
+                                      style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green))
                                 ],
                               ));
                         },
@@ -173,13 +178,13 @@ class _TrainingScreenState extends State<TrainingScreen> {
   }
 }
 
-class GetTrainingResultsParser {
+class GetAnnualResultsParser {
   // 1. pass the encoded json as a constructor argument
-  GetTrainingResultsParser(this.encodedJson);
+  GetAnnualResultsParser(this.encodedJson);
   final String encodedJson;
 
   // 2. public method that does the parsing in the background
-  Future<List<MTrainingInfo>> parseInBackground() async {
+  Future<List<MAnnualInfo>> parseInBackground() async {
     // create a port
     final p = ReceivePort();
     // spawn the isolate and wait for it to complete
@@ -195,7 +200,7 @@ class GetTrainingResultsParser {
     //final resultsJson = jsonData['results'] as List<dynamic>;
     final resultsJson = jsonData as List<dynamic>;
     final results =
-        resultsJson.map((json) => MTrainingInfo.fromJson(json)).toList();
+        resultsJson.map((json) => MAnnualInfo.fromJson(json)).toList();
     // return the result data via Isolate.exit()
     Isolate.exit(p, results);
   }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hris/components/annual.dart';
 import 'package:hris/components/login.dart';
 import 'package:hris/components/lvrecord.dart';
 import 'package:hris/components/lvrequest.dart';
 import 'package:hris/components/medical.dart';
 import 'package:hris/components/otrecord.dart';
 import 'package:hris/components/slip.dart';
+import 'package:hris/components/slippreview.dart';
 import 'package:hris/components/trainning.dart';
 import 'package:hris/lang/lang_th.dart';
 import 'package:hris/models/md_account.dart';
@@ -37,11 +39,13 @@ class MyApp extends StatelessWidget {
       routes: {
         '/ot': (context) => const OTRecordScreen(),
         '/lv': (context) => const LeaveScreen(),
+        '/annual': (context) => const AnnualScreen(),
         '/med': (context) => const MedicalScreen(),
         '/login': (context) => const LogInScreen(),
         '/slip': (context) => const SlipScreen(),
         '/train': (context) => const TrainingScreen(),
         '/lvreq': (context) => const LVRequestScreen(),
+        '/pdf': (context) => const PDFPreview(),
       },
       home: const MainPage(),
     );
@@ -60,6 +64,7 @@ class _MainPageState extends State<MainPage> {
   String? code, shortName, fullName, tFullName, posit, joinDate, token;
   MAccount? oAccount;
   String nameEmp = '', positEmp = '';
+  bool isInit = false;
 
   @override
   void initState() {
@@ -69,7 +74,9 @@ class _MainPageState extends State<MainPage> {
       if (oAccount == null || oAccount!.code == '' || oAccount!.code.isEmpty) {
         Navigator.pushNamed(context, '/login');
       } else {
-        //Navigator.pushNamed(context, '/');
+        setState(() {
+          isInit = true;
+        });
       }
     });
   }
@@ -103,7 +110,7 @@ class _MainPageState extends State<MainPage> {
     MainMenu(FontAwesomeIcons.clock, Colors.orange, 'รายการทำโอที', 'OVERTIME',
         'OT'),
     MainMenu(FontAwesomeIcons.personSkiing, Colors.purple, 'วันลาพักร้อน',
-        'HOLIDAY', 'HOL'),
+        'ANNUAL', 'ANN'),
     MainMenu(FontAwesomeIcons.briefcaseMedical, Colors.amber, 'ค่ารักษาพยาบาล',
         'MEDICAL', 'MED'),
     MainMenu(FontAwesomeIcons.userSlash, Colors.red, 'ขาด ลา มาสาย',
@@ -117,7 +124,8 @@ class _MainPageState extends State<MainPage> {
   void loadScreen(String selectedScreen) {
     if (selectedScreen == 'OT') {
       Navigator.pushNamed(context, '/ot');
-    } else if (selectedScreen == 'HOL') {
+    } else if (selectedScreen == 'ANN') {
+      Navigator.pushNamed(context, '/annual');
     } else if (selectedScreen == 'MED') {
       Navigator.pushNamed(context, '/med');
     } else if (selectedScreen == 'LV') {
@@ -139,115 +147,120 @@ class _MainPageState extends State<MainPage> {
     );
     return WillPopScope(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(LangTH.titleMain),
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: theme.colorScheme.surface,
-        ),
-        body: ListView.builder(
-            padding: const EdgeInsets.only(top: 10, left: 30, right: 30),
-            itemCount: oAryMenu.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Card(
-                elevation: 10,
-                shadowColor: Colors.black,
-                color: Colors.white,
-                margin: const EdgeInsets.all(7),
-                child: ListTile(
-                  leading: Container(
-                    height: 60,
-                    width: 60,
-                    color: oAryMenu[index].mColor,
-                    child: Icon(
-                      oAryMenu[index].mnIcon,
-                      color: theme.colorScheme.surface,
+        appBar: (isInit)
+            ? AppBar(
+                title: Text(LangTH.titleMain),
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.surface,
+              )
+            : AppBar(),
+        body: (isInit)
+            ? ListView.builder(
+                padding: const EdgeInsets.only(top: 10, left: 30, right: 30),
+                itemCount: oAryMenu.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    elevation: 10,
+                    shadowColor: Colors.black,
+                    color: Colors.white,
+                    margin: const EdgeInsets.all(7),
+                    child: ListTile(
+                      leading: Container(
+                        height: 60,
+                        width: 60,
+                        color: oAryMenu[index].mColor,
+                        child: Icon(
+                          oAryMenu[index].mnIcon,
+                          color: theme.colorScheme.surface,
+                        ),
+                      ),
+                      title: Text(
+                        oAryMenu[index].mnTitle,
+                        style: styleBody,
+                      ),
+                      subtitle: Text(
+                        oAryMenu[index].mnSubTitle,
+                        style: styleBody,
+                      ),
+                      onTap: () {
+                        loadScreen(oAryMenu[index].mnSceen);
+                      },
                     ),
-                  ),
-                  title: Text(
-                    oAryMenu[index].mnTitle,
-                    style: styleBody,
-                  ),
-                  subtitle: Text(
-                    oAryMenu[index].mnSubTitle,
-                    style: styleBody,
-                  ),
-                  onTap: () {
-                    loadScreen(oAryMenu[index].mnSceen);
-                  },
-                ),
-              );
-            }),
-        drawer: Drawer(
-          backgroundColor: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              UserAccountsDrawerHeader(
-                  currentAccountPicture: const CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      'http://dcidmc.dci.daikin.co.jp/PICTURE/40865.jpg',
-                    ),
-                    backgroundColor: Colors.white,
-                  ),
-                  accountName: Text(nameEmp),
-                  accountEmail: Text('Position $positEmp')),
-              const Divider(),
-              Expanded(
-                  child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Card(
-                  child: ListTile(
-                    tileColor: Colors.blueAccent,
-                    titleAlignment: ListTileTitleAlignment.center,
-                    leading: const Icon(FontAwesomeIcons.rightFromBracket,
-                        color: Colors.white),
-                    title: const Text(
-                      'LOG OUT',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () async {
-                      final SharedPreferences prefs =
-                          await SharedPreferences.getInstance();
-                      prefs.remove('code');
-                      prefs.remove('name');
-                      prefs.remove('surn');
-                      prefs.remove('shortName');
-                      prefs.remove('fullName');
-                      prefs.remove('tName');
-                      prefs.remove('tSurn');
-                      prefs.remove('joinDate');
-                      prefs.remove('tFullName');
-                      prefs.remove('posit');
-                      prefs.remove('token');
-                      prefs.remove('logInDate');
-                      setState(() {
-                        oAccount = MAccount(
-                            code: '',
-                            name: '',
-                            surn: '',
-                            shortName: '',
-                            fullName: '',
-                            tName: '',
-                            tSurn: '',
-                            joinDate: DateTime.now(),
-                            tFullName: '',
-                            posit: '',
-                            token: '',
-                            logInDate: DateTime.now());
-                      });
+                  );
+                })
+            : const CircularProgressIndicator(),
+        drawer: (isInit)
+            ? Drawer(
+                backgroundColor: Colors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    UserAccountsDrawerHeader(
+                        currentAccountPicture: const CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            'http://dcidmc.dci.daikin.co.jp/PICTURE/40865.jpg',
+                          ),
+                          backgroundColor: Colors.white,
+                        ),
+                        accountName: Text(nameEmp),
+                        accountEmail: Text('Position $positEmp')),
+                    const Divider(),
+                    Expanded(
+                        child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Card(
+                        child: ListTile(
+                          tileColor: Colors.blueAccent,
+                          titleAlignment: ListTileTitleAlignment.center,
+                          leading: const Icon(FontAwesomeIcons.rightFromBracket,
+                              color: Colors.white),
+                          title: const Text(
+                            'LOG OUT',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onTap: () async {
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            prefs.remove('code');
+                            prefs.remove('name');
+                            prefs.remove('surn');
+                            prefs.remove('shortName');
+                            prefs.remove('fullName');
+                            prefs.remove('tName');
+                            prefs.remove('tSurn');
+                            prefs.remove('joinDate');
+                            prefs.remove('tFullName');
+                            prefs.remove('posit');
+                            prefs.remove('token');
+                            prefs.remove('logInDate');
+                            setState(() {
+                              oAccount = MAccount(
+                                  code: '',
+                                  name: '',
+                                  surn: '',
+                                  shortName: '',
+                                  fullName: '',
+                                  tName: '',
+                                  tSurn: '',
+                                  joinDate: DateTime.now(),
+                                  tFullName: '',
+                                  posit: '',
+                                  token: '',
+                                  logInDate: DateTime.now());
+                            });
 
-                      if (context.mounted){
-                        Navigator.pushNamed(context, '/login');
-                      }
-                        
-                    },
-                  ),
+                            if (context.mounted) {
+                              Navigator.pushNamed(context, '/login');
+                            }
+                          },
+                        ),
+                      ),
+                    ))
+                  ],
                 ),
-              ))
-            ],
-          ),
-        ),
+              )
+            : null,
       ),
       onWillPop: () async {
         return false;

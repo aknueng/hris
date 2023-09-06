@@ -118,6 +118,10 @@ class _LogInScreenState extends State<LogInScreen> {
                 const SizedBox(
                   height: 100,
                 ),
+                const Image(
+                  image: AssetImage('assets/dci_logo.png'),
+                  width: 270,
+                ),
                 Container(
                   margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
                   decoration: BoxDecoration(boxShadow: [
@@ -209,16 +213,6 @@ class _LogInScreenState extends State<LogInScreen> {
                               borderSide: const BorderSide(
                                   color: Colors.orangeAccent)))),
                 ),
-                // ElevatedButton(
-                //     onPressed: () async {
-                //       if (formKey.currentState!.validate()) {
-                //         formKey.currentState!.save();
-                //         checkLogin();
-                //       }
-                //       //formKey.currentState!.reset();
-                //     },
-                //     child: Text('Login')),
-
                 Container(
                     alignment: Alignment.centerLeft,
                     margin: const EdgeInsets.only(
@@ -227,7 +221,7 @@ class _LogInScreenState extends State<LogInScreen> {
                     child: TextButton(
                         onPressed: () {},
                         child: const Text(
-                          'ไม่สามารถเข้าได้, ลืมรหัสผ่าน?',
+                          'ลืมรหัสผ่าน?',
                           style:
                               TextStyle(decoration: TextDecoration.underline),
                         ))),
@@ -240,8 +234,8 @@ class _LogInScreenState extends State<LogInScreen> {
                       if (snapshot.hasData &&
                           snapshot.connectionState == ConnectionState.done &&
                           snapshot.data!.code != '') {
-                        return Text(
-                            ' log in - ${snapshot.data!.code} ${snapshot.data!.fullName}');
+                        // return Text(' log in - ${snapshot.data!.code} ${snapshot.data!.fullName}');
+                        return const Text('');
                       } else if (snapshot.connectionState ==
                           ConnectionState.waiting) {
                         return const CircularProgressIndicator();

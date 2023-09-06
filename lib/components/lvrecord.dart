@@ -41,14 +41,15 @@ class _LeaveScreenState extends State<LeaveScreen> {
             // backgroundColor: Colors.red[100],
             ),
         onPressed: () {
-// 0 1 2 3 4 5 6 7 8 9
-// 1 9 / 0 9 / 2 0 2 3
-          
-          // print(mLV.cDate);
-          // print('${int.parse(mLV.cDate.substring(6,10))}  ${int.parse(mLV.cDate.substring(3,5))}  ${int.parse(mLV.cDate.substring(0,2))}');
-          // print(formatYMD.format(DateTime(int.parse(mLV.cDate.substring(6,10)), int.parse(mLV.cDate.substring(3,5)), int.parse(mLV.cDate.substring(0,2)) )));
-          cancelLV(formatYMD.format(DateTime(int.parse(mLV.cDate.substring(6,10)), int.parse(mLV.cDate.substring(3,5)), int.parse(mLV.cDate.substring(0,2)) )), mLV.type,
-              mLV.lvFrom, mLV.lvTo, '');
+          cancelLV(
+              formatYMD.format(DateTime(
+                  int.parse(mLV.cDate.substring(6, 10)),
+                  int.parse(mLV.cDate.substring(3, 5)),
+                  int.parse(mLV.cDate.substring(0, 2)))),
+              mLV.type,
+              mLV.lvFrom,
+              mLV.lvTo,
+              '');
 
           //refreshData();
           Navigator.of(context).pop();
@@ -197,127 +198,134 @@ class _LeaveScreenState extends State<LeaveScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('ขาด ลา มาสาย (Leave Record)'),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.surface,
-      ),
-      body: FutureBuilder<List<MLVInfo>>(
-        future: oAryLV,
-        builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.data!.isNotEmpty) {
-              return Column(
-                children: <Widget>[
-                  Expanded(
-                    child: ListView.separated(
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          String lvtype = "", lvStatus = "";
-                          Color? lvStatusCorlor;
-                          if (snapshot.data![index].type == "ANNU") {
-                            lvtype = 'ลาพักร้อน';
-                          } else if (snapshot.data![index].type == "SICK") {
-                            lvtype = 'ลาป่วย';
-                          } else if (snapshot.data![index].type == "BUSI") {
-                            lvtype = 'พักร้อน';
-                          } else if (snapshot.data![index].type == "ABSE") {
-                            lvtype = 'ขาดงาน';
-                          } else if (snapshot.data![index].type == "PERS") {
-                            lvtype = 'ลากิจ';
-                          } else if (snapshot.data![index].type == "MONK") {
-                            lvtype = 'ลาบวช';
-                          } else if (snapshot.data![index].type == "CARE") {
-                            lvtype = 'ลาคลอด';
-                          }
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('ขาด ลา มาสาย (Leave Record)'),
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.surface,
+        ),
+        body: FutureBuilder<List<MLVInfo>>(
+          future: oAryLV,
+          builder: (context, snapshot) {
+            if (snapshot.hasData &&
+                snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.data!.isNotEmpty) {
+                return Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            String lvtype = "", lvStatus = "";
+                            Color? lvStatusCorlor;
+                            if (snapshot.data![index].type == "ANNU") {
+                              lvtype = 'ลาพักร้อน';
+                            } else if (snapshot.data![index].type == "SICK") {
+                              lvtype = 'ลาป่วย';
+                            } else if (snapshot.data![index].type == "BUSI") {
+                              lvtype = 'พักร้อน';
+                            } else if (snapshot.data![index].type == "ABSE") {
+                              lvtype = 'ขาดงาน';
+                            } else if (snapshot.data![index].type == "PERS") {
+                              lvtype = 'ลากิจ';
+                            } else if (snapshot.data![index].type == "MONK") {
+                              lvtype = 'ลาบวช';
+                            } else if (snapshot.data![index].type == "CARE") {
+                              lvtype = 'ลาคลอด';
+                            }
 
-                          if (snapshot.data![index].reqSTATUS == "APPROVE") {
-                            lvStatus = 'อนุมัติ';
-                            lvStatusCorlor = Colors.greenAccent[400]!;
-                          } else if (snapshot.data![index].reqSTATUS ==
-                              "REQUEST") {
-                            lvStatus = 'รอ';
-                            lvStatusCorlor = Colors.yellow[400]!;
-                          } else if (snapshot.data![index].reqSTATUS ==
-                              "REJECT") {
-                            lvStatus = 'ไม่อนุมัติ';
-                            lvStatusCorlor = Colors.redAccent[700]!;
-                          } else if (snapshot.data![index].reqSTATUS ==
-                              "CANCEL") {
-                            lvStatus = 'ยกเลิก';
-                            lvStatusCorlor = Colors.black45;
-                          }
+                            if (snapshot.data![index].reqSTATUS == "APPROVE") {
+                              lvStatus = 'อนุมัติ';
+                              lvStatusCorlor = Colors.greenAccent[400]!;
+                            } else if (snapshot.data![index].reqSTATUS ==
+                                "REQUEST") {
+                              lvStatus = 'รอ';
+                              lvStatusCorlor = Colors.yellow[400]!;
+                            } else if (snapshot.data![index].reqSTATUS ==
+                                "REJECT") {
+                              lvStatus = 'ไม่อนุมัติ';
+                              lvStatusCorlor = Colors.redAccent[700]!;
+                            } else if (snapshot.data![index].reqSTATUS ==
+                                "CANCEL") {
+                              lvStatus = 'ยกเลิก';
+                              lvStatusCorlor = Colors.black45;
+                            }
 
-                          return ListTile(
-                            title: Row(
-                              children: [
-                                Text('${snapshot.data![index].cDate}  '),
-                                Text(
-                                  '$lvtype (${snapshot.data![index].type})',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                            subtitle: Row(
-                              children: [
-                                const Text('เวลา: '),
-                                Text(
-                                    '${snapshot.data![index].lvFrom}-${snapshot.data![index].lvTo}'),
-                                const Text(', เหตุผล : '),
-                                Expanded(
-                                    child: Text(snapshot.data![index].reason)),
-                              ],
-                            ),
-                            trailing: TextButton(
-                                onPressed: () {
-                                  if (snapshot.data![index].reqSTATUS ==
-                                      "REQUEST") {
-                                    // confirm cancel leave
-                                    showConfirmDialog(
-                                        context, snapshot.data![index], lvtype);
-                                  }
-                                },
-                                child: Text(
-                                  lvStatus,
-                                  style: TextStyle(
-                                      color: lvStatusCorlor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
-                                )),
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return const Divider();
-                        },
-                        itemCount: snapshot.data!.length),
-                  ),
-                ],
-              );
-            } else {
-              return const Text('ไม่พบข้อมูล');
+                            return ListTile(
+                              title: Row(
+                                children: [
+                                  Text('${snapshot.data![index].cDate}  '),
+                                  Text(
+                                    '$lvtype (${snapshot.data![index].type})',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              subtitle: Row(
+                                children: [
+                                  const Text('เวลา: '),
+                                  Text(
+                                      '${snapshot.data![index].lvFrom}-${snapshot.data![index].lvTo}'),
+                                  const Text(', เหตุผล : '),
+                                  Expanded(
+                                      child:
+                                          Text(snapshot.data![index].reason)),
+                                ],
+                              ),
+                              trailing: TextButton(
+                                  onPressed: () {
+                                    if (snapshot.data![index].reqSTATUS ==
+                                        "REQUEST") {
+                                      // confirm cancel leave
+                                      showConfirmDialog(context,
+                                          snapshot.data![index], lvtype);
+                                    }
+                                  },
+                                  child: Text(
+                                    lvStatus,
+                                    style: TextStyle(
+                                        color: lvStatusCorlor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
+                                  )),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return const Divider();
+                          },
+                          itemCount: snapshot.data!.length),
+                    ),
+                  ],
+                );
+              } else {
+                return const Text('ไม่พบข้อมูล');
+              }
+            } else if (snapshot.hasError) {
+              return Text('err: ${snapshot.error}');
             }
-          } else if (snapshot.hasError) {
-            return Text('err: ${snapshot.error}');
-          }
 
-          return const Center(child: CircularProgressIndicator());
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        shape: const CircleBorder(),
-        backgroundColor: Colors.indigoAccent[700],
-        onPressed: () {
-          Navigator.pushNamed(context, '/lvreq');
-        },
-        child: const Icon(
-          FontAwesomeIcons.plus,
-          color: Colors.white,
-          size: 50,
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          shape: const CircleBorder(),
+          backgroundColor: Colors.indigoAccent[700],
+          onPressed: () {
+            Navigator.pushNamed(context, '/lvreq');
+          },
+          child: const Icon(
+            FontAwesomeIcons.plus,
+            color: Colors.white,
+            size: 50,
+          ),
         ),
       ),
+      onWillPop: () async {
+        Navigator.pushNamed(context, '/');
+        return false;
+      },
     );
   }
 }

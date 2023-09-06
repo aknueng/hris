@@ -8,6 +8,7 @@ import 'package:hris/models/md_slip.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class SlipScreen extends StatefulWidget {
   const SlipScreen({super.key});
@@ -17,6 +18,7 @@ class SlipScreen extends StatefulWidget {
 }
 
 class _SlipScreenState extends State<SlipScreen> {
+  final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
   final formatDMY = DateFormat('MMMM, yyyy');
   Future<List<MSlipInfo>>? oArySlip;
   String? code, shortName, fullName, tFullName, posit, joinDate, token;
@@ -77,7 +79,7 @@ class _SlipScreenState extends State<SlipScreen> {
       _obscureText = [];
 
       // on success, parse the JSON in the response body
-       final parser = GetSlipResultsParser(response.body);
+      final parser = GetSlipResultsParser(response.body);
       Future<List<MSlipInfo>> data = parser.parseInBackground();
 
       // Future<List<MSlipInfo>> data = compute(parseSlipList, response.body);
@@ -119,103 +121,119 @@ class _SlipScreenState extends State<SlipScreen> {
         const TextStyle(color: Colors.green, fontWeight: FontWeight.bold);
     TextStyle txtSecret =
         const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('สลิปเงินเดือน (E-Pay Slip)'),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.surface,
-      ),
-      body: FutureBuilder<List<MSlipInfo>>(
-        future: oArySlip,
-        builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              snapshot.connectionState == ConnectionState.done) {
-            return Column(
-              children: [
-                (snapshot.data!.isNotEmpty)
-                    ? Expanded(
-                        child: ListView.separated(
-                            itemBuilder: (context, index) {
-                              String display = formatDMY.format(DateTime.parse(
-                                  snapshot.data![index].reqDate ??
-                                      DateTime.now().toString()));
-                              return ListTile(
-                                title: Row(
-                                  children: [
-                                    const Text('ประจำเดือน '),
-                                    Text(
-                                      display,
-                                      style: txtBold,
-                                    ),
-                                  ],
-                                ),
-                                subtitle: Row(
-                                  children: [
-                                    Container(
-                                        margin: const EdgeInsets.only(left: 15),
-                                        child: const Text('รหัสในการเปิด ')),
-                                    Container(
-                                      padding: const EdgeInsets.only(
-                                          left: 15,
-                                          right: 15,
-                                          top: 3,
-                                          bottom: 3),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[100],
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('สลิปเงินเดือน (E-Pay Slip)'),
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.surface,
+        ),
+        body: FutureBuilder<List<MSlipInfo>>(
+          future: oArySlip,
+          builder: (context, snapshot) {
+            if (snapshot.hasData &&
+                snapshot.connectionState == ConnectionState.done) {
+              return Column(
+                children: [
+                  (snapshot.data!.isNotEmpty)
+                      ? Expanded(
+                          child: ListView.separated(
+                              itemBuilder: (context, index) {
+                                String display = formatDMY.format(
+                                    DateTime.parse(
+                                        snapshot.data![index].reqDate ??
+                                            DateTime.now().toString()));
+                                return ListTile(
+                                  title: Row(
+                                    children: [
+                                      const Text('ประจำเดือน '),
+                                      Text(
+                                        display,
+                                        style: txtBold,
                                       ),
-                                      child: (_obscureText[index])
-                                          ? Text(
-                                              '******',
-                                              style: txtSecret,
-                                            )
-                                          : Text(
-                                              '${snapshot.data![index].passcode}',
-                                              style: txtSecret,
-                                            ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () => setState(() {
-                                        _obscureText[index] =
-                                            !_obscureText[index];
-                                      }),
-                                      icon: (_obscureText[index])
-                                          ? const Icon(
-                                              FontAwesomeIcons.eyeSlash,
-                                              color: Colors.blue,
-                                            )
-                                          : const Icon(FontAwesomeIcons.eye,
-                                              color: Colors.redAccent),
-                                    )
-                                  ],
-                                ),
-                                trailing: OutlinedButton.icon(
-                                    onPressed: () async {
-                                      // String UrlFile ='https://www.dci.co.th/hris/pdfviewer.aspx?f=dist/Slip/${snapshot.data![index].docFile}';
+                                    ],
+                                  ),
+                                  subtitle: Row(
+                                    children: [
+                                      Container(
+                                          margin:
+                                              const EdgeInsets.only(left: 15),
+                                          child: const Text('รหัสในการเปิด ')),
+                                      Container(
+                                        padding: const EdgeInsets.only(
+                                            left: 15,
+                                            right: 15,
+                                            top: 3,
+                                            bottom: 3),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[100],
+                                        ),
+                                        child: (_obscureText[index])
+                                            ? Text(
+                                                '******',
+                                                style: txtSecret,
+                                              )
+                                            : Text(
+                                                '${snapshot.data![index].passcode}',
+                                                style: txtSecret,
+                                              ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () => setState(() {
+                                          _obscureText[index] =
+                                              !_obscureText[index];
+                                        }),
+                                        icon: (_obscureText[index])
+                                            ? const Icon(
+                                                FontAwesomeIcons.eyeSlash,
+                                                color: Colors.blue,
+                                              )
+                                            : const Icon(FontAwesomeIcons.eye,
+                                                color: Colors.redAccent),
+                                      )
+                                    ],
+                                  ),
+                                  trailing: OutlinedButton.icon(
+                                      onPressed: () async {
+                                        Navigator.pushNamed(context, '/pdf',
+                                            arguments: {
+                                              'url':
+                                                  'https://www.dci.co.th/hris/pdfviewer.aspx?f=dist/Slip/${snapshot.data![index].docFile}'
+                                            });
+                                        // String UrlFile ='https://www.dci.co.th/hris/pdfviewer.aspx?f=dist/Slip/${snapshot.data![index].docFile}';
 
-                                      //https://www.dci.co.th/hris/pdfviewer.aspx?f=dist/Slip/202308\40865_HR042308-0050.pdf&fn=202308\40865_HR042308-0050.pdf
-                                    },
-                                    icon:
-                                        const Icon(FontAwesomeIcons.paperclip, size: 20,),
-                                    label: const Text('ดูสลิป')),
-                              );
-                            },
-                            separatorBuilder: (context, index) => const Divider(
-                                  height: 5,
-                                ),
-                            itemCount: snapshot.data!.length),
-                      )
-                    : const Text('ไม่พบข้อมูล'),
-              ],
+                                        //https://www.dci.co.th/hris/pdfviewer.aspx?f=dist/Slip/202308\40865_HR042308-0050.pdf&fn=202308\40865_HR042308-0050.pdf
+                                      },
+                                      icon: const Icon(
+                                        FontAwesomeIcons.paperclip,
+                                        size: 20,
+                                      ),
+                                      label: const Text('ดูสลิป')),
+                                );
+                              },
+                              separatorBuilder: (context, index) =>
+                                  const Divider(
+                                    height: 5,
+                                  ),
+                              itemCount: snapshot.data!.length),
+                        )
+                      : const Text('ไม่พบข้อมูล'),
+                ],
+              );
+            } else if (snapshot.hasError) {
+              return Text('${snapshot.error}');
+            }
+
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
-          }
-
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+          },
+        ),
       ),
+      onWillPop: () async {
+        Navigator.pushNamed(context, '/');
+        return false;
+      },
     );
   }
 }

@@ -6,7 +6,7 @@ import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_ot.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // ดึงข้อมูลจัดการข้อมูลบนเครือข่าย internet
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OTRecordScreen extends StatefulWidget {
   const OTRecordScreen({super.key});
@@ -21,7 +21,6 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
   MAccount? oAccount;
 
   final formatYMD = DateFormat("yyyyMMdd");
-
 
   List<String>? _selectOTJob;
 
@@ -487,7 +486,7 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                                                       child:
                                                           const Text('ยกเลิก OT'))
                                                   : const Text('')
-                                              : const Text(''),
+                                              : Text('อนุมัติแล้ว', style: TextStyle(color: Colors.teal[900], fontSize: 18, fontWeight: FontWeight.bold)),
                                     ),
                                   );
                                 },
