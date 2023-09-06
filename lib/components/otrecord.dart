@@ -337,6 +337,7 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('รายการทำโอที (Overtime)'),
+        centerTitle: false,
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.surface,
       ),

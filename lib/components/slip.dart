@@ -18,7 +18,6 @@ class SlipScreen extends StatefulWidget {
 }
 
 class _SlipScreenState extends State<SlipScreen> {
-  final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
   final formatDMY = DateFormat('MMMM, yyyy');
   Future<List<MSlipInfo>>? oArySlip;
   String? code, shortName, fullName, tFullName, posit, joinDate, token;
@@ -125,6 +124,7 @@ class _SlipScreenState extends State<SlipScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('สลิปเงินเดือน (E-Pay Slip)'),
+          centerTitle: false,
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.surface,
         ),

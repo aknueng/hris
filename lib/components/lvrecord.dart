@@ -202,6 +202,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('ขาด ลา มาสาย (Leave Record)'),
+          centerTitle: false,
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.surface,
         ),

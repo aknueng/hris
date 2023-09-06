@@ -110,6 +110,7 @@ class _MedicalScreenState extends State<MedicalScreen> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('ค่ารักษาพยาบาล (Medical)'),
+          centerTitle: false,
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.surface,
         ),

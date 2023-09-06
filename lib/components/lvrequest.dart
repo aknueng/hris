@@ -240,6 +240,22 @@ class _LVRequestScreenState extends State<LVRequestScreen>
           ),
         );
       }
+    } else {
+      if (context.mounted) {
+        setState(() {
+          selectDate = DateTime(1900, 1, 1);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Expanded(
+                child: Text(
+                    'ไม่สามารถทำการลา $paramLVType ได้ \n ในวัน ${formatDMY.format(paramLVDate)}')),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(30),
+          ),
+        );
+      }
     }
   }
 
@@ -288,6 +304,7 @@ class _LVRequestScreenState extends State<LVRequestScreen>
     return Scaffold(
         appBar: AppBar(
           title: const Text('ร้องขอวันลา (Leave Request)'),
+          centerTitle: false,
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.surface,
         ),

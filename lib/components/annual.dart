@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:isolate';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_annual.dart';
@@ -96,6 +97,7 @@ class _AnnualScreenState extends State<AnnualScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('วันลาพักร้อน (Annual)'),
+        centerTitle: false,
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.surface,
       ),

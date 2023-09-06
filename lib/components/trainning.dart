@@ -88,6 +88,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
     return Scaffold(
       appBar: AppBar(
           title: const Text('ฝึกอบรม (Training Record)'),
+          centerTitle: false,
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.surface),
       body: FutureBuilder<List<MTrainingInfo>>(
