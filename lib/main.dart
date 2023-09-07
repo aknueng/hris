@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hris/components/annual.dart';
+import 'package:hris/components/changepassword.dart';
 import 'package:hris/components/login.dart';
 import 'package:hris/components/lvrecord.dart';
 import 'package:hris/components/lvrequest.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         '/train': (context) => const TrainingScreen(),
         '/lvreq': (context) => const LVRequestScreen(),
         '/pdf': (context) => const PDFPreview(),
+        '/chgpwd': (context) => const ChangePasswordScreen(),
       },
       home: const MainPage(),
     );
@@ -207,6 +209,12 @@ class _MainPageState extends State<MainPage> {
                           accountName: Text(nameEmp),
                           accountEmail: Text('Position $positEmp')),
                       const Divider(),
+                      TextButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/chgpwd');
+                          },
+                          icon: const Icon(Icons.key),
+                          label: const Text('เปลี่ยนรหัสผ่าน')),
                       Expanded(
                           child: Align(
                         alignment: Alignment.bottomCenter,

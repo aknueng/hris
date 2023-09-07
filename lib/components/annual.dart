@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:isolate';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_annual.dart';

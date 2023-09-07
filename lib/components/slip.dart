@@ -8,7 +8,6 @@ import 'package:hris/models/md_slip.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class SlipScreen extends StatefulWidget {
   const SlipScreen({super.key});
