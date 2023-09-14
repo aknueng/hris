@@ -82,7 +82,7 @@ class _LVRequestScreenState extends State<LVRequestScreen>
   void initState() {
     super.initState();
     getValidateAccount().whenComplete(() async {
-      if (oAccount == null || oAccount!.code == '') {
+      if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
         Navigator.pushNamed(context, '/login');
       }
     });

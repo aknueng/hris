@@ -25,7 +25,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
   void initState() {
     super.initState();
     getValidateAccount().whenComplete(() {
-      if (oAccount == null || oAccount!.code == '') {
+      if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
         Navigator.pushNamed(context, '/login');
       }
 

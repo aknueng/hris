@@ -26,7 +26,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
     super.initState();
     getValidateAccount().whenComplete(
       () {
-        if (oAccount == null || oAccount!.code == '') {
+        if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
           Navigator.pushNamed(context, '/login');
         }
 
@@ -183,7 +183,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
       final parser = GetLeaveResultsParser(response.body);
       // return parser.parseInBackground();
       Future<List<MLVInfo>> data = parser.parseInBackground();
-      data.then((value) => value.sort((a, b) => b.cDate.compareTo(a.cDate)));
+      data.then(
+          (value) => value.sort((a, b) => b.cDateYMD.compareTo(a.cDateYMD)));
       return data;
     } else {
       throw ('failed to load data');

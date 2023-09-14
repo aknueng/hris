@@ -26,7 +26,7 @@ class _AnnualScreenState extends State<AnnualScreen> {
 
     getValidateAccount().whenComplete(
       () {
-        if (oAccount == null || oAccount!.code == '') {
+        if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
           Navigator.pushNamed(context, '/login');
         }
 
@@ -151,7 +151,7 @@ class _AnnualScreenState extends State<AnnualScreen> {
                                   ),
                                   Text(snapshot.data![index].remainHr,
                                       style: const TextStyle(
-                                          fontSize: 20,
+                                          fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.green))
                                 ],

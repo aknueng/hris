@@ -28,7 +28,7 @@ class _SlipScreenState extends State<SlipScreen> {
     super.initState();
 
     getValidateAccount().whenComplete(() {
-      if (oAccount == null || oAccount!.code == '') {
+      if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
         Navigator.pushNamed(context, '/login');
       }
 

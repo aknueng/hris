@@ -24,7 +24,7 @@ class _MedicalScreenState extends State<MedicalScreen> {
   void initState() {
     super.initState();
     getValidateAccount().whenComplete(() async {
-      if (oAccount == null || oAccount!.code == '') {
+      if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
         Navigator.pushNamed(context, '/login');
       }
 

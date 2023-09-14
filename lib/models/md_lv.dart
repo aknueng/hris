@@ -1,6 +1,7 @@
 class MLVInfo {
   final String code;
   final String cDate;
+  final String cDateYMD;
   final String type;
   final String lvFrom;
   final String lvTo;
@@ -12,6 +13,7 @@ class MLVInfo {
   MLVInfo({
     required this.code,
     required this.cDate,
+    required this.cDateYMD,
     required this.type,
     required this.lvFrom,
     required this.lvTo,
@@ -26,6 +28,7 @@ class MLVInfo {
     return MLVInfo(
         code: json['code'],
         cDate: json['cDate'],
+        cDateYMD: json['cDateYMD'],
         type: json['type'],
         lvFrom: json['lvFrom'],
         lvTo: json['lvTo'],
@@ -39,6 +42,7 @@ class MLVInfo {
   Map<String, dynamic> toJson() => {
         'code': code,
         'cDate': cDate,
+        'cDateYMD': cDateYMD,
         'type': type,
         'lvFrom': lvFrom,
         'lvTo': lvTo,

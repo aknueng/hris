@@ -55,5 +55,8 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to demonstrate image picker plugin</string>
 
+	<key>com.apple.security.network.client</key>
+	<true/>
+
 </dict>
 </plist>
