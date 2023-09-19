@@ -79,6 +79,11 @@ class _AnnualScreenState extends State<AnnualScreen> {
       data.then((value) =>
           value.sort((a, b) => b.yearAnnual.compareTo(a.yearAnnual)));
       return data;
+    } else if (response.statusCode == 401) {
+      if (context.mounted) {
+        Navigator.pushNamed(context, '/login');
+      }
+      throw ('failed to load data');
     } else {
       throw ('failed to load data');
     }

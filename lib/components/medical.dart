@@ -73,6 +73,11 @@ class _MedicalScreenState extends State<MedicalScreen> {
         }));
     if (response.statusCode == 200) {
       return MedicalInfo.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 401) {
+      if (context.mounted) {
+        Navigator.pushNamed(context, '/login');
+      }
+      throw ('failed to load data');
     } else {
       throw Exception('fail load data.');
     }

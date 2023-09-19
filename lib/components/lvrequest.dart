@@ -240,6 +240,11 @@ class _LVRequestScreenState extends State<LVRequestScreen>
           ),
         );
       }
+    } else if (response.statusCode == 401) {
+      if (context.mounted) {
+        Navigator.pushNamed(context, '/login');
+      }
+      throw ('failed to load data');
     } else {
       if (context.mounted) {
         setState(() {

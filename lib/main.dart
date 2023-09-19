@@ -73,7 +73,7 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     getValidateAccount().whenComplete(() async {
       //if (oAccount!.code == '' || oAccount!.code == null) {
-      if (oAccount == null || oAccount!.code == '' || oAccount!.code.isEmpty) {
+      if (oAccount == null || oAccount!.code == '' || oAccount!.code.isEmpty || oAccount!.token == '' || oAccount!.token.isEmpty) {
         Navigator.pushNamed(context, '/login');
       } else {
         setState(() {

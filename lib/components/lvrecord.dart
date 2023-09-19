@@ -186,6 +186,11 @@ class _LeaveScreenState extends State<LeaveScreen> {
       data.then(
           (value) => value.sort((a, b) => b.cDateYMD.compareTo(a.cDateYMD)));
       return data;
+    } else if (response.statusCode == 401) {
+      if (context.mounted) {
+        Navigator.pushNamed(context, '/login');
+      }
+      throw ('failed to load data');
     } else {
       throw ('failed to load data');
     }

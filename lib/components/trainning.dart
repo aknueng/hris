@@ -77,6 +77,11 @@ class _TrainingScreenState extends State<TrainingScreen> {
       data.then((value) =>
           value.sort((a, b) => b.scheduleStart.compareTo(a.scheduleStart)));
       return data;
+    } else if (response.statusCode == 401) {
+      if (context.mounted) {
+        Navigator.pushNamed(context, '/login');
+      }
+      throw ('failed to load data');
     } else {
       throw ('failed to load data');
     }

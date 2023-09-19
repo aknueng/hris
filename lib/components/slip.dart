@@ -95,6 +95,11 @@ class _SlipScreenState extends State<SlipScreen> {
           ));
       return data;
       //return compute((message) => parseSlipList(response.body), response.body);
+    } else if (response.statusCode == 401) {
+      if (context.mounted) {
+        Navigator.pushNamed(context, '/login');
+      }
+      throw ('failed to load data');
     } else {
       throw ('failed to load data slip');
     }

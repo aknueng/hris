@@ -311,6 +311,11 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
       // return compute((message) => parseOTList(response.body), response.body);
       // final parsed = jsonDecode(response.body)['todos'].cast<Map<String, dynamic>>();
       // return parsed.map<Todos>((json) => Todos.fromJson(json)).toList();
+    } else if (response.statusCode == 401) {
+      if (context.mounted) {
+        Navigator.pushNamed(context, '/login');
+      }
+      throw ('failed to load data');
     } else {
       // กรณี error
       throw Exception('Failed to load ot list');
