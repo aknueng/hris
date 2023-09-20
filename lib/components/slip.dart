@@ -165,8 +165,8 @@ class _SlipScreenState extends State<SlipScreen> {
                                           child: const Text('รหัสในการเปิด ')),
                                       Container(
                                         padding: const EdgeInsets.only(
-                                            left: 15,
-                                            right: 15,
+                                            left: 10,
+                                            right: 10,
                                             top: 3,
                                             bottom: 3),
                                         decoration: BoxDecoration(

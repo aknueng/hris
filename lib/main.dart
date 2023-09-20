@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hris/components/annual.dart';
 import 'package:hris/components/changepassword.dart';
+import 'package:hris/components/dcix_chat.dart';
+import 'package:hris/components/dcix_voice.dart';
 import 'package:hris/components/login.dart';
 import 'package:hris/components/lvrecord.dart';
 import 'package:hris/components/lvrequest.dart';
@@ -48,6 +50,8 @@ class MyApp extends StatelessWidget {
         '/lvreq': (context) => const LVRequestScreen(),
         '/pdf': (context) => const PDFPreview(),
         '/chgpwd': (context) => const ChangePasswordScreen(),
+        '/voice': (context) => const AIVoiceScreen(),
+        '/chat': (context) => const AIChatScreen(),
       },
       home: const MainPage(),
     );
@@ -73,7 +77,11 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     getValidateAccount().whenComplete(() async {
       //if (oAccount!.code == '' || oAccount!.code == null) {
-      if (oAccount == null || oAccount!.code == '' || oAccount!.code.isEmpty || oAccount!.token == '' || oAccount!.token.isEmpty) {
+      if (oAccount == null ||
+          oAccount!.code == '' ||
+          oAccount!.code.isEmpty ||
+          oAccount!.token == '' ||
+          oAccount!.token.isEmpty) {
         Navigator.pushNamed(context, '/login');
       } else {
         setState(() {
@@ -215,6 +223,18 @@ class _MainPageState extends State<MainPage> {
                           },
                           icon: const Icon(Icons.key),
                           label: const Text('เปลี่ยนรหัสผ่าน')),
+                      TextButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/voice');
+                          },
+                          icon: const Icon(Icons.help_center),
+                          label: const Text('DCI X (Voice)')),
+                      TextButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/chat');
+                          },
+                          icon: const Icon(Icons.live_help),
+                          label: const Text('DCI X (Chat)')),
                       Expanded(
                           child: Align(
                         alignment: Alignment.bottomCenter,
