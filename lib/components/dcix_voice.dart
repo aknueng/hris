@@ -19,10 +19,13 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
   MAccount? oAccount;
   String listenText = 'กดเพื่อบอกสิ่งที่ต้องการ';
   bool isListening = false;
+  bool onPress = false;
+  int cnt = 0;
 
   @override
   void initState() {
     super.initState();
+
     getValidateAccount().whenComplete(
       () {
         if (oAccount == null ||
@@ -56,10 +59,31 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
     });
   }
 
+  void countDown() {
+    int count = 5;
+    setState(() {
+      onPress = true;
+    });
+    for (var i = 0; i < count; i++) {
+      setCount();
+    }
+  }
+
+  void setCount() async {
+    await Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        debugPrint('count : $cnt [$onPress]');
+        cnt = (cnt >= 5) ? 0 : cnt++;
+        onPress = (cnt >= 5) ? false : true;
+      });
+    });
+  }
+
   Future toggleRecording() => SpeechApi.toogleRecording(
         onResult: (text) {
           setState(() {
             listenText = text;
+            //debugPrint('set result : $isListening  | $listenText');
           });
         },
         onListening: (isListening) {
@@ -67,11 +91,17 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
             this.isListening = isListening;
           });
 
-          if (!isListening) {
-            Future.delayed(const Duration(seconds: 1), () {
-              Utils.scanText(context, listenText);
-            });
-          }
+          // debugPrint('before : $isListening');
+          // if (!isListening) {
+          //   Future.delayed(const Duration(seconds: 3), () {
+          //     debugPrint('in before : $isListening  | $listenText');
+          //     Utils.scanText(listenText);
+
+          //     debugPrint('in after : $isListening  | $listenText');
+          //   });
+          // }
+
+          // debugPrint('after : $isListening');
         },
       );
 
@@ -79,33 +109,48 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     TextStyle fntSmall = const TextStyle(
-      fontSize: 12,
+      fontSize: 16,
     );
     TextStyle fntTitle = const TextStyle(
-      fontSize: 18,
+      fontSize: 22,
     );
     return Scaffold(
       appBar: AppBar(
-          title: const Text('DCI-X'),
+          title: const Text('DCI-X (VOICE)'),
           centerTitle: false,
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.surface),
       body: Column(
         children: [
-          Text('กรุณาบอกสิ่งที่ต้องการให้ช่วยเหลือ', style: fntTitle),
-          Text(
-            listenText,
-            style: fntSmall,
+          Text('กรุณาบอกสิ่งที่ต้องการให้ช่วยเหลือ : $cnt/5', style: fntTitle),
+          Wrap(
+            children: [
+              Text(
+                listenText,
+                style: fntSmall,
+              ),
+            ],
           )
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: AvatarGlow(
-        animate: isListening,
+        animate: onPress,
         endRadius: 80,
         glowColor: Theme.of(context).primaryColor,
         child: FloatingActionButton(
-          onPressed: toggleRecording,
+          onPressed: () {
+            countDown();
+            toggleRecording().whenComplete(
+              () {
+                if (!isListening) {
+                  Future.delayed(const Duration(seconds: 5), () {
+                    Utils.scanText(listenText);
+                  });
+                }
+              },
+            );
+          },
           child: Icon((isListening) ? Icons.mic : Icons.mic_off, size: 36),
         ),
       ),

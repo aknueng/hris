@@ -8,15 +8,18 @@ class SpeechApi {
     required Function(String text) onResult,
     required ValueChanged<bool> onListening,
   }) async {
-    debugPrint('start call: ${_speech.isListening}');
+    // debugPrint('start call: ${_speech.isListening}');
 
-    if (_speech.isListening) {
-      _speech.stop();
-      return true;
-    }
+    // if (_speech.isListening) {
+    //   _speech.stop();
+    //   return true;
+    // }
 
     final isAvailable = await _speech.initialize(
-      onStatus: (status) => onListening(_speech.isListening),
+      onStatus: (status) {
+        debugPrint('on status : ${_speech.isListening}');
+        onListening(_speech.isListening);
+      },
       onError: (e) => debugPrint('Error: $e'),
     );
 
@@ -24,10 +27,13 @@ class SpeechApi {
       // _speech.listen(onResult: (value) => onResult(value.recognizedWords));
       _speech.listen(
           localeId: 'th_TH',
-          onResult: (result) => onResult(result.recognizedWords));
+          onResult: (result) {
+            debugPrint('result : ${result.recognizedWords}');
+            onResult(result.recognizedWords);
+          },);
     }
 
-    debugPrint('mic status : ${_speech.isListening}');
+    
     return isAvailable;
   }
 }

@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
         '/chat': (context) => const AIChatScreen(),
       },
       home: const MainPage(),
+      navigatorKey: NavigationService.navigatorKey,
     );
   }
 }
@@ -227,13 +228,13 @@ class _MainPageState extends State<MainPage> {
                           onPressed: () {
                             Navigator.pushNamed(context, '/voice');
                           },
-                          icon: const Icon(Icons.help_center),
+                          icon: const Icon(FontAwesomeIcons.headset),
                           label: const Text('DCI X (Voice)')),
                       TextButton.icon(
                           onPressed: () {
                             Navigator.pushNamed(context, '/chat');
                           },
-                          icon: const Icon(Icons.live_help),
+                          icon: const Icon(FontAwesomeIcons.comments),
                           label: const Text('DCI X (Chat)')),
                       Expanded(
                           child: Align(
@@ -299,3 +300,10 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
+
+
+class NavigationService { 
+  static GlobalKey<NavigatorState> navigatorKey = 
+  GlobalKey<NavigatorState>();
+}
+

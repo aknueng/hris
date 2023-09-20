@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hris/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Command {
@@ -6,41 +7,48 @@ class Command {
   static const pd02 = 'อันดงบอร์ด';
   static const pd03 = 'แผนการผลิต';
   static const hrm01 = 'โอที';
-  static const hrm04 = 'OT';
+  static const hrm04 = 'ot';
   static const hrm02 = 'ลางาน';
   static const hrm03 = 'รักษาพยาบาล';
 }
 
 class Utils {
-  static void scanText(BuildContext context, String rawText) {
+  static void scanText(String rawText) {
     // final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+    BuildContext? context = NavigationService.navigatorKey.currentContext;
+    
 
     final txtListen = rawText.toLowerCase();
     if (txtListen.contains(Command.pd01)) {
       final body = _getTextAfterCommand(text: txtListen, command: Command.pd01);
-      debugPrint('go to PD Result');
+      // debugPrint('go to PD Result');
       openEmail(body: body);
     } else if (txtListen.contains(Command.pd02)) {
       final url = _getTextAfterCommand(text: txtListen, command: Command.pd02);
-      debugPrint('go to Andon');
+      // debugPrint('go to Andon');
       openLink(url: url);
     } else if (txtListen.contains(Command.pd03)) {
       final url = _getTextAfterCommand(text: txtListen, command: Command.pd03);
-      debugPrint('go to PD Plan');
+      // debugPrint('go to PD Plan');
       openLink(url: url);
     } else if (txtListen.contains(Command.hrm01) ||
         txtListen.contains(Command.hrm04)) {
-      debugPrint('go to OT');
-      Navigator.pushNamed(context, '/ot');
-      // navigatorKey.currentState!.pushNamed('/ot');
+      // debugPrint('go to OT');
+      
+      Navigator.pushNamedAndRemoveUntil(context!, '/ot', (route) => true,);
+      
     } else if (txtListen.contains(Command.hrm02)) {
-      debugPrint('go to LV');
-      Navigator.pushNamed(context, '/lv');
-      // navigatorKey.currentState!.pushNamed('/lv');
+      // debugPrint('go to LV');
+      Navigator.pushNamedAndRemoveUntil(context!, '/lv', (route) => true,);
+      
     } else if (txtListen.contains(Command.hrm03)) {
-      debugPrint('go to MED');
-      Navigator.pushNamed(context, '/med');
-      // navigatorKey.currentState!.pushNamed('/med');
+      // debugPrint('go to MED');
+      
+
+      Navigator.pushNamedAndRemoveUntil(context!, '/med', (route) => true,);
+      
+    }else{
+      // debugPrint('not match [$txtListen] ');
     }
   }
 

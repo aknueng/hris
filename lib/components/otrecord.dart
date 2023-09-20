@@ -345,7 +345,7 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
         centerTitle: false,
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.surface,
-      ),
+      ),      
       body: Center(
         child: FutureBuilder<List<MOtInfo>>(
             future: oAryOT,
