@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:hris/api/speech_api.dart';
@@ -17,10 +19,15 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
   final formatYMD = DateFormat("yyyyMMdd");
   String? code, shortName, fullName, tFullName, posit, joinDate, token;
   MAccount? oAccount;
-  String listenText = 'กดเพื่อบอกสิ่งที่ต้องการ';
+  String listenText = '';
   bool isListening = false;
   bool onPress = false;
-  int cnt = 0;
+  
+
+  static const maxSecond = 5;
+
+  int seconds = maxSecond;
+  Timer? timer;
 
   @override
   void initState() {
@@ -59,30 +66,41 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
     });
   }
 
-  void countDown() {
-    int count = 5;
-    setState(() {
-      onPress = true;
+  void startTimer({bool reset = true}) {
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (seconds > 0) {
+        setState(() {
+          onPress = true;
+          seconds--;
+        });
+      } else {
+        stopTimer(reset: true);        
+      }
     });
-    for (var i = 0; i < count; i++) {
-      setCount();
-    }
   }
 
-  void setCount() async {
-    await Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        debugPrint('count : $cnt [$onPress]');
-        cnt = (cnt >= 5) ? 0 : cnt++;
-        onPress = (cnt >= 5) ? false : true;
-      });
+  void stopTimer({bool reset = true}) {
+    if (reset) {
+      resetTimer();
+    }
+
+    setState(() {
+      timer?.cancel();
     });
   }
+
+  void resetTimer() {
+    seconds = maxSecond;
+    setState(() {
+      onPress = false;
+    });
+  }
+
 
   Future toggleRecording() => SpeechApi.toogleRecording(
         onResult: (text) {
           setState(() {
-            listenText = text;
+            listenText = 'คุณ: $text';
             //debugPrint('set result : $isListening  | $listenText');
           });
         },
@@ -90,18 +108,6 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
           setState(() {
             this.isListening = isListening;
           });
-
-          // debugPrint('before : $isListening');
-          // if (!isListening) {
-          //   Future.delayed(const Duration(seconds: 3), () {
-          //     debugPrint('in before : $isListening  | $listenText');
-          //     Utils.scanText(listenText);
-
-          //     debugPrint('in after : $isListening  | $listenText');
-          //   });
-          // }
-
-          // debugPrint('after : $isListening');
         },
       );
 
@@ -114,15 +120,21 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
     TextStyle fntTitle = const TextStyle(
       fontSize: 22,
     );
+
+    final isRunning = timer == null ? false : timer!.isActive;
+
     return Scaffold(
       appBar: AppBar(
           title: const Text('DCI-X (VOICE)'),
           centerTitle: false,
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.surface),
-      body: Column(
+      body: Column(        
         children: [
-          Text('กรุณาบอกสิ่งที่ต้องการให้ช่วยเหลือ : $cnt/5', style: fntTitle),
+          Text('DCI-X : บอกสิ่งที่ต้องการให้ช่วยเหลือ ?', style: fntTitle),
+          const SizedBox(height: 10),
+          (isRunning) ? buildTimer() : const Text(''),
+          (isRunning) ? const SizedBox(height: 10) : const Text(''),
           Wrap(
             children: [
               Text(
@@ -137,10 +149,13 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
       floatingActionButton: AvatarGlow(
         animate: onPress,
         endRadius: 80,
+        repeat: true,
+        showTwoGlows: true,
         glowColor: Theme.of(context).primaryColor,
         child: FloatingActionButton(
           onPressed: () {
-            countDown();
+            
+            startTimer();
             toggleRecording().whenComplete(
               () {
                 if (!isListening) {
@@ -151,9 +166,37 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
               },
             );
           },
-          child: Icon((isListening) ? Icons.mic : Icons.mic_off, size: 36),
+          child: Icon((onPress) ? Icons.mic : Icons.mic_off, size: 36),
         ),
       ),
+    );
+  }
+
+  Widget buildTimer() {
+    return SizedBox(
+      height: 70,
+      width: 70,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          CircularProgressIndicator(
+            color: Colors.green,
+            strokeWidth: 20,
+            value: seconds / maxSecond,
+          ),
+          Center(
+            child: buildTime(),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buildTime() {
+    return Text(
+      '$seconds',
+      style: const TextStyle(
+          fontWeight: FontWeight.bold, color: Colors.green, fontSize: 28,),
     );
   }
 }
