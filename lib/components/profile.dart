@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -7,23 +8,21 @@ import 'package:hris/models/md_account.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ChangePasswordScreen extends StatefulWidget {
-  const ChangePasswordScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
-  String? code, shortName, fullName, tFullName, posit, joinDate, token;
+class _ProfileScreenState extends State<ProfileScreen> {
+  //String? code, shortName, fullName, tFullName, posit, joinDate, token;
   MAccount? oAccount;
-  final frmPwdChgKey = GlobalKey<FormState>();
+  final frmProfileChgKey = GlobalKey<FormState>();
   bool obscureTxtPwdOld = true;
   bool obscureTxtPwd1New = true;
   bool obscureTxtPwd2New = true;
-  String pwdOld = '';
-  String pwd1New = '';
-  String pwd2New = '';
+  String telEmp = '';
 
   @override
   void initState() {
@@ -31,18 +30,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     getValidateAccount().whenComplete(() async {
       if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
         Navigator.pushNamed(context, '/login');
-      }
-    });
-  }
-
-  void _toggle(String txtPwd) {
-    setState(() {
-      if (txtPwd == "OLD") {
-        obscureTxtPwdOld = !obscureTxtPwdOld;
-      } else if (txtPwd == "NEW1") {
-        obscureTxtPwd1New = !obscureTxtPwd1New;
-      } else if (txtPwd == "NEW2") {
-        obscureTxtPwd2New = !obscureTxtPwd2New;
       }
     });
   }
@@ -67,22 +54,22 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           telephone: prefs.getString('telephone') ?? '',
           logInDate: DateTime.parse(
               prefs.getString('logInDate') ?? DateTime.now().toString()));
+
+      telEmp = oAccount!.telephone;
     });
   }
 
-  Future changePassword(String paramUser, String paramOldPassword,
-      String paramNewPassword) async {
-    // print('>> ${formatYMD.format(paramLVDate)} $paramLVType $paramLVFrom $paramLVTo $paramReason');
+  Future changeProfile(String paramEmpCode, String paramTelephone) async {
     final response = await http.post(
-        Uri.parse('https://scm.dci.co.th/hrisapi/api/emp/chgpass'),
+        Uri.parse('https://scm.dci.co.th/hrisapi/api/emp/updateprofile'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer ${oAccount!.token}',
         },
         body: jsonEncode(<String, String>{
-          'user': paramUser,
-          'passOld': paramOldPassword,
-          'passNew': paramNewPassword
+          'EmpCode': paramEmpCode,
+          'Telephone': paramTelephone,
+          'UpdateBy': oAccount!.code
         }));
     if (response.statusCode == 200 || response.statusCode == 201) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -132,7 +119,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Expanded(child: Text('รหัสผ่านเก่าไม่ถูกต้อง')),
+            content: Expanded(child: Text('ข้อมูลไม่ถูกต้อง')),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             margin: EdgeInsets.all(30),
@@ -147,13 +134,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('เปลี่ยนรหัสผ่าน (Change Password)'),
+        title: const Text('แก้ไขข้อมูลส่วนตัว (Profile)'),
         centerTitle: false,
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.surface,
       ),
       body: Form(
-        key: frmPwdChgKey,
+        key: frmProfileChgKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -169,43 +156,44 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     spreadRadius: 0)
               ]),
               child: TextFormField(
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
-                    MinLengthValidator(6,
-                        errorText: 'กรุณากรอกรหัสผ่าน 6 ตัวอักษรขึ้นไป')
-                  ]),
-                  onSaved: (pwd) {
-                    setState(() {
-                      pwdOld = pwd.toString();
-                    });
-                  },
-                  maxLength: 20,
-                  obscureText: obscureTxtPwdOld,
+                  initialValue: oAccount!.fullName,
+                  readOnly: true,
                   decoration: InputDecoration(
-                      hintText: 'รหัสผ่านเก่า',
-                      labelText: 'รหัสผ่านเก่า',
-                      fillColor: Colors.lime[50],
+                      hintText: 'ชื่อ-นามสกุล',
+                      labelText: 'ชื่อ-นามสกุล',
+                      fillColor: Colors.blue[50],
                       filled: true,
                       counterText: '',
                       contentPadding: const EdgeInsets.all(10),
                       prefixIcon: const Padding(
                           padding: EdgeInsets.all(10),
-                          child: Icon(FontAwesomeIcons.key)),
-                      suffixIcon: Padding(
-                          padding: const EdgeInsets.only(right: 15),
-                          child: IconButton(
-                              onPressed: () {
-                                _toggle("OLD");
-                              },
-                              icon: (obscureTxtPwdOld)
-                                  ? const Icon(
-                                      FontAwesomeIcons.starOfLife,
-                                      size: 10,
-                                    )
-                                  : const Icon(
-                                      FontAwesomeIcons.eye,
-                                      size: 10,
-                                    ))),
+                          child: Icon(FontAwesomeIcons.user)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(15),
+                          borderSide:
+                              const BorderSide(color: Colors.orangeAccent)))),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
+              decoration: BoxDecoration(boxShadow: [
+                BoxShadow(
+                    color: Colors.black38.withOpacity(0.2),
+                    blurRadius: 10,
+                    spreadRadius: 0)
+              ]),
+              child: TextFormField(
+                  initialValue: oAccount!.posit,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                      hintText: 'ตำแหน่ง',
+                      labelText: 'ตำแหน่ง',
+                      fillColor: Colors.blue[50],
+                      filled: true,
+                      counterText: '',
+                      contentPadding: const EdgeInsets.all(10),
+                      prefixIcon: const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Icon(FontAwesomeIcons.user)),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
                           borderSide:
@@ -222,96 +210,26 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               child: TextFormField(
                   validator: MultiValidator([
                     RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
-                    MinLengthValidator(6,
-                        errorText: 'กรุณากรอกรหัสผ่าน 6 ตัวอักษรขึ้นไป')
+                    MinLengthValidator(10,
+                        errorText: 'กรุณากรอกรหัสผ่าน 6 ตัวอักษรขึ้นไป'),
                   ]),
-                  onSaved: (pwd) {
+                  onSaved: (tel) {
                     setState(() {
-                      pwd1New = pwd.toString();
+                      telEmp = tel.toString();
                     });
                   },
-                  maxLength: 20,
-                  obscureText: obscureTxtPwd1New,
+                  initialValue: telEmp,
+                  maxLength: 10,
                   decoration: InputDecoration(
-                      hintText: 'รหัสผ่านใหม่',
-                      labelText: 'รหัสผ่านใหม่',
+                      hintText: 'เบอร์โทรศัพท์',
+                      labelText: 'เบอร์โทรศัพท์',
                       fillColor: Colors.lime[50],
                       filled: true,
                       counterText: '',
                       contentPadding: const EdgeInsets.all(10),
                       prefixIcon: const Padding(
                           padding: EdgeInsets.all(10),
-                          child: Icon(FontAwesomeIcons.key)),
-                      suffixIcon: Padding(
-                          padding: const EdgeInsets.only(right: 15),
-                          child: IconButton(
-                              onPressed: () {
-                                _toggle("NEW1");
-                              },
-                              icon: (obscureTxtPwd1New)
-                                  ? const Icon(
-                                      FontAwesomeIcons.starOfLife,
-                                      size: 10,
-                                    )
-                                  : const Icon(
-                                      FontAwesomeIcons.eye,
-                                      size: 10,
-                                    ))),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide:
-                              const BorderSide(color: Colors.orangeAccent)))),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
-              decoration: BoxDecoration(boxShadow: [
-                BoxShadow(
-                    color: Colors.black38.withOpacity(0.2),
-                    blurRadius: 10,
-                    spreadRadius: 0)
-              ]),
-              child: TextFormField(
-                  validator: (val) =>
-                      MatchValidator(errorText: 'รหัสผ่านใหม่ไม่ตรงกัน')
-                          .validateMatch(val!, pwd1New),
-
-                  // validator: MultiValidator([
-                  //   RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
-                  //   MinLengthValidator(6,
-                  //       errorText: 'กรุณากรอกรหัสผ่าน 6 ตัวอักษรขึ้นไป'),
-                  // ]),
-                  onSaved: (pwd) {
-                    setState(() {
-                      pwd2New = pwd.toString();
-                    });
-                  },
-                  maxLength: 20,
-                  obscureText: obscureTxtPwd2New,
-                  decoration: InputDecoration(
-                      hintText: 'ยืนยันรหัสผ่านใหม่',
-                      labelText: 'ยืนยันรหัสผ่านใหม่',
-                      fillColor: Colors.lime[50],
-                      filled: true,
-                      counterText: '',
-                      contentPadding: const EdgeInsets.all(10),
-                      prefixIcon: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(FontAwesomeIcons.key)),
-                      suffixIcon: Padding(
-                          padding: const EdgeInsets.only(right: 15),
-                          child: IconButton(
-                              onPressed: () {
-                                _toggle("NEW2");
-                              },
-                              icon: (obscureTxtPwd2New)
-                                  ? const Icon(
-                                      FontAwesomeIcons.starOfLife,
-                                      size: 10,
-                                    )
-                                  : const Icon(
-                                      FontAwesomeIcons.eye,
-                                      size: 10,
-                                    ))),
+                          child: Icon(FontAwesomeIcons.phone)),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
                           borderSide:
@@ -325,14 +243,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               height: 40,
               child: ElevatedButton(
                   onPressed: () async {
-                    frmPwdChgKey.currentState!.save();
+                    frmProfileChgKey.currentState!.save();
 
-                    if (frmPwdChgKey.currentState!.validate()) {
-                      changePassword(oAccount!.code, pwdOld, pwd1New);
+                    if (frmProfileChgKey.currentState!.validate()) {
+                      changeProfile(oAccount!.code, telEmp);
                     }
                     //frmPwdChgKey.currentState!.reset();
                   },
-                  child: const Text('เปลี่ยนรหัสผ่าน')),
+                  child: const Text('บันทึกข้อมูลส่วนตัว')),
             ),
           ],
         ),

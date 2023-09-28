@@ -57,6 +57,7 @@ class _MedicalScreenState extends State<MedicalScreen> {
           posit: prefs.getString('posit') ?? '',
           token: prefs.getString('token') ?? '',
           role: prefs.getString('role') ?? '',
+          telephone: prefs.getString('telephone') ?? '',
           logInDate: DateTime.parse(
               prefs.getString('logInDate') ?? DateTime.now().toString()));
     });

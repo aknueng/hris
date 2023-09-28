@@ -11,6 +11,7 @@ class MAccount {
   final String posit;
   final String token;
   final String role;
+  final String telephone;
   final DateTime logInDate;
 
   MAccount({
@@ -26,6 +27,7 @@ class MAccount {
     required this.posit,
     required this.token,
     required this.role,
+    required this.telephone,
     required this.logInDate,
   });
 
@@ -43,6 +45,7 @@ class MAccount {
       posit: json['posit'],
       token: json['token'],
       role: json['role'],
+      telephone: json['telephone'],
       logInDate: DateTime.parse(json['logInDate']),
     );
   }

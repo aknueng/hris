@@ -9,6 +9,7 @@ import 'package:hris/components/lvrecord.dart';
 import 'package:hris/components/lvrequest.dart';
 import 'package:hris/components/medical.dart';
 import 'package:hris/components/otrecord.dart';
+import 'package:hris/components/profile.dart';
 import 'package:hris/components/slip.dart';
 import 'package:hris/components/slippreview.dart';
 import 'package:hris/components/trainning.dart';
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
         '/lvreq': (context) => const LVRequestScreen(),
         '/pdf': (context) => const PDFPreview(),
         '/chgpwd': (context) => const ChangePasswordScreen(),
+        '/profile': (context) => const ProfileScreen(),
         '/voice': (context) => const AIVoiceScreen(),
         '/chat': (context) => const AIChatScreen(),
         '/user': (context) => const UserListScreen(),
@@ -72,7 +74,7 @@ class _MainPageState extends State<MainPage> {
   // final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   String? code, shortName, fullName, tFullName, posit, joinDate, token;
   MAccount? oAccount;
-  String nameEmp = '', positEmp = '';
+  String nameEmp = '', positEmp = '', telephoneEmp = '';
   bool isInit = false;
 
   @override
@@ -112,11 +114,13 @@ class _MainPageState extends State<MainPage> {
           posit: prefs.getString('posit') ?? '',
           token: prefs.getString('token') ?? '',
           role: prefs.getString('role') ?? '',
+          telephone: prefs.getString('telephone') ?? '',
           logInDate: DateTime.parse(
               prefs.getString('logInDate') ?? DateTime.now().toString()));
 
       nameEmp = oAccount!.fullName;
       positEmp = oAccount!.posit;
+      telephoneEmp = oAccount!.telephone;
     });
   }
 
@@ -212,15 +216,30 @@ class _MainPageState extends State<MainPage> {
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       UserAccountsDrawerHeader(
-                          currentAccountPicture: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              'https://www.dci.co.th/PublishService/Picture/${oAccount!.code}.JPG',
-                            ),
-                            backgroundColor: Colors.white,
+                        currentAccountPicture: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            'https://www.dci.co.th/PublishService/Picture/${oAccount!.code}.JPG',
                           ),
-                          accountName: Text(nameEmp),
-                          accountEmail: Text('Position $positEmp')),
-                      const Divider(),
+                          backgroundColor: Colors.white,
+                        ),
+                        accountName: Text(nameEmp),
+                        accountEmail: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Position : $positEmp'),
+                            Text('Telephone : $telephoneEmp')
+                          ],
+                        ),
+                      ),
+                      //const Divider(),
+                      TextButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/profile');
+                          },
+                          icon: const Icon(FontAwesomeIcons.user),
+                          label: const Text('แก้ไขข้อมูลส่วนตัว (Profile)')),
                       TextButton.icon(
                           onPressed: () {
                             Navigator.pushNamed(context, '/chgpwd');
@@ -276,6 +295,7 @@ class _MainPageState extends State<MainPage> {
                               prefs.remove('posit');
                               prefs.remove('token');
                               prefs.remove('role');
+                              prefs.remove('telephone');
                               prefs.remove('logInDate');
                               setState(() {
                                 oAccount = MAccount(
@@ -291,6 +311,7 @@ class _MainPageState extends State<MainPage> {
                                     posit: '',
                                     token: '',
                                     role: '',
+                                    telephone: '',
                                     logInDate: DateTime.now());
                               });
 

@@ -219,24 +219,25 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
   }
 
   Future getValidateAccount() async {
-    final SharedPreferences pers = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       oAccount = MAccount(
-          code: pers.getString('code') ?? '',
-          name: pers.getString('name') ?? '',
-          surn: pers.getString('surn') ?? '',
-          shortName: pers.getString('shortName') ?? '',
-          fullName: pers.getString('fullName') ?? '',
-          tName: pers.getString('tName') ?? '',
-          tSurn: pers.getString('tSurn') ?? '',
+          code: prefs.getString('code') ?? '',
+          name: prefs.getString('name') ?? '',
+          surn: prefs.getString('surn') ?? '',
+          shortName: prefs.getString('shortName') ?? '',
+          fullName: prefs.getString('fullName') ?? '',
+          tName: prefs.getString('tName') ?? '',
+          tSurn: prefs.getString('tSurn') ?? '',
           joinDate: DateTime.parse(
-              pers.getString('joinDate') ?? DateTime.now().toString()),
-          tFullName: pers.getString('tFullName') ?? '',
-          posit: pers.getString('posit') ?? '',
-          token: pers.getString('token') ?? '',
-          role: pers.getString('role') ?? '',
+              prefs.getString('joinDate') ?? DateTime.now().toString()),
+          tFullName: prefs.getString('tFullName') ?? '',
+          posit: prefs.getString('posit') ?? '',
+          token: prefs.getString('token') ?? '',
+          role: prefs.getString('role') ?? '',
+          telephone: prefs.getString('telephone') ?? '',
           logInDate: DateTime.parse(
-              pers.getString('logInDate)') ?? DateTime.now().toString()));
+              prefs.getString('logInDate)') ?? DateTime.now().toString()));
     });
   }
 
@@ -346,7 +347,7 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
         centerTitle: false,
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.surface,
-      ),      
+      ),
       body: Center(
         child: FutureBuilder<List<MOtInfo>>(
             future: oAryOT,

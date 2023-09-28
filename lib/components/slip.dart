@@ -59,6 +59,7 @@ class _SlipScreenState extends State<SlipScreen> {
         posit: prefs.getString('posit') ?? '',
         token: prefs.getString('token') ?? '',
         role: prefs.getString('role') ?? '',
+        telephone: prefs.getString('telephone') ?? '',
         logInDate: DateTime.parse(
             prefs.getString('logInDate)') ?? DateTime.now().toString()),
       );
@@ -149,55 +150,60 @@ class _SlipScreenState extends State<SlipScreen> {
                                         snapshot.data![index].reqDate ??
                                             DateTime.now().toString()));
                                 return ListTile(
-                                  title: Row(
-                                    children: [
-                                      const Text('ประจำเดือน '),
-                                      Text(
-                                        display,
-                                        style: txtBold,
-                                      ),
-                                    ],
-                                  ),
-                                  subtitle: Row(
-                                    children: [
-                                      Container(
-                                          margin:
-                                              const EdgeInsets.only(left: 15),
-                                          child: const Text('รหัสในการเปิด ')),
-                                      Container(
-                                        padding: const EdgeInsets.only(
-                                            left: 10,
-                                            right: 10,
-                                            top: 3,
-                                            bottom: 3),
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[100],
+                                  title: Wrap(children: [
+                                    Row(
+                                      children: [
+                                        const Text('ประจำเดือน '),
+                                        Text(
+                                          display,
+                                          style: txtBold,
                                         ),
-                                        child: (_obscureText[index])
-                                            ? Text(
-                                                '******',
-                                                style: txtSecret,
-                                              )
-                                            : Text(
-                                                '${snapshot.data![index].passcode}',
-                                                style: txtSecret,
-                                              ),
-                                      ),
-                                      IconButton(
-                                        onPressed: () => setState(() {
-                                          _obscureText[index] =
-                                              !_obscureText[index];
-                                        }),
-                                        icon: (_obscureText[index])
-                                            ? const Icon(
-                                                FontAwesomeIcons.eyeSlash,
-                                                color: Colors.blue,
-                                              )
-                                            : const Icon(FontAwesomeIcons.eye,
-                                                color: Colors.redAccent),
-                                      )
-                                    ],
-                                  ),
+                                      ],
+                                    ),
+                                  ]),
+                                  subtitle: Wrap(children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                            margin:
+                                                const EdgeInsets.only(left: 15),
+                                            child:
+                                                const Text('รหัสในการเปิด ')),
+                                        Container(
+                                          padding: const EdgeInsets.only(
+                                              left: 10,
+                                              right: 10,
+                                              top: 3,
+                                              bottom: 3),
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[100],
+                                          ),
+                                          child: (_obscureText[index])
+                                              ? Text(
+                                                  '******',
+                                                  style: txtSecret,
+                                                )
+                                              : Text(
+                                                  '${snapshot.data![index].passcode}',
+                                                  style: txtSecret,
+                                                ),
+                                        ),
+                                        IconButton(
+                                          onPressed: () => setState(() {
+                                            _obscureText[index] =
+                                                !_obscureText[index];
+                                          }),
+                                          icon: (_obscureText[index])
+                                              ? const Icon(
+                                                  FontAwesomeIcons.eyeSlash,
+                                                  color: Colors.blue,
+                                                )
+                                              : const Icon(FontAwesomeIcons.eye,
+                                                  color: Colors.redAccent),
+                                        )
+                                      ],
+                                    ),
+                                  ]),
                                   trailing: OutlinedButton.icon(
                                       onPressed: () async {
                                         Navigator.pushNamed(context, '/pdf',

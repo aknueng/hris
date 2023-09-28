@@ -22,6 +22,7 @@ class _UserListScreenState extends State<UserListScreen> {
   MAccount? oAccount;
   List<bool> _obscureText = [];
   String txtSearch = "";
+  String txtEmpCodeNew = "";
 
   @override
   void initState() {
@@ -59,6 +60,7 @@ class _UserListScreenState extends State<UserListScreen> {
         posit: prefs.getString('posit') ?? '',
         token: prefs.getString('token') ?? '',
         role: prefs.getString('role') ?? '',
+        telephone: prefs.getString('telephone') ?? '',
         logInDate: DateTime.parse(
             prefs.getString('logInDate)') ?? DateTime.now().toString()),
       );
@@ -118,14 +120,24 @@ class _UserListScreenState extends State<UserListScreen> {
           'UpdateBy': oAccount!.code,
         }));
     if (response.statusCode == 200 || response.statusCode == 201) {
-      setState(() => txtSearch = paramEmpCode);
       refreshData();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Expanded(child: Text('แก้ไข User $paramEmpCode เรียบร้อยแล้ว')),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(30),
+          ),
+        );
+      }
     } else {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content:
-                Expanded(child: Text('ไม่สามารถแก้ไขข้อมูล $paramEmpCode ได้')),
+                Expanded(child: Text('ไม่สามารถแก้ไข User $paramEmpCode ได้')),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
             margin: const EdgeInsets.all(30),
@@ -147,35 +159,119 @@ class _UserListScreenState extends State<UserListScreen> {
           'UpdateBy': oAccount!.code,
         }));
     if (response.statusCode == 200 || response.statusCode == 201) {
-      setState(() => txtSearch = paramEmpCode);
       refreshData();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Expanded(child: Text('สร้าง User $paramEmpCode เรียบร้อยแล้ว')),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(30),
+          ),
+        );
+      }
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Expanded(child: Text('ไม่สามารถสร้าง User $paramEmpCode ได้')),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(30),
+          ),
+        );
+      }
     }
   }
 
-  // List<MSlipInfo> parseSlipList(String responseBody) {
-  //   final jsonData = jsonDecode(responseBody);
-  //   //final resultsJson = jsonData['results'] as List<dynamic>;
-  //   final resultsJson = jsonData as List<dynamic>;
-  //   return resultsJson.map((json) => MSlipInfo.fromJson(json)).toList();
-  // }
+  showCreateUserDialog(BuildContext contexxt) {
+    Widget btnCreate = ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+            // backgroundColor: Colors.red[100],
+            ),
+        onPressed: () {
+          createUser(txtEmpCodeNew);
 
-  // List<MUserInfo> parseSlipList(String responseBody) {
-  //   final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
-  //   return parsed.map<MUserInfo>((json) => MUserInfo.fromJson(json)).toList();
-  // }
+          Navigator.of(context).pop();
+        },
+        icon: Icon(
+          FontAwesomeIcons.plus,
+          color: Colors.blue[900],
+        ),
+        label: Text(
+          'สร้าง User ใหม่',
+          style:
+              TextStyle(color: Colors.blue[900], fontWeight: FontWeight.bold),
+        ));
+
+    Widget btnCancel = ElevatedButton.icon(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        icon: Icon(FontAwesomeIcons.circleXmark, color: Colors.red[900]),
+        label: Text('ปิด',
+            style: TextStyle(
+                color: Colors.red[900], fontWeight: FontWeight.bold)));
+
+    AlertDialog alDlg = AlertDialog(
+      title: const Text('สร้าง User เข้าใช้งานระบบ HRIS'),
+      backgroundColor: Colors.white,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('สร้าง User เข้าใช้งานระบบ HRIS'),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(50, 5, 50, 5),
+              child: TextFormField(
+                maxLength: 5,
+                autofocus: false,
+                initialValue: txtEmpCodeNew,
+                decoration: const InputDecoration(
+                  counterText: '',
+                  label: Text('รหัสพนักงานใหม่'),
+                  hintText: 'รหัสพนักงานใหม่',
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    txtEmpCodeNew = value;
+                  });
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [btnCreate, btnCancel],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alDlg;
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    TextStyle txtBold = const TextStyle(
+    TextStyle fntInfo = const TextStyle(
         color: Colors.green, fontWeight: FontWeight.bold, fontSize: 12);
+    TextStyle fntWran = TextStyle(
+        color: Colors.orange[900], fontWeight: FontWeight.bold, fontSize: 12);
     TextStyle txtSecret = const TextStyle(
         color: Colors.redAccent, fontWeight: FontWeight.bold, fontSize: 12);
 
     return WillPopScope(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('จัดการรายชื่อเข้าใช้งาน (User Control)'),
+          title: const Text('จัดการรายชื่อ (User Control)'),
           centerTitle: false,
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.surface,
@@ -187,6 +283,8 @@ class _UserListScreenState extends State<UserListScreen> {
               margin: const EdgeInsets.fromLTRB(100, 5, 100, 5),
               child: TextFormField(
                 maxLength: 5,
+                autofocus: false,
+                initialValue: txtSearch,
                 decoration: const InputDecoration(
                   counterText: '',
                   label: Text('ค้นหา'),
@@ -218,7 +316,10 @@ class _UserListScreenState extends State<UserListScreen> {
                                 title: Wrap(children: [
                                   Text(
                                       '${snapshot.data![index].empCode}:${snapshot.data![index].empFullName} [${snapshot.data![index].empPosit}]',
-                                      style: txtBold),
+                                      style: (snapshot.data![index].status ==
+                                              "ACTIVE")
+                                          ? fntInfo
+                                          : fntWran),
                                 ]),
                                 subtitle: Wrap(children: [
                                   Row(
@@ -263,6 +364,13 @@ class _UserListScreenState extends State<UserListScreen> {
                                   ),
                                 ]),
                                 trailing: OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                        backgroundColor:
+                                            (snapshot.data![index].status ==
+                                                    "ACTIVE")
+                                                ? Colors.greenAccent[400]
+                                                : Colors.orange[900],
+                                        foregroundColor: Colors.white),
                                     onPressed: () async {
                                       updateUser(snapshot.data![index].empCode);
                                     },
@@ -289,7 +397,12 @@ class _UserListScreenState extends State<UserListScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
         floatingActionButton: FloatingActionButton(
           backgroundColor: theme.colorScheme.primary,
-          onPressed: () {},
+          onPressed: () {
+            setState(() {
+              txtEmpCodeNew = '';
+              showCreateUserDialog(context);
+            });
+          },
           shape: const CircleBorder(),
           child: Icon(
             FontAwesomeIcons.plus,

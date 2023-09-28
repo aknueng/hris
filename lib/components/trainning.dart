@@ -56,6 +56,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
           posit: prefs.getString('posit') ?? '',
           token: prefs.getString('token') ?? '',
           role: prefs.getString('role') ?? '',
+          telephone: prefs.getString('telephone') ?? '',
           logInDate: DateTime.parse(
               prefs.getString('logInDate)') ?? DateTime.now().toString()));
     });

@@ -58,6 +58,7 @@ class _LogInScreenState extends State<LogInScreen> {
           prefs.setString('posit', acc.posit);
           prefs.setString('token', acc.token);
           prefs.setString('role', acc.role);
+          prefs.setString('telephone', acc.telephone);
           prefs.setString('logInDate', acc.logInDate.toString());
 
           if (context.mounted) Navigator.pushNamed(context, '/');
@@ -104,6 +105,7 @@ class _LogInScreenState extends State<LogInScreen> {
           posit: '',
           token: '',
           role: '',
+          telephone: '',
           logInDate: DateTime.now());
     } else {
       throw Exception('fail load data.');
