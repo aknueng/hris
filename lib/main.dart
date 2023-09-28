@@ -12,6 +12,7 @@ import 'package:hris/components/otrecord.dart';
 import 'package:hris/components/slip.dart';
 import 'package:hris/components/slippreview.dart';
 import 'package:hris/components/trainning.dart';
+import 'package:hris/components/userlist.dart';
 import 'package:hris/lang/lang_th.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_menu.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
         '/chgpwd': (context) => const ChangePasswordScreen(),
         '/voice': (context) => const AIVoiceScreen(),
         '/chat': (context) => const AIChatScreen(),
+        '/user': (context) => const UserListScreen(),
       },
       home: const MainPage(),
       navigatorKey: NavigationService.navigatorKey,
@@ -109,6 +111,7 @@ class _MainPageState extends State<MainPage> {
           tFullName: prefs.getString('tFullName') ?? '',
           posit: prefs.getString('posit') ?? '',
           token: prefs.getString('token') ?? '',
+          role: prefs.getString('role') ?? '',
           logInDate: DateTime.parse(
               prefs.getString('logInDate') ?? DateTime.now().toString()));
 
@@ -236,6 +239,14 @@ class _MainPageState extends State<MainPage> {
                           },
                           icon: const Icon(FontAwesomeIcons.comments),
                           label: const Text('DCI X (Chat)')),
+                      (oAccount!.role == "ADMIN")
+                          ? TextButton.icon(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/user');
+                              },
+                              icon: const Icon(FontAwesomeIcons.users),
+                              label: const Text('User Control'))
+                          : const Text(''),
                       Expanded(
                           child: Align(
                         alignment: Alignment.bottomCenter,
@@ -264,6 +275,7 @@ class _MainPageState extends State<MainPage> {
                               prefs.remove('tFullName');
                               prefs.remove('posit');
                               prefs.remove('token');
+                              prefs.remove('role');
                               prefs.remove('logInDate');
                               setState(() {
                                 oAccount = MAccount(
@@ -278,6 +290,7 @@ class _MainPageState extends State<MainPage> {
                                     tFullName: '',
                                     posit: '',
                                     token: '',
+                                    role: '',
                                     logInDate: DateTime.now());
                               });
 
@@ -301,9 +314,6 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-
-class NavigationService { 
-  static GlobalKey<NavigatorState> navigatorKey = 
-  GlobalKey<NavigatorState>();
+class NavigationService {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
-

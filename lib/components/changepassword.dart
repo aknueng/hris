@@ -63,6 +63,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           tFullName: prefs.getString('tFullName') ?? '',
           posit: prefs.getString('posit') ?? '',
           token: prefs.getString('token') ?? '',
+          role: prefs.getString('role') ?? '',
           logInDate: DateTime.parse(
               prefs.getString('logInDate') ?? DateTime.now().toString()));
     });
@@ -109,6 +110,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             tFullName: '',
             posit: '',
             token: '',
+            role: '',
             logInDate: DateTime.now());
       });
 

@@ -2,7 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:hris/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Command {
+class PatternMain {
+  static const pd01 = 'ยอดการผลิต';
+  static const pd02 = 'อันดงบอร์ด';
+  static const pd03 = 'แผนการผลิต';
+  static const hrm01 = 'โอที';
+  static const hrm04 = 'ot';
+  static const hrm02 = 'ลางาน';
+  static const hrm03 = 'รักษาพยาบาล';
+}
+
+class PatternLine {
+  static const pd01 = 'ยอดการผลิต';
+  static const pd02 = 'อันดงบอร์ด';
+  static const pd03 = 'แผนการผลิต';
+  static const hrm01 = 'โอที';
+  static const hrm04 = 'ot';
+  static const hrm02 = 'ลางาน';
+  static const hrm03 = 'รักษาพยาบาล';
+}
+
+class PatternPeriod {
   static const pd01 = 'ยอดการผลิต';
   static const pd02 = 'อันดงบอร์ด';
   static const pd03 = 'แผนการผลิต';
@@ -16,38 +36,45 @@ class Utils {
   static void scanText(String rawText) {
     // final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
     BuildContext? context = NavigationService.navigatorKey.currentContext;
-    
 
     final txtListen = rawText.toLowerCase();
-    if (txtListen.contains(Command.pd01)) {
-      final body = _getTextAfterCommand(text: txtListen, command: Command.pd01);
+    if (txtListen.contains(PatternMain.pd01)) {
+      final body = _getTextAfterCommand(text: txtListen, command: PatternMain.pd01);
       // debugPrint('go to PD Result');
       openEmail(body: body);
-    } else if (txtListen.contains(Command.pd02)) {
-      final url = _getTextAfterCommand(text: txtListen, command: Command.pd02);
+    } else if (txtListen.contains(PatternMain.pd02)) {
+      final url = _getTextAfterCommand(text: txtListen, command: PatternMain.pd02);
       // debugPrint('go to Andon');
       openLink(url: url);
-    } else if (txtListen.contains(Command.pd03)) {
-      final url = _getTextAfterCommand(text: txtListen, command: Command.pd03);
+    } else if (txtListen.contains(PatternMain.pd03)) {
+      final url = _getTextAfterCommand(text: txtListen, command: PatternMain.pd03);
       // debugPrint('go to PD Plan');
       openLink(url: url);
-    } else if (txtListen.contains(Command.hrm01) ||
-        txtListen.contains(Command.hrm04)) {
+    } else if (txtListen.contains(PatternMain.hrm01) ||
+        txtListen.contains(PatternMain.hrm04)) {
       // debugPrint('go to OT');
-      
-      Navigator.pushNamedAndRemoveUntil(context!, '/ot', (route) => true,);
-      
-    } else if (txtListen.contains(Command.hrm02)) {
-      // debugPrint('go to LV');
-      Navigator.pushNamedAndRemoveUntil(context!, '/lv', (route) => true,);
-      
-    } else if (txtListen.contains(Command.hrm03)) {
-      // debugPrint('go to MED');
-      
 
-      Navigator.pushNamedAndRemoveUntil(context!, '/med', (route) => true,);
-      
-    }else{
+      Navigator.pushNamedAndRemoveUntil(
+        context!,
+        '/ot',
+        (route) => true,
+      );
+    } else if (txtListen.contains(PatternMain.hrm02)) {
+      // debugPrint('go to LV');
+      Navigator.pushNamedAndRemoveUntil(
+        context!,
+        '/lv',
+        (route) => true,
+      );
+    } else if (txtListen.contains(PatternMain.hrm03)) {
+      // debugPrint('go to MED');
+
+      Navigator.pushNamedAndRemoveUntil(
+        context!,
+        '/med',
+        (route) => true,
+      );
+    } else {
       // debugPrint('not match [$txtListen] ');
     }
   }

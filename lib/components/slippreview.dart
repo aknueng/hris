@@ -171,20 +171,6 @@ class _PDFPreviewState extends State<PDFPreview> {
                       )
                     ]))),
             actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  _handlePasswordValidation(_textFieldController.text);
-                },
-                child: Text(
-                  'ยืนยัน',
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                 child: TextButton(
@@ -197,11 +183,27 @@ class _PDFPreviewState extends State<PDFPreview> {
                       fontFamily: 'Roboto',
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.surface,
+                      backgroundColor: Theme.of(context).colorScheme.error,
                     ),
                   ),
                 ),
-              )
+              ),
+              TextButton(
+                onPressed: () {
+                  _handlePasswordValidation(_textFieldController.text);
+                },
+                child: Text(
+                  'ยืนยัน',
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.surface,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
             ],
           );
         });

@@ -125,6 +125,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
           tFullName: prefs.getString('tFullName') ?? '',
           posit: prefs.getString('posit') ?? '',
           token: prefs.getString('token') ?? '',
+          role: prefs.getString('role') ?? '',
           logInDate: DateTime.parse(
               prefs.getString('logInDate') ?? DateTime.now().toString()));
     });

@@ -234,6 +234,7 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
           tFullName: pers.getString('tFullName') ?? '',
           posit: pers.getString('posit') ?? '',
           token: pers.getString('token') ?? '',
+          role: pers.getString('role') ?? '',
           logInDate: DateTime.parse(
               pers.getString('logInDate)') ?? DateTime.now().toString()));
     });

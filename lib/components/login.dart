@@ -57,6 +57,7 @@ class _LogInScreenState extends State<LogInScreen> {
           prefs.setString('tFullName', acc.tFullName);
           prefs.setString('posit', acc.posit);
           prefs.setString('token', acc.token);
+          prefs.setString('role', acc.role);
           prefs.setString('logInDate', acc.logInDate.toString());
 
           if (context.mounted) Navigator.pushNamed(context, '/');
@@ -102,6 +103,7 @@ class _LogInScreenState extends State<LogInScreen> {
           tFullName: '',
           posit: '',
           token: '',
+          role: '',
           logInDate: DateTime.now());
     } else {
       throw Exception('fail load data.');
@@ -135,7 +137,8 @@ class _LogInScreenState extends State<LogInScreen> {
                     child: TextFormField(
                       validator: MultiValidator([
                         RequiredValidator(errorText: 'กรุณากรอกรหัสพนักงาน'),
-                        MinLengthValidator(5, errorText: 'รหัสพนักงาน 5 ตัวอักษร')
+                        MinLengthValidator(5,
+                            errorText: 'รหัสพนักงาน 5 ตัวอักษร')
                       ]),
                       onSaved: (usr) {
                         _username = usr.toString();
@@ -251,7 +254,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                 onPressed: () async {
                                   if (formKey.currentState!.validate()) {
                                     TextInput.finishAutofillContext();
-                                    
+
                                     formKey.currentState!.save();
                                     checkLogin();
                                   }
