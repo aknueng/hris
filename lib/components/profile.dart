@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -15,13 +13,27 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
+class PhoneValidator extends TextFieldValidator {
+  // pass the error text to the super constructor
+  PhoneValidator({String errorText = 'กรุณาใส่เบอร์โทรให้ถูกต้อง'})
+      : super(errorText);
+
+  // return false if you want the validator to return error
+  // message when the value is empty.
+  @override
+  bool get ignoreEmptyValues => true;
+
+  @override
+  bool isValid(String? value) {
+    // return hasMatch(r'^((+|00)?66|0?)?(9[0-9]{8})$', value!);
+    return hasMatch(r'^(?:0)?[0-9]{9}$', value!);
+  }
+}
+
 class _ProfileScreenState extends State<ProfileScreen> {
   //String? code, shortName, fullName, tFullName, posit, joinDate, token;
   MAccount? oAccount;
   final frmProfileChgKey = GlobalKey<FormState>();
-  bool obscureTxtPwdOld = true;
-  bool obscureTxtPwd1New = true;
-  bool obscureTxtPwd2New = true;
   String telEmp = '';
 
   @override
@@ -108,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Navigator.pushNamed(context, '/login');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('เปลี่ยนรหัสผ่านเรียบร้อยแล้ว'),
+            content: Text('แก้ไขข้อมูลส่วนตัว เรียบร้อยแล้ว'),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
             margin: EdgeInsets.all(30),
@@ -209,9 +221,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ]),
               child: TextFormField(
                   validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
+                    RequiredValidator(errorText: 'กรุณากรอกเบอร์โทรศัพท์'),
                     MinLengthValidator(10,
-                        errorText: 'กรุณากรอกรหัสผ่าน 6 ตัวอักษรขึ้นไป'),
+                        errorText: 'กรุณากรอกเบอร์โทรศัพท์ 10 ตัวอักษร'),
+                    PhoneValidator(),
                   ]),
                   onSaved: (tel) {
                     setState(() {
