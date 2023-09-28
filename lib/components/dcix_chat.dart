@@ -71,7 +71,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
           foregroundColor: theme.colorScheme.surface),
       body: Column(
         children: [
-          Text('กรุณาบอกสิ่งที่ต้องการให้ช่วยเหลือ', style: fntTitle),          
+          Text('กรุณาบอกสิ่งที่ต้องการให้ช่วยเหลือ', style: fntTitle),
         ],
       ),
     );

@@ -22,9 +22,8 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
   String listenText = '';
   bool isListening = false;
   bool onPress = false;
-  
 
-  static const maxSecond = 5;
+  static const maxSecond = 6;
 
   int seconds = maxSecond;
   Timer? timer;
@@ -76,7 +75,7 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
           seconds--;
         });
       } else {
-        stopTimer(reset: true);        
+        stopTimer(reset: true);
       }
     });
   }
@@ -97,7 +96,6 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
       onPress = false;
     });
   }
-
 
   Future toggleRecording() => SpeechApi.toogleRecording(
         onResult: (text) {
@@ -131,7 +129,7 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
           centerTitle: false,
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.surface),
-      body: Column(        
+      body: Column(
         children: [
           Text('DCI-X : บอกสิ่งที่ต้องการให้ช่วยเหลือ ?', style: fntTitle),
           const SizedBox(height: 10),
@@ -156,12 +154,11 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
         glowColor: Theme.of(context).primaryColor,
         child: FloatingActionButton(
           onPressed: () {
-            
             startTimer();
             toggleRecording().whenComplete(
               () {
                 if (!isListening) {
-                  Future.delayed(const Duration(seconds: 5), () {
+                  Future.delayed(const Duration(seconds: maxSecond), () {
                     Utils.scanText(listenText);
                   });
                 }
@@ -198,7 +195,10 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
     return Text(
       '$seconds',
       style: const TextStyle(
-          fontWeight: FontWeight.bold, color: Colors.green, fontSize: 28,),
+        fontWeight: FontWeight.bold,
+        color: Colors.green,
+        fontSize: 28,
+      ),
     );
   }
 }

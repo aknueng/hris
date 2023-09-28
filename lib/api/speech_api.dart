@@ -30,10 +30,10 @@ class SpeechApi {
           onResult: (result) {
             debugPrint('result : ${result.recognizedWords}');
             onResult(result.recognizedWords);
-          },);
+          },
+          listenFor: const Duration(seconds: 6));
     }
 
-    
     return isAvailable;
   }
 }
