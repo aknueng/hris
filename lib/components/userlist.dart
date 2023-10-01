@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_user.dart';
 import 'package:http/http.dart' as http;
@@ -30,7 +31,8 @@ class _UserListScreenState extends State<UserListScreen> {
 
     getValidateAccount().whenComplete(() {
       if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
 
       oAryUsers = fetchDataUserList();
@@ -100,7 +102,8 @@ class _UserListScreenState extends State<UserListScreen> {
       //return compute((message) => parseSlipList(response.body), response.body);
     } else if (response.statusCode == 401) {
       if (context.mounted) {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
       throw ('failed to load data');
     } else {
@@ -194,7 +197,8 @@ class _UserListScreenState extends State<UserListScreen> {
         onPressed: () {
           createUser(txtEmpCodeNew);
 
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
+          Get.back();
         },
         icon: Icon(
           FontAwesomeIcons.plus,
@@ -208,7 +212,8 @@ class _UserListScreenState extends State<UserListScreen> {
 
     Widget btnCancel = ElevatedButton.icon(
         onPressed: () {
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
+          Get.back();
         },
         icon: Icon(FontAwesomeIcons.circleXmark, color: Colors.red[900]),
         label: Text('ปิด',
@@ -275,6 +280,10 @@ class _UserListScreenState extends State<UserListScreen> {
           centerTitle: false,
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.surface,
+          leading: IconButton(
+            icon: const Icon(FontAwesomeIcons.leftLong),
+            onPressed: () => Get.offAllNamed('/'),
+          ),
         ),
         body: Column(
           mainAxisSize: MainAxisSize.max,
@@ -411,7 +420,8 @@ class _UserListScreenState extends State<UserListScreen> {
         ),
       ),
       onWillPop: () async {
-        Navigator.pushNamed(context, '/');
+        // Navigator.pushNamed(context, '/');
+        Get.offAllNamed('/');
         return false;
       },
     );

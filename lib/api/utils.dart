@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hris/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -54,26 +55,32 @@ class Utils {
         txtListen.contains(PatternMain.hrm04)) {
       // debugPrint('go to OT');
 
-      Navigator.pushNamedAndRemoveUntil(
-        context!,
-        '/ot',
-        (route) => true,
-      );
+      Get.offAllNamed('/ot');
+
+      // Navigator.pushNamedAndRemoveUntil(
+      //   context!,
+      //   '/ot',
+      //   (route) => true,
+      // );
     } else if (txtListen.contains(PatternMain.hrm02)) {
       // debugPrint('go to LV');
-      Navigator.pushNamedAndRemoveUntil(
-        context!,
-        '/lv',
-        (route) => true,
-      );
+
+      Get.offAllNamed('/lv');
+      // Navigator.pushNamedAndRemoveUntil(
+      //   context!,
+      //   '/lv',
+      //   (route) => true,
+      // );
     } else if (txtListen.contains(PatternMain.hrm03)) {
       // debugPrint('go to MED');
 
-      Navigator.pushNamedAndRemoveUntil(
-        context!,
-        '/med',
-        (route) => true,
-      );
+      Get.offAllNamed('/med');
+
+      // Navigator.pushNamedAndRemoveUntil(
+      //   context!,
+      //   '/med',
+      //   (route) => true,
+      // );
     } else {
       // debugPrint('not match [$txtListen] ');
     }

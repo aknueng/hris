@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class PDFPreview extends StatefulWidget {
@@ -27,42 +28,50 @@ class _PDFPreviewState extends State<PDFPreview> {
     final argument = (ModalRoute.of(context)?.settings.arguments ??
         <String, dynamic>{'url': ''}) as Map<String, dynamic>;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('DCI E-SLIP'),
-        toolbarHeight: 56,
-      ),
-      body: SfPdfViewer.network(
-        argument['url'],
-        canShowPasswordDialog: false,
-        password: _password,
-        onDocumentLoaded: (details) {
-          if (_hasPasswordDialog) {
-            Navigator.pop(context);
-            _hasPasswordDialog = false;
-            _passwordDialogFocusNode.unfocus();
-            _textFieldController.clear();
-          }
-        },
-        onDocumentLoadFailed: (details) {
-          if (details.description.contains('password')) {
-            if (details.description.contains('password') &&
-                _hasPasswordDialog) {
-              _errorText = "รหัสไม่ถูกต้อง (Invalid password) !!";
-              _formKey.currentState?.validate();
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('DCI E-SLIP'),
+          toolbarHeight: 56,
+        ),
+        body: SfPdfViewer.network(
+          argument['url'],
+          canShowPasswordDialog: false,
+          password: _password,
+          onDocumentLoaded: (details) {
+            if (_hasPasswordDialog) {
+              // Navigator.pop(context);
+              Get.back();
+              
+              _hasPasswordDialog = false;
+              _passwordDialogFocusNode.unfocus();
               _textFieldController.clear();
-              _passwordDialogFocusNode.requestFocus();
-            } else {
-              _errorText = '';
-
-              /// Creating custom password dialog.
-              _showCustomPasswordDialog();
-              _passwordDialogFocusNode.requestFocus();
-              _hasPasswordDialog = true;
             }
-          }
-        },
+          },
+          onDocumentLoadFailed: (details) {
+            if (details.description.contains('password')) {
+              if (details.description.contains('password') &&
+                  _hasPasswordDialog) {
+                _errorText = "รหัสไม่ถูกต้อง (Invalid password) !!";
+                _formKey.currentState?.validate();
+                _textFieldController.clear();
+                _passwordDialogFocusNode.requestFocus();
+              } else {
+                _errorText = '';
+    
+                /// Creating custom password dialog.
+                _showCustomPasswordDialog();
+                _passwordDialogFocusNode.requestFocus();
+                _hasPasswordDialog = true;
+              }
+            }
+          },
+        ),
       ),
+      onWillPop: () async {
+        Get.offAllNamed('/slip');
+        return false;
+      },
     );
   }
 
@@ -147,8 +156,10 @@ class _PDFPreviewState extends State<PDFPreview> {
                           controller: _textFieldController,
                           focusNode: _passwordDialogFocusNode,
                           obscureText: true,
+                          maxLength: 6,
                           decoration: const InputDecoration(
                               hintText: 'รหัสดูสลิป',
+                              counterText: '',
                               border: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.blue)),
                               focusedBorder: OutlineInputBorder(
@@ -212,7 +223,8 @@ class _PDFPreviewState extends State<PDFPreview> {
   ///Close the password dialog
   void _closePasswordDialog() {
     //Navigator.pop(context, 'Cancel');
-    Navigator.pushNamed(context, '/slip');
+    // Navigator.pushNamed(context, '/slip');
+    Get.offAllNamed('/slip');
     _hasPasswordDialog = false;
     _passwordDialogFocusNode.unfocus();
     _textFieldController.clear();

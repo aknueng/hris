@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_training.dart';
 import 'package:intl/intl.dart';
@@ -26,7 +28,8 @@ class _TrainingScreenState extends State<TrainingScreen> {
     super.initState();
     getValidateAccount().whenComplete(() {
       if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
 
       oAryTraining = fetchTraningData();
@@ -81,7 +84,8 @@ class _TrainingScreenState extends State<TrainingScreen> {
       return data;
     } else if (response.statusCode == 401) {
       if (context.mounted) {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
       throw ('failed to load data');
     } else {
@@ -92,91 +96,101 @@ class _TrainingScreenState extends State<TrainingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(
-          title: const Text('ฝึกอบรม (Training Record)'),
-          centerTitle: false,
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: theme.colorScheme.surface),
-      body: FutureBuilder<List<MTrainingInfo>>(
-        future: oAryTraining,
-        builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.data!.isNotEmpty) {
-              return Column(
-                children: <Widget>[
-                  Expanded(
-                    child: ListView.separated(
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                              title: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${snapshot.data![index].courseCode} : ${snapshot.data![index].courseName}',
-                                      // style: const TextStyle(
-                                      //     fontWeight: FontWeight.bold),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+            title: const Text('ฝึกอบรม (Training Record)'),
+            centerTitle: false,
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.surface,
+            leading: IconButton(
+              icon: const Icon(FontAwesomeIcons.leftLong),
+              onPressed: () => Get.offAllNamed('/'),
+            ),),          
+        body: FutureBuilder<List<MTrainingInfo>>(
+          future: oAryTraining,
+          builder: (context, snapshot) {
+            if (snapshot.hasData &&
+                snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.data!.isNotEmpty) {
+                return Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                                title: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        '${snapshot.data![index].courseCode} : ${snapshot.data![index].courseName}',
+                                        // style: const TextStyle(
+                                        //     fontWeight: FontWeight.bold),
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              subtitle: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      '${snapshot.data![index].scheduleStart} - ${snapshot.data![index].scheduleEnd}',
-                                      // style: TextStyle(
-                                      //     fontSize: 14,
-                                      //     fontWeight: FontWeight.bold,
-                                      //     color: Colors.blue[900]),
+                                  ],
+                                ),
+                                subtitle: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        '${snapshot.data![index].scheduleStart} - ${snapshot.data![index].scheduleEnd}',
+                                        // style: TextStyle(
+                                        //     fontSize: 14,
+                                        //     fontWeight: FontWeight.bold,
+                                        //     color: Colors.blue[900]),
+                                      ),
                                     ),
-                                  ),
-                                  // const Text(', ใช้ : '),
-                                  // Expanded(
-                                  //     child: Text(
-                                  //   snapshot.data![index].useText,
-                                  //   style: TextStyle(
-                                  //       fontSize: 14,
-                                  //       fontWeight: FontWeight.bold,
-                                  //       color: Colors.amber[700]),
-                                  // )),
-                                ],
-                              ),
-                              trailing: Column(
-                                children: [
-                                  (snapshot.data![index].evaluateResult == "P")
-                                      ? const Text('ผ่าน',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.green))
-                                      : const Text('ไม่ผ่าน',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.red))
-                                ],
-                              ));
-                        },
-                        separatorBuilder: (context, index) {
-                          return const Divider();
-                        },
-                        itemCount: snapshot.data!.length),
-                  ),
-                ],
-              );
-            } else {
-              return const Text('ไม่พบข้อมูล');
+                                    // const Text(', ใช้ : '),
+                                    // Expanded(
+                                    //     child: Text(
+                                    //   snapshot.data![index].useText,
+                                    //   style: TextStyle(
+                                    //       fontSize: 14,
+                                    //       fontWeight: FontWeight.bold,
+                                    //       color: Colors.amber[700]),
+                                    // )),
+                                  ],
+                                ),
+                                trailing: Column(
+                                  children: [
+                                    (snapshot.data![index].evaluateResult == "P")
+                                        ? const Text('ผ่าน',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.green))
+                                        : const Text('ไม่ผ่าน',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.red))
+                                  ],
+                                ));
+                          },
+                          separatorBuilder: (context, index) {
+                            return const Divider();
+                          },
+                          itemCount: snapshot.data!.length),
+                    ),
+                  ],
+                );
+              } else {
+                return const Text('ไม่พบข้อมูล');
+              }
+            } else if (snapshot.hasError) {
+              return Text('err: ${snapshot.error}');
             }
-          } else if (snapshot.hasError) {
-            return Text('err: ${snapshot.error}');
-          }
-
-          return const Center(child: CircularProgressIndicator());
-        },
+    
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
       ),
+      onWillPop: () async {
+        Get.offAllNamed('/');
+        return false;
+      },
     );
   }
 }

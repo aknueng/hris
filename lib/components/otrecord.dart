@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_ot.dart';
 import 'package:http/http.dart' as http;
@@ -45,7 +46,8 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
     super.initState();
     getValidateAccount().whenComplete(() async {
       if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
 
       oAryOT = fetchDataOT();
@@ -70,7 +72,8 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
               'A',
               'A');
           //refreshData();
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
+          Get.back();
         },
         icon: Icon(
           FontAwesomeIcons.circleCheck,
@@ -84,7 +87,8 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
 
     Widget btnCancel = ElevatedButton.icon(
         onPressed: () {
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
+          Get.back();
         },
         icon: Icon(FontAwesomeIcons.circleXmark, color: Colors.red[900]),
         label: Text('ปิด',
@@ -137,7 +141,8 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                 selValue);
 
             //refreshData();
-            Navigator.of(context).pop();
+            // Navigator.of(context).pop();
+            Get.back();
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -163,7 +168,8 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
 
     Widget btnCancel = ElevatedButton.icon(
         onPressed: () {
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
+          Get.back();
         },
         icon: Icon(FontAwesomeIcons.circleXmark, color: Colors.red[900]),
         label: Text('ปิด',
@@ -315,7 +321,8 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
       // return parsed.map<Todos>((json) => Todos.fromJson(json)).toList();
     } else if (response.statusCode == 401) {
       if (context.mounted) {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
       throw ('failed to load data');
     } else {
@@ -341,183 +348,195 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
       color: Colors.blue,
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('รายการทำโอที (Overtime)'),
-        centerTitle: false,
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.surface,
-      ),
-      body: Center(
-        child: FutureBuilder<List<MOtInfo>>(
-            future: oAryOT,
-            builder: (context, snapshot) {
-              if (snapshot.hasData &&
-                  snapshot.connectionState == ConnectionState.done) {
-                return Column(
-                  children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Expanded(
-                        child: snapshot.data!.isNotEmpty
-                            ? ListView.separated(
-                                itemBuilder: (context, index) {
-                                  bool canRequest = false;
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('รายการทำโอที (Overtime)'),
+          centerTitle: false,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.surface,
+          leading: IconButton(
+            icon: const Icon(FontAwesomeIcons.leftLong),
+            onPressed: () => Get.offAllNamed('/'),
+          ),
+        ),
+        body: Center(
+          child: FutureBuilder<List<MOtInfo>>(
+              future: oAryOT,
+              builder: (context, snapshot) {
+                if (snapshot.hasData &&
+                    snapshot.connectionState == ConnectionState.done) {
+                  return Column(
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Expanded(
+                          child: snapshot.data!.isNotEmpty
+                              ? ListView.separated(
+                                  itemBuilder: (context, index) {
+                                    bool canRequest = false;
 
-                                  if (snapshot.data![index].dateNow == "YES") {
-                                    canRequest = (DateTime.now().hour < 13)
-                                        ? true
-                                        : false;
-                                  } else {
-                                    canRequest = true;
-                                  }
+                                    if (snapshot.data![index].dateNow ==
+                                        "YES") {
+                                      canRequest = (DateTime.now().hour < 13)
+                                          ? true
+                                          : false;
+                                    } else {
+                                      canRequest = true;
+                                    }
 
-                                  String otType = "";
-                                  String timePeriod = "";
-                                  if (snapshot.data![index].status == "") {
-                                    if (snapshot.data![index].shift == "D") {
-                                      timePeriod = "18:15 - 20:00";
-                                      otType = "A";
+                                    String otType = "";
+                                    String timePeriod = "";
+                                    if (snapshot.data![index].status == "") {
+                                      if (snapshot.data![index].shift == "D") {
+                                        timePeriod = "18:15 - 20:00";
+                                        otType = "A";
+                                      }
+                                      if (snapshot.data![index].shift == "HD") {
+                                        timePeriod = "08:00 - 20:00";
+                                        otType = "F";
+                                      }
+                                      if (snapshot.data![index].shift == "N") {
+                                        timePeriod = "06:05 - 07:50";
+                                        otType = "D";
+                                      }
+                                      if (snapshot.data![index].shift == "HN") {
+                                        timePeriod = "20:00 - 07:50";
+                                        otType = "K";
+                                      }
+                                    } else if (snapshot.data![index].status ==
+                                        "") {
+                                    } else {
+                                      timePeriod =
+                                          '${snapshot.data![index].otStart} - ${snapshot.data![index].otEnd}';
                                     }
-                                    if (snapshot.data![index].shift == "HD") {
-                                      timePeriod = "08:00 - 20:00";
-                                      otType = "F";
-                                    }
-                                    if (snapshot.data![index].shift == "N") {
-                                      timePeriod = "06:05 - 07:50";
-                                      otType = "D";
-                                    }
-                                    if (snapshot.data![index].shift == "HN") {
-                                      timePeriod = "20:00 - 07:50";
-                                      otType = "K";
-                                    }
-                                  } else if (snapshot.data![index].status ==
-                                      "") {
-                                  } else {
-                                    timePeriod =
-                                        '${snapshot.data![index].otStart} - ${snapshot.data![index].otEnd}';
-                                  }
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                              blurRadius: 10,
-                                              spreadRadius: 0,
-                                              blurStyle: BlurStyle.outer,
-                                              color: Colors.black12)
-                                        ]),
-                                    child: ListTile(
-                                      tileColor:
-                                          (snapshot.data![index].status ==
-                                                  "APPROVE")
-                                              ? Colors.greenAccent[100]
-                                              : theme.colorScheme.surface,
-                                      title: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            '(${snapshot.data![index].shift})  ',
-                                            style:
-                                                (snapshot.data![index].shift ==
-                                                            "D" ||
-                                                        snapshot.data![index]
-                                                                .shift ==
-                                                            "N")
-                                                    ? txtBlue
-                                                    : txtBrown,
-                                          ),
-                                          Text(
-                                            '${snapshot.data![index].strDate}',
-                                            style: txtBold,
-                                          ),
-                                        ],
-                                      ),
-                                      subtitle: Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 35),
-                                        child: Row(
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                                blurRadius: 10,
+                                                spreadRadius: 0,
+                                                blurStyle: BlurStyle.outer,
+                                                color: Colors.black12)
+                                          ]),
+                                      child: ListTile(
+                                        tileColor:
+                                            (snapshot.data![index].status ==
+                                                    "APPROVE")
+                                                ? Colors.greenAccent[100]
+                                                : theme.colorScheme.surface,
+                                        title: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
                                           children: [
-                                            const Text('เวลา '),
                                             Text(
-                                              timePeriod,
+                                              '(${snapshot.data![index].shift})  ',
+                                              style: (snapshot.data![index]
+                                                              .shift ==
+                                                          "D" ||
+                                                      snapshot.data![index]
+                                                              .shift ==
+                                                          "N")
+                                                  ? txtBlue
+                                                  : txtBrown,
+                                            ),
+                                            Text(
+                                              '${snapshot.data![index].strDate}',
                                               style: txtBold,
                                             ),
                                           ],
                                         ),
-                                      ),
-                                      trailing: (snapshot.data![index].status ==
-                                              "")
-                                          ? (canRequest)
-                                              ? ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                      backgroundColor:
-                                                          Colors.yellow[100],
-                                                      foregroundColor:
-                                                          Colors.black,
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              20)),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      selValue = '';
-                                                    });
-                                                    showRequestConfirmDialog(
-                                                        context,
-                                                        snapshot.data![index],
-                                                        otType,
-                                                        timePeriod);
-                                                  },
-                                                  child:
-                                                      const Text('ร้องขอ OT'))
-                                              : const Text(' ')
-                                          : (snapshot.data![index].status ==
-                                                  "REQUEST")
-                                              ? (canRequest)
-                                                  ? ElevatedButton(
-                                                      style: ElevatedButton.styleFrom(
-                                                          backgroundColor: Colors
-                                                              .redAccent[400],
-                                                          foregroundColor:
-                                                              Colors.white,
-                                                          padding:
-                                                              const EdgeInsets.all(
-                                                                  20)),
-                                                      onPressed: () {
-                                                        showConfirmDialog(
-                                                            context,
-                                                            snapshot
-                                                                .data![index]);
-                                                      },
-                                                      child:
-                                                          const Text('ยกเลิก OT'))
-                                                  : const Text('')
-                                              : Text('อนุมัติแล้ว', style: TextStyle(color: Colors.teal[900], fontSize: 18, fontWeight: FontWeight.bold)),
-                                    ),
-                                  );
-                                },
-                                separatorBuilder:
-                                    (BuildContext context, int index) =>
-                                        const SizedBox(
-                                          height: 5,
+                                        subtitle: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 35),
+                                          child: Row(
+                                            children: [
+                                              const Text('เวลา '),
+                                              Text(
+                                                timePeriod,
+                                                style: txtBold,
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                itemCount: snapshot.data!.length)
-                            : const Center(child: Text('ไม่พบรายการ'))),
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
-              }
+                                        trailing: (snapshot.data![index].status ==
+                                                "")
+                                            ? (canRequest)
+                                                ? ElevatedButton(
+                                                    style: ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.yellow[100],
+                                                        foregroundColor:
+                                                            Colors.black,
+                                                        padding:
+                                                            const EdgeInsets.all(
+                                                                20)),
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        selValue = '';
+                                                      });
+                                                      showRequestConfirmDialog(
+                                                          context,
+                                                          snapshot.data![index],
+                                                          otType,
+                                                          timePeriod);
+                                                    },
+                                                    child:
+                                                        const Text('ร้องขอ OT'))
+                                                : const Text(' ')
+                                            : (snapshot.data![index].status ==
+                                                    "REQUEST")
+                                                ? (canRequest)
+                                                    ? ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                            backgroundColor: Colors
+                                                                .redAccent[400],
+                                                            foregroundColor:
+                                                                Colors.white,
+                                                            padding:
+                                                                const EdgeInsets.all(
+                                                                    20)),
+                                                        onPressed: () {
+                                                          showConfirmDialog(
+                                                              context,
+                                                              snapshot.data![
+                                                                  index]);
+                                                        },
+                                                        child:
+                                                            const Text('ยกเลิก OT'))
+                                                    : const Text('')
+                                                : Text('อนุมัติแล้ว', style: TextStyle(color: Colors.teal[900], fontSize: 18, fontWeight: FontWeight.bold)),
+                                      ),
+                                    );
+                                  },
+                                  separatorBuilder:
+                                      (BuildContext context, int index) =>
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                  itemCount: snapshot.data!.length)
+                              : const Center(child: Text('ไม่พบรายการ'))),
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
 
-              return const CircularProgressIndicator();
-            }),
+                return const CircularProgressIndicator();
+              }),
+        ),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: refreshData,
+        //   child: const Icon(FontAwesomeIcons.rotate),
+        // ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: refreshData,
-      //   child: const Icon(FontAwesomeIcons.rotate),
-      // ),
+      onWillPop: () async {
+        Get.offAllNamed('/');
+        return false;
+      },
     );
   }
 }

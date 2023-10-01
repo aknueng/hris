@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_slip.dart';
 import 'package:intl/intl.dart';
@@ -29,7 +30,8 @@ class _SlipScreenState extends State<SlipScreen> {
 
     getValidateAccount().whenComplete(() {
       if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
-        Navigator.pushNamed(context, '/login');
+        //Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
 
       oArySlip = fetchDataSlip();
@@ -99,7 +101,8 @@ class _SlipScreenState extends State<SlipScreen> {
       //return compute((message) => parseSlipList(response.body), response.body);
     } else if (response.statusCode == 401) {
       if (context.mounted) {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
       throw ('failed to load data');
     } else {
@@ -133,6 +136,10 @@ class _SlipScreenState extends State<SlipScreen> {
           centerTitle: false,
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.surface,
+          leading: IconButton(
+            icon: const Icon(FontAwesomeIcons.leftLong),
+            onPressed: () => Get.offAllNamed('/'),
+          ),
         ),
         body: FutureBuilder<List<MSlipInfo>>(
           future: oArySlip,
@@ -206,11 +213,21 @@ class _SlipScreenState extends State<SlipScreen> {
                                   ]),
                                   trailing: OutlinedButton.icon(
                                       onPressed: () async {
-                                        Navigator.pushNamed(context, '/pdf',
-                                            arguments: {
+                                        Get.toNamed('/pdf', arguments: {
                                               'url':
                                                   'https://www.dci.co.th/hris/pdfviewer.aspx?f=dist/Slip/${snapshot.data![index].docFile}'
                                             });
+
+
+                                        // Navigator.pushNamed(context, '/pdf',                                        
+                                        //     arguments: {
+                                        //       'url':
+                                        //           'https://www.dci.co.th/hris/pdfviewer.aspx?f=dist/Slip/${snapshot.data![index].docFile}'
+                                        //     });
+
+
+
+
                                         // String UrlFile ='https://www.dci.co.th/hris/pdfviewer.aspx?f=dist/Slip/${snapshot.data![index].docFile}';
 
                                         //https://www.dci.co.th/hris/pdfviewer.aspx?f=dist/Slip/202308\40865_HR042308-0050.pdf&fn=202308\40865_HR042308-0050.pdf
@@ -242,7 +259,8 @@ class _SlipScreenState extends State<SlipScreen> {
         ),
       ),
       onWillPop: () async {
-        Navigator.pushNamed(context, '/');
+        // Navigator.pushNamed(context, '/');
+        Get.offAllNamed('/');
         return false;
       },
     );

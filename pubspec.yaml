@@ -67,7 +67,8 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/icon/daikin_icon.jpg"
+  #image_path: "assets/icon/daikin_icon.jpg"
+  image_path: "assets/icon/hris_icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

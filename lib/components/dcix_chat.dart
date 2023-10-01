@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,7 +25,8 @@ class _AIChatScreenState extends State<AIChatScreen> {
         if (oAccount == null ||
             oAccount!.code == '' ||
             oAccount!.code.isEmpty) {
-          Navigator.pushNamed(context, '/login');
+          // Navigator.pushNamed(context, '/login');
+          Get.offAllNamed('/login');
         }
       },
     );
@@ -63,17 +66,28 @@ class _AIChatScreenState extends State<AIChatScreen> {
       fontSize: 18,
     );
 
-    return Scaffold(
-      appBar: AppBar(
-          title: const Text('DCI-X (CHAT BOT)'),
-          centerTitle: false,
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: theme.colorScheme.surface),
-      body: Column(
-        children: [
-          Text('กรุณาบอกสิ่งที่ต้องการให้ช่วยเหลือ', style: fntTitle),
-        ],
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+            title: const Text('DCI-X (CHAT BOT)'),
+            centerTitle: false,
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.surface,
+            leading: IconButton(
+              icon: const Icon(FontAwesomeIcons.leftLong),
+              onPressed: () => Get.offAllNamed('/'),
+            ),
+            ),
+        body: Column(
+          children: [
+            Text('กรุณาบอกสิ่งที่ต้องการให้ช่วยเหลือ', style: fntTitle),
+          ],
+        ),
       ),
+      onWillPop:() async {
+        Get.offAllNamed('/');
+        return false;
+      },
     );
   }
 }

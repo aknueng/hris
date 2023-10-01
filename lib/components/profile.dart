@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:get/get.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,7 +42,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     getValidateAccount().whenComplete(() async {
       if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
     });
   }
@@ -117,7 +119,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
 
       if (context.mounted) {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('แก้ไขข้อมูลส่วนตัว เรียบร้อยแล้ว'),
@@ -144,130 +147,140 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('แก้ไขข้อมูลส่วนตัว (Profile)'),
-        centerTitle: false,
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.surface,
-      ),
-      body: Form(
-        key: frmProfileChgKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const SizedBox(
-              height: 35,
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('แก้ไขข้อมูลส่วนตัว (Profile)'),
+          centerTitle: false,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.surface,
+          leading: IconButton(
+              icon: const Icon(FontAwesomeIcons.leftLong),
+              onPressed: () => Get.offAllNamed('/'),
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
-              decoration: BoxDecoration(boxShadow: [
-                BoxShadow(
-                    color: Colors.black38.withOpacity(0.2),
-                    blurRadius: 10,
-                    spreadRadius: 0)
-              ]),
-              child: TextFormField(
-                  initialValue: oAccount!.fullName,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                      hintText: 'ชื่อ-นามสกุล',
-                      labelText: 'ชื่อ-นามสกุล',
-                      fillColor: Colors.blue[50],
-                      filled: true,
-                      counterText: '',
-                      contentPadding: const EdgeInsets.all(10),
-                      prefixIcon: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(FontAwesomeIcons.user)),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide:
-                              const BorderSide(color: Colors.orangeAccent)))),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
-              decoration: BoxDecoration(boxShadow: [
-                BoxShadow(
-                    color: Colors.black38.withOpacity(0.2),
-                    blurRadius: 10,
-                    spreadRadius: 0)
-              ]),
-              child: TextFormField(
-                  initialValue: oAccount!.posit,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                      hintText: 'ตำแหน่ง',
-                      labelText: 'ตำแหน่ง',
-                      fillColor: Colors.blue[50],
-                      filled: true,
-                      counterText: '',
-                      contentPadding: const EdgeInsets.all(10),
-                      prefixIcon: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(FontAwesomeIcons.user)),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide:
-                              const BorderSide(color: Colors.orangeAccent)))),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
-              decoration: BoxDecoration(boxShadow: [
-                BoxShadow(
-                    color: Colors.black38.withOpacity(0.2),
-                    blurRadius: 10,
-                    spreadRadius: 0)
-              ]),
-              child: TextFormField(
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณากรอกเบอร์โทรศัพท์'),
-                    MinLengthValidator(10,
-                        errorText: 'กรุณากรอกเบอร์โทรศัพท์ 10 ตัวอักษร'),
-                    PhoneValidator(),
-                  ]),
-                  onSaved: (tel) {
-                    setState(() {
-                      telEmp = tel.toString();
-                    });
-                  },
-                  initialValue: telEmp,
-                  maxLength: 10,
-                  decoration: InputDecoration(
-                      hintText: 'เบอร์โทรศัพท์',
-                      labelText: 'เบอร์โทรศัพท์',
-                      fillColor: Colors.lime[50],
-                      filled: true,
-                      counterText: '',
-                      contentPadding: const EdgeInsets.all(10),
-                      prefixIcon: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(FontAwesomeIcons.phone)),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide:
-                              const BorderSide(color: Colors.orangeAccent)))),
-            ),
-            const SizedBox(
-              height: 35,
-            ),
-            SizedBox(
-              width: 200,
-              height: 40,
-              child: ElevatedButton(
-                  onPressed: () async {
-                    frmProfileChgKey.currentState!.save();
-
-                    if (frmProfileChgKey.currentState!.validate()) {
-                      changeProfile(oAccount!.code, telEmp);
-                    }
-                    //frmPwdChgKey.currentState!.reset();
-                  },
-                  child: const Text('บันทึกข้อมูลส่วนตัว')),
-            ),
-          ],
+        ),
+        body: Form(
+          key: frmProfileChgKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const SizedBox(
+                height: 35,
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                      color: Colors.black38.withOpacity(0.2),
+                      blurRadius: 10,
+                      spreadRadius: 0)
+                ]),
+                child: TextFormField(
+                    initialValue: oAccount!.fullName,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                        hintText: 'ชื่อ-นามสกุล',
+                        labelText: 'ชื่อ-นามสกุล',
+                        fillColor: Colors.blue[50],
+                        filled: true,
+                        counterText: '',
+                        contentPadding: const EdgeInsets.all(10),
+                        prefixIcon: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Icon(FontAwesomeIcons.user)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide:
+                                const BorderSide(color: Colors.orangeAccent)))),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                      color: Colors.black38.withOpacity(0.2),
+                      blurRadius: 10,
+                      spreadRadius: 0)
+                ]),
+                child: TextFormField(
+                    initialValue: oAccount!.posit,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                        hintText: 'ตำแหน่ง',
+                        labelText: 'ตำแหน่ง',
+                        fillColor: Colors.blue[50],
+                        filled: true,
+                        counterText: '',
+                        contentPadding: const EdgeInsets.all(10),
+                        prefixIcon: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Icon(FontAwesomeIcons.user)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide:
+                                const BorderSide(color: Colors.orangeAccent)))),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                      color: Colors.black38.withOpacity(0.2),
+                      blurRadius: 10,
+                      spreadRadius: 0)
+                ]),
+                child: TextFormField(
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: 'กรุณากรอกเบอร์โทรศัพท์'),
+                      MinLengthValidator(10,
+                          errorText: 'กรุณากรอกเบอร์โทรศัพท์ 10 ตัวอักษร'),
+                      PhoneValidator(),
+                    ]),
+                    onSaved: (tel) {
+                      setState(() {
+                        telEmp = tel.toString();
+                      });
+                    },
+                    initialValue: telEmp,
+                    maxLength: 10,
+                    decoration: InputDecoration(
+                        hintText: 'เบอร์โทรศัพท์',
+                        labelText: 'เบอร์โทรศัพท์',
+                        fillColor: Colors.lime[50],
+                        filled: true,
+                        counterText: '',
+                        contentPadding: const EdgeInsets.all(10),
+                        prefixIcon: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Icon(FontAwesomeIcons.phone)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide:
+                                const BorderSide(color: Colors.orangeAccent)))),
+              ),
+              const SizedBox(
+                height: 35,
+              ),
+              SizedBox(
+                width: 200,
+                height: 40,
+                child: ElevatedButton(
+                    onPressed: () async {
+                      frmProfileChgKey.currentState!.save();
+    
+                      if (frmProfileChgKey.currentState!.validate()) {
+                        changeProfile(oAccount!.code, telEmp);
+                      }
+                      //frmPwdChgKey.currentState!.reset();
+                    },
+                    child: const Text('บันทึกข้อมูลส่วนตัว')),
+              ),
+            ],
+          ),
         ),
       ),
+      onWillPop: () async {
+        Get.offAllNamed('/');
+        return  false;
+      },
     );
   }
 }

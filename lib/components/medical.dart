@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 // import 'package:flutter/rendering.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_medical.dart';
@@ -25,7 +27,8 @@ class _MedicalScreenState extends State<MedicalScreen> {
     super.initState();
     getValidateAccount().whenComplete(() async {
       if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
 
       oMedical = fetchData();
@@ -77,7 +80,8 @@ class _MedicalScreenState extends State<MedicalScreen> {
       return MedicalInfo.fromJson(jsonDecode(response.body));
     } else if (response.statusCode == 401) {
       if (context.mounted) {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
       throw ('failed to load data');
     } else {
@@ -114,231 +118,241 @@ class _MedicalScreenState extends State<MedicalScreen> {
     String tilte = 'นาย';
     // String idno = '1-4799-00071-20-9';
 
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('ค่ารักษาพยาบาล (Medical)'),
-          centerTitle: false,
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: theme.colorScheme.surface,
-        ),
-        body: SingleChildScrollView(
-          child: FutureBuilder<MedicalInfo>(
-              future: oMedical,
-              builder: (context, snapshot) {
-                if (snapshot.hasData &&
-                    snapshot.connectionState == ConnectionState.done) {
-                  return Column(
-                    children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        margin: const EdgeInsets.only(bottom: 15),
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                blurRadius: 20,
-                                blurStyle: BlurStyle.outer,
-                                spreadRadius: 0),
-                          ],
-                          color: Colors.blue[100],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 25, top: 5, bottom: 5, right: 25),
-                          child: Text(
-                            '$tilte ${oAccount!.tFullName}',
-                            //'$tilte ${oAccount!.tFullName}\nเลขที่บัตรประชาชน $idno ',
-                            style: const TextStyle(
-                                fontSize: 15, color: Colors.black),
+    return WillPopScope(
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text('ค่ารักษาพยาบาล (Medical)'),
+            centerTitle: false,
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.surface,
+            leading: IconButton(
+              icon: const Icon(FontAwesomeIcons.leftLong),
+              onPressed: () => Get.offAllNamed('/'),
+            ),
+          ),
+          body: SingleChildScrollView(
+            child: FutureBuilder<MedicalInfo>(
+                future: oMedical,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData &&
+                      snapshot.connectionState == ConnectionState.done) {
+                    return Column(
+                      children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          margin: const EdgeInsets.only(bottom: 15),
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  blurRadius: 20,
+                                  blurStyle: BlurStyle.outer,
+                                  spreadRadius: 0),
+                            ],
+                            color: Colors.blue[100],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 25, top: 5, bottom: 5, right: 25),
+                            child: Text(
+                              '$tilte ${oAccount!.tFullName}',
+                              //'$tilte ${oAccount!.tFullName}\nเลขที่บัตรประชาชน $idno ',
+                              style: const TextStyle(
+                                  fontSize: 15, color: Colors.black),
+                            ),
                           ),
                         ),
-                      ),
-                      Card(
-                        color: Colors.yellow[50],
-                        child: Column(
-                          children: [
-                            Container(
-                                alignment: Alignment.centerLeft,
-                                margin: const EdgeInsets.only(top: 10),
-                                padding: const EdgeInsets.all(10),
+                        Card(
+                          color: Colors.yellow[50],
+                          child: Column(
+                            children: [
+                              Container(
+                                  alignment: Alignment.centerLeft,
+                                  margin: const EdgeInsets.only(top: 10),
+                                  padding: const EdgeInsets.all(10),
+                                  child: Row(
+                                    children: [
+                                      const Text('ผู้ป่วยนอก '),
+                                      Text(
+                                        '(ไม่เกิน ${snapshot.data!.oPDAllow} บาท/ปี)',
+                                        style: styleFontInfo,
+                                      ),
+                                    ],
+                                  )),
+                              const Divider(
+                                height: 2,
+                                color: Colors.orange,
+                              ),
+                              ListTile(
+                                title: const Text('ตนเอง คู่สมรส บุตร'),
+                                subtitle: Text(
+                                  'ไม่เกิน (${snapshot.data!.oPDAllowFamily} บาท/ปี)',
+                                  style: styleFontInfo,
+                                ),
+                                trailing: Text(snapshot.data!.oPDUseFamily,
+                                    style: styleFontDetail),
+                              ),
+                              ListTile(
+                                title: const Text('พ่อ แม่'),
+                                subtitle: Text(
+                                    'ไม่เกิน (${snapshot.data!.oPDAllowParent} บาท/ปี)',
+                                    style: styleFontInfo),
+                                trailing: Text(
+                                  snapshot.data!.oPDUseParent,
+                                  style: styleFontDetail,
+                                ),
+                              ),
+                              ListTile(
+                                title: const Text('ผดุงครรภ์'),
+                                subtitle: Text(
+                                    'ไม่เกิน (${snapshot.data!.oPDAllowPregnant} บาท/ปี)',
+                                    style: styleFontInfo),
+                                trailing: Text(
+                                  snapshot.data!.oPDUsePregnant,
+                                  style: styleFontDetail,
+                                ),
+                              ),
+                              const Divider(
+                                height: 2,
+                                color: Colors.orange,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
                                 child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const Text('ผู้ป่วยนอก '),
+                                    const Text('รวมผู้ป่วยนอก'),
+                                    Column(
+                                      children: [
+                                        const Text('ใช้'),
+                                        Text(
+                                          snapshot.data!.oPDUseTotal,
+                                          style: styleFontUse,
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        const Text('คงเหลือ'),
+                                        Text(
+                                          snapshot.data!.oPDAllowRemain,
+                                          style: styleFontRemain,
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Card(
+                          color: Colors.yellow[50],
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('ผู้ป่วยใน'),
                                     Text(
-                                      '(ไม่เกิน ${snapshot.data!.oPDAllow} บาท/ปี)',
+                                      '(ไม่เกิน ${snapshot.data!.iPDAllow} บาท/ปี)',
+                                      style: styleFontInfo,
+                                    ),
+                                    const Text('ตนเอง คู่สมรส บุตร พ่อ แม่'),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    const Text('ใช้'),
+                                    Text(
+                                      snapshot.data!.iPDUse,
+                                      style: styleFontUse,
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    const Text('คงเหลือ'),
+                                    Text(
+                                      snapshot.data!.iPDAllowRemain,
+                                      style: styleFontRemain,
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Card(
+                          color: Colors.yellow[50],
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('รวมค่ารักษาพยาบาล'),
+                                    Text(
+                                      '(ไม่เกิน ${snapshot.data!.medicalAllow} บาท/ปี)',
                                       style: styleFontInfo,
                                     ),
                                   ],
-                                )),
-                            const Divider(
-                              height: 2,
-                              color: Colors.orange,
+                                ),
+                                Column(
+                                  children: [
+                                    const Text('ใช้'),
+                                    Text(
+                                      snapshot.data!.medicalUse,
+                                      style: styleFontUse,
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    const Text('คงเหลือ'),
+                                    Text(
+                                      snapshot.data!.medicalRemain,
+                                      style: styleFontRemain,
+                                    ),
+                                  ],
+                                )
+                              ],
                             ),
-                            ListTile(
-                              title: const Text('ตนเอง คู่สมรส บุตร'),
-                              subtitle: Text(
-                                'ไม่เกิน (${snapshot.data!.oPDAllowFamily} บาท/ปี)',
-                                style: styleFontInfo,
-                              ),
-                              trailing: Text(snapshot.data!.oPDUseFamily,
-                                  style: styleFontDetail),
-                            ),
-                            ListTile(
-                              title: const Text('พ่อ แม่'),
-                              subtitle: Text(
-                                  'ไม่เกิน (${snapshot.data!.oPDAllowParent} บาท/ปี)',
-                                  style: styleFontInfo),
-                              trailing: Text(
-                                snapshot.data!.oPDUseParent,
-                                style: styleFontDetail,
-                              ),
-                            ),
-                            ListTile(
-                              title: const Text('ผดุงครรภ์'),
-                              subtitle: Text(
-                                  'ไม่เกิน (${snapshot.data!.oPDAllowPregnant} บาท/ปี)',
-                                  style: styleFontInfo),
-                              trailing: Text(
-                                snapshot.data!.oPDUsePregnant,
-                                style: styleFontDetail,
-                              ),
-                            ),
-                            const Divider(
-                              height: 2,
-                              color: Colors.orange,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('รวมผู้ป่วยนอก'),
-                                  Column(
-                                    children: [
-                                      const Text('ใช้'),
-                                      Text(
-                                        snapshot.data!.oPDUseTotal,
-                                        style: styleFontUse,
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      const Text('คงเหลือ'),
-                                      Text(
-                                        snapshot.data!.oPDAllowRemain,
-                                        style: styleFontRemain,
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Card(
-                        color: Colors.yellow[50],
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('ผู้ป่วยใน'),
-                                  Text(
-                                    '(ไม่เกิน ${snapshot.data!.iPDAllow} บาท/ปี)',
-                                    style: styleFontInfo,
-                                  ),
-                                  const Text('ตนเอง คู่สมรส บุตร พ่อ แม่'),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  const Text('ใช้'),
-                                  Text(
-                                    snapshot.data!.iPDUse,
-                                    style: styleFontUse,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  const Text('คงเหลือ'),
-                                  Text(
-                                    snapshot.data!.iPDAllowRemain,
-                                    style: styleFontRemain,
-                                  ),
-                                ],
-                              )
-                            ],
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Card(
-                        color: Colors.yellow[50],
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('รวมค่ารักษาพยาบาล'),
-                                  Text(
-                                    '(ไม่เกิน ${snapshot.data!.medicalAllow} บาท/ปี)',
-                                    style: styleFontInfo,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  const Text('ใช้'),
-                                  Text(
-                                    snapshot.data!.medicalUse,
-                                    style: styleFontUse,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  const Text('คงเหลือ'),
-                                  Text(
-                                    snapshot.data!.medicalRemain,
-                                    style: styleFontRemain,
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
+                        const SizedBox(
+                          height: 10,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                    ],
+                      ],
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Err: ${snapshot.error} ');
+                  }
+    
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
-                } else if (snapshot.hasError) {
-                  return Text('Err: ${snapshot.error} ');
-                }
-
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }),
-        ));
+                }),
+          )),
+          onWillPop: () async {
+            Get.offAllNamed('/');
+            return false;
+          },
+    );
   }
 }

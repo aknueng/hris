@@ -18,6 +18,7 @@ import 'package:hris/lang/lang_th.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: LangTH.titleMain,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -41,22 +42,94 @@ class MyApp extends StatelessWidget {
         // fontFamily: 'Georgia',
       ),
       initialRoute: '/',
-      routes: {
-        '/ot': (context) => const OTRecordScreen(),
-        '/lv': (context) => const LeaveScreen(),
-        '/annual': (context) => const AnnualScreen(),
-        '/med': (context) => const MedicalScreen(),
-        '/login': (context) => const LogInScreen(),
-        '/slip': (context) => const SlipScreen(),
-        '/train': (context) => const TrainingScreen(),
-        '/lvreq': (context) => const LVRequestScreen(),
-        '/pdf': (context) => const PDFPreview(),
-        '/chgpwd': (context) => const ChangePasswordScreen(),
-        '/profile': (context) => const ProfileScreen(),
-        '/voice': (context) => const AIVoiceScreen(),
-        '/chat': (context) => const AIChatScreen(),
-        '/user': (context) => const UserListScreen(),
-      },
+      getPages: [
+        GetPage(
+          name: '/ot',
+          page: () => const OTRecordScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/lv',
+          page: () => const LeaveScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/annual',
+          page: () => const AnnualScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/med',
+          page: () => const MedicalScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/login',
+          page: () => const LogInScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/slip',
+          page: () => const SlipScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/train',
+          page: () => const TrainingScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/lvreq',
+          page: () => const LVRequestScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/pdf',
+          page: () => const PDFPreview(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/chgpwd',
+          page: () => const ChangePasswordScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/profile',
+          page: () => const ProfileScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/voice',
+          page: () => const AIVoiceScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/chat',
+          page: () => const AIChatScreen(),
+          transition: Transition.cupertino,
+        ),
+        GetPage(
+          name: '/user',
+          page: () => const UserListScreen(),
+          transition: Transition.cupertino,
+        ),
+      ],
+      // routes: {
+      //   '/ot': (context) => const OTRecordScreen(),
+      //   '/lv': (context) => const LeaveScreen(),
+      //   '/annual': (context) => const AnnualScreen(),
+      //   '/med': (context) => const MedicalScreen(),
+      //   '/login': (context) => const LogInScreen(),
+      //   '/slip': (context) => const SlipScreen(),
+      //   '/train': (context) => const TrainingScreen(),
+      //   '/lvreq': (context) => const LVRequestScreen(),
+      //   '/pdf': (context) => const PDFPreview(),
+      //   '/chgpwd': (context) => const ChangePasswordScreen(),
+      //   '/profile': (context) => const ProfileScreen(),
+      //   '/voice': (context) => const AIVoiceScreen(),
+      //   '/chat': (context) => const AIChatScreen(),
+      //   '/user': (context) => const UserListScreen(),
+      // },
       home: const MainPage(),
       navigatorKey: NavigationService.navigatorKey,
     );
@@ -87,7 +160,8 @@ class _MainPageState extends State<MainPage> {
           oAccount!.code.isEmpty ||
           oAccount!.token == '' ||
           oAccount!.token.isEmpty) {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       } else {
         setState(() {
           isInit = true;
@@ -141,19 +215,26 @@ class _MainPageState extends State<MainPage> {
 
   void loadScreen(String selectedScreen) {
     if (selectedScreen == 'OT') {
-      Navigator.pushNamed(context, '/ot');
+      // Navigator.pushNamed(context, '/ot');
+      Get.offAllNamed('/ot');
     } else if (selectedScreen == 'ANN') {
-      Navigator.pushNamed(context, '/annual');
+      // Navigator.pushNamed(context, '/annual');
+      Get.offAllNamed('/annual');
     } else if (selectedScreen == 'MED') {
-      Navigator.pushNamed(context, '/med');
+      // Navigator.pushNamed(context, '/med');
+      Get.offAllNamed('/med');
     } else if (selectedScreen == 'LV') {
-      Navigator.pushNamed(context, '/lv');
+      // Navigator.pushNamed(context, '/lv');
+      Get.offAllNamed('/lv');
     } else if (selectedScreen == 'SLIP') {
-      Navigator.pushNamed(context, '/slip');
+      // Navigator.pushNamed(context, '/slip');
+      Get.offAllNamed('/slip');
     } else if (selectedScreen == 'TRAIN') {
-      Navigator.pushNamed(context, '/train');
+      // Navigator.pushNamed(context, '/train');
+      Get.offAllNamed('/train');
     } else if (selectedScreen == 'LVREQ') {
-      Navigator.pushNamed(context, '/lvreq');
+      // Navigator.pushNamed(context, '/lvreq');
+      Get.offAllNamed('/lvreq');
     }
   }
 
@@ -236,32 +317,37 @@ class _MainPageState extends State<MainPage> {
                       //const Divider(),
                       TextButton.icon(
                           onPressed: () {
-                            Navigator.pushNamed(context, '/profile');
+                            // Navigator.pushNamed(context, '/profile');
+                            Get.offAllNamed('/profile');
                           },
                           icon: const Icon(FontAwesomeIcons.user),
                           label: const Text('แก้ไขข้อมูลส่วนตัว (Profile)')),
                       TextButton.icon(
                           onPressed: () {
-                            Navigator.pushNamed(context, '/chgpwd');
+                            // Navigator.pushNamed(context, '/chgpwd');
+                            Get.offAllNamed('/chgpwd');
                           },
                           icon: const Icon(Icons.key),
                           label: const Text('เปลี่ยนรหัสผ่าน')),
                       TextButton.icon(
                           onPressed: () {
-                            Navigator.pushNamed(context, '/voice');
+                            // Navigator.pushNamed(context, '/voice');
+                            Get.offAllNamed('/voice');
                           },
                           icon: const Icon(FontAwesomeIcons.headset),
                           label: const Text('DCI X (Voice)')),
                       TextButton.icon(
                           onPressed: () {
-                            Navigator.pushNamed(context, '/chat');
+                            // Navigator.pushNamed(context, '/chat');
+                            Get.offAllNamed('/chat');
                           },
                           icon: const Icon(FontAwesomeIcons.comments),
                           label: const Text('DCI X (Chat)')),
                       (oAccount!.role == "ADMIN")
                           ? TextButton.icon(
                               onPressed: () {
-                                Navigator.pushNamed(context, '/user');
+                                // Navigator.pushNamed(context, '/user');
+                                Get.offAllNamed('/user');
                               },
                               icon: const Icon(FontAwesomeIcons.users),
                               label: const Text('User Control'))
@@ -316,7 +402,8 @@ class _MainPageState extends State<MainPage> {
                               });
 
                               if (context.mounted) {
-                                Navigator.pushNamed(context, '/login');
+                                // Navigator.pushNamed(context, '/login');
+                                Get.offAllNamed('/login');
                               }
                             },
                           ),

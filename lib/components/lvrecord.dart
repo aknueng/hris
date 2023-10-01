@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_lv.dart';
 import 'package:intl/intl.dart';
@@ -27,7 +28,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
     getValidateAccount().whenComplete(
       () {
         if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
-          Navigator.pushNamed(context, '/login');
+          // Navigator.pushNamed(context, '/login');
+          Get.offAllNamed('/login');
         }
 
         oAryLV = fetchLVData();
@@ -52,7 +54,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
               '');
 
           //refreshData();
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
+          Get.back();
         },
         icon: Icon(
           FontAwesomeIcons.circleCheck,
@@ -66,7 +69,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
 
     Widget btnCancel = ElevatedButton.icon(
         onPressed: () {
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
+          Get.back();
         },
         icon: Icon(FontAwesomeIcons.circleXmark, color: Colors.red[900]),
         label: Text('ปิด',
@@ -190,7 +194,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
       return data;
     } else if (response.statusCode == 401) {
       if (context.mounted) {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
       throw ('failed to load data');
     } else {
@@ -213,6 +218,10 @@ class _LeaveScreenState extends State<LeaveScreen> {
           centerTitle: false,
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.surface,
+          leading: IconButton(
+            icon: const Icon(FontAwesomeIcons.leftLong),
+            onPressed: () => Get.offAllNamed('/'),
+          ),
         ),
         body: FutureBuilder<List<MLVInfo>>(
           future: oAryLV,
@@ -322,7 +331,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
           shape: const CircleBorder(),
           backgroundColor: Colors.indigoAccent[700],
           onPressed: () {
-            Navigator.pushNamed(context, '/lvreq');
+            // Navigator.pushNamed(context, '/lvreq');
+            Get.offAllNamed('/lvreq');
           },
           child: const Icon(
             FontAwesomeIcons.plus,
@@ -332,7 +342,8 @@ class _LeaveScreenState extends State<LeaveScreen> {
         ),
       ),
       onWillPop: () async {
-        Navigator.pushNamed(context, '/');
+        // Navigator.pushNamed(context, '/');
+        Get.offAllNamed('/');
         return false;
       },
     );

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:get/get.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +31,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     super.initState();
     getValidateAccount().whenComplete(() async {
       if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
     });
   }
@@ -118,7 +120,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       });
 
       if (context.mounted) {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('เปลี่ยนรหัสผ่านเรียบร้อยแล้ว'),
@@ -145,198 +148,208 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('เปลี่ยนรหัสผ่าน (Change Password)'),
-        centerTitle: false,
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.surface,
-      ),
-      body: Form(
-        key: frmPwdChgKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const SizedBox(
-              height: 35,
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('เปลี่ยนรหัสผ่าน (Change Password)'),
+          centerTitle: false,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.surface,
+          leading: IconButton(
+              icon: const Icon(FontAwesomeIcons.leftLong),
+              onPressed: () => Get.offAllNamed('/'),
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
-              decoration: BoxDecoration(boxShadow: [
-                BoxShadow(
-                    color: Colors.black38.withOpacity(0.2),
-                    blurRadius: 10,
-                    spreadRadius: 0)
-              ]),
-              child: TextFormField(
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
-                    MinLengthValidator(6,
-                        errorText: 'กรุณากรอกรหัสผ่าน 6 ตัวอักษรขึ้นไป')
-                  ]),
-                  onSaved: (pwd) {
-                    setState(() {
-                      pwdOld = pwd.toString();
-                    });
-                  },
-                  maxLength: 20,
-                  obscureText: obscureTxtPwdOld,
-                  decoration: InputDecoration(
-                      hintText: 'รหัสผ่านเก่า',
-                      labelText: 'รหัสผ่านเก่า',
-                      fillColor: Colors.lime[50],
-                      filled: true,
-                      counterText: '',
-                      contentPadding: const EdgeInsets.all(10),
-                      prefixIcon: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(FontAwesomeIcons.key)),
-                      suffixIcon: Padding(
-                          padding: const EdgeInsets.only(right: 15),
-                          child: IconButton(
-                              onPressed: () {
-                                _toggle("OLD");
-                              },
-                              icon: (obscureTxtPwdOld)
-                                  ? const Icon(
-                                      FontAwesomeIcons.starOfLife,
-                                      size: 10,
-                                    )
-                                  : const Icon(
-                                      FontAwesomeIcons.eye,
-                                      size: 10,
-                                    ))),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide:
-                              const BorderSide(color: Colors.orangeAccent)))),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
-              decoration: BoxDecoration(boxShadow: [
-                BoxShadow(
-                    color: Colors.black38.withOpacity(0.2),
-                    blurRadius: 10,
-                    spreadRadius: 0)
-              ]),
-              child: TextFormField(
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
-                    MinLengthValidator(6,
-                        errorText: 'กรุณากรอกรหัสผ่าน 6 ตัวอักษรขึ้นไป')
-                  ]),
-                  onSaved: (pwd) {
-                    setState(() {
-                      pwd1New = pwd.toString();
-                    });
-                  },
-                  maxLength: 20,
-                  obscureText: obscureTxtPwd1New,
-                  decoration: InputDecoration(
-                      hintText: 'รหัสผ่านใหม่',
-                      labelText: 'รหัสผ่านใหม่',
-                      fillColor: Colors.lime[50],
-                      filled: true,
-                      counterText: '',
-                      contentPadding: const EdgeInsets.all(10),
-                      prefixIcon: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(FontAwesomeIcons.key)),
-                      suffixIcon: Padding(
-                          padding: const EdgeInsets.only(right: 15),
-                          child: IconButton(
-                              onPressed: () {
-                                _toggle("NEW1");
-                              },
-                              icon: (obscureTxtPwd1New)
-                                  ? const Icon(
-                                      FontAwesomeIcons.starOfLife,
-                                      size: 10,
-                                    )
-                                  : const Icon(
-                                      FontAwesomeIcons.eye,
-                                      size: 10,
-                                    ))),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide:
-                              const BorderSide(color: Colors.orangeAccent)))),
-            ),
-            Container(
-              margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
-              decoration: BoxDecoration(boxShadow: [
-                BoxShadow(
-                    color: Colors.black38.withOpacity(0.2),
-                    blurRadius: 10,
-                    spreadRadius: 0)
-              ]),
-              child: TextFormField(
-                  validator: (val) =>
-                      MatchValidator(errorText: 'รหัสผ่านใหม่ไม่ตรงกัน')
-                          .validateMatch(val!, pwd1New),
-
-                  // validator: MultiValidator([
-                  //   RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
-                  //   MinLengthValidator(6,
-                  //       errorText: 'กรุณากรอกรหัสผ่าน 6 ตัวอักษรขึ้นไป'),
-                  // ]),
-                  onSaved: (pwd) {
-                    setState(() {
-                      pwd2New = pwd.toString();
-                    });
-                  },
-                  maxLength: 20,
-                  obscureText: obscureTxtPwd2New,
-                  decoration: InputDecoration(
-                      hintText: 'ยืนยันรหัสผ่านใหม่',
-                      labelText: 'ยืนยันรหัสผ่านใหม่',
-                      fillColor: Colors.lime[50],
-                      filled: true,
-                      counterText: '',
-                      contentPadding: const EdgeInsets.all(10),
-                      prefixIcon: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Icon(FontAwesomeIcons.key)),
-                      suffixIcon: Padding(
-                          padding: const EdgeInsets.only(right: 15),
-                          child: IconButton(
-                              onPressed: () {
-                                _toggle("NEW2");
-                              },
-                              icon: (obscureTxtPwd2New)
-                                  ? const Icon(
-                                      FontAwesomeIcons.starOfLife,
-                                      size: 10,
-                                    )
-                                  : const Icon(
-                                      FontAwesomeIcons.eye,
-                                      size: 10,
-                                    ))),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide:
-                              const BorderSide(color: Colors.orangeAccent)))),
-            ),
-            const SizedBox(
-              height: 35,
-            ),
-            SizedBox(
-              width: 200,
-              height: 40,
-              child: ElevatedButton(
-                  onPressed: () async {
-                    frmPwdChgKey.currentState!.save();
-
-                    if (frmPwdChgKey.currentState!.validate()) {
-                      changePassword(oAccount!.code, pwdOld, pwd1New);
-                    }
-                    //frmPwdChgKey.currentState!.reset();
-                  },
-                  child: const Text('เปลี่ยนรหัสผ่าน')),
-            ),
-          ],
+        ),
+        body: Form(
+          key: frmPwdChgKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const SizedBox(
+                height: 35,
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                      color: Colors.black38.withOpacity(0.2),
+                      blurRadius: 10,
+                      spreadRadius: 0)
+                ]),
+                child: TextFormField(
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
+                      MinLengthValidator(6,
+                          errorText: 'กรุณากรอกรหัสผ่าน 6 ตัวอักษรขึ้นไป')
+                    ]),
+                    onSaved: (pwd) {
+                      setState(() {
+                        pwdOld = pwd.toString();
+                      });
+                    },
+                    maxLength: 20,
+                    obscureText: obscureTxtPwdOld,
+                    decoration: InputDecoration(
+                        hintText: 'รหัสผ่านเก่า',
+                        labelText: 'รหัสผ่านเก่า',
+                        fillColor: Colors.lime[50],
+                        filled: true,
+                        counterText: '',
+                        contentPadding: const EdgeInsets.all(10),
+                        prefixIcon: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Icon(FontAwesomeIcons.key)),
+                        suffixIcon: Padding(
+                            padding: const EdgeInsets.only(right: 15),
+                            child: IconButton(
+                                onPressed: () {
+                                  _toggle("OLD");
+                                },
+                                icon: (obscureTxtPwdOld)
+                                    ? const Icon(
+                                        FontAwesomeIcons.starOfLife,
+                                        size: 10,
+                                      )
+                                    : const Icon(
+                                        FontAwesomeIcons.eye,
+                                        size: 10,
+                                      ))),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide:
+                                const BorderSide(color: Colors.orangeAccent)))),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                      color: Colors.black38.withOpacity(0.2),
+                      blurRadius: 10,
+                      spreadRadius: 0)
+                ]),
+                child: TextFormField(
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
+                      MinLengthValidator(6,
+                          errorText: 'กรุณากรอกรหัสผ่าน 6 ตัวอักษรขึ้นไป')
+                    ]),
+                    onSaved: (pwd) {
+                      setState(() {
+                        pwd1New = pwd.toString();
+                      });
+                    },
+                    maxLength: 20,
+                    obscureText: obscureTxtPwd1New,
+                    decoration: InputDecoration(
+                        hintText: 'รหัสผ่านใหม่',
+                        labelText: 'รหัสผ่านใหม่',
+                        fillColor: Colors.lime[50],
+                        filled: true,
+                        counterText: '',
+                        contentPadding: const EdgeInsets.all(10),
+                        prefixIcon: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Icon(FontAwesomeIcons.key)),
+                        suffixIcon: Padding(
+                            padding: const EdgeInsets.only(right: 15),
+                            child: IconButton(
+                                onPressed: () {
+                                  _toggle("NEW1");
+                                },
+                                icon: (obscureTxtPwd1New)
+                                    ? const Icon(
+                                        FontAwesomeIcons.starOfLife,
+                                        size: 10,
+                                      )
+                                    : const Icon(
+                                        FontAwesomeIcons.eye,
+                                        size: 10,
+                                      ))),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide:
+                                const BorderSide(color: Colors.orangeAccent)))),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                      color: Colors.black38.withOpacity(0.2),
+                      blurRadius: 10,
+                      spreadRadius: 0)
+                ]),
+                child: TextFormField(
+                    validator: (val) =>
+                        MatchValidator(errorText: 'รหัสผ่านใหม่ไม่ตรงกัน')
+                            .validateMatch(val!, pwd1New),
+    
+                    // validator: MultiValidator([
+                    //   RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
+                    //   MinLengthValidator(6,
+                    //       errorText: 'กรุณากรอกรหัสผ่าน 6 ตัวอักษรขึ้นไป'),
+                    // ]),
+                    onSaved: (pwd) {
+                      setState(() {
+                        pwd2New = pwd.toString();
+                      });
+                    },
+                    maxLength: 20,
+                    obscureText: obscureTxtPwd2New,
+                    decoration: InputDecoration(
+                        hintText: 'ยืนยันรหัสผ่านใหม่',
+                        labelText: 'ยืนยันรหัสผ่านใหม่',
+                        fillColor: Colors.lime[50],
+                        filled: true,
+                        counterText: '',
+                        contentPadding: const EdgeInsets.all(10),
+                        prefixIcon: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Icon(FontAwesomeIcons.key)),
+                        suffixIcon: Padding(
+                            padding: const EdgeInsets.only(right: 15),
+                            child: IconButton(
+                                onPressed: () {
+                                  _toggle("NEW2");
+                                },
+                                icon: (obscureTxtPwd2New)
+                                    ? const Icon(
+                                        FontAwesomeIcons.starOfLife,
+                                        size: 10,
+                                      )
+                                    : const Icon(
+                                        FontAwesomeIcons.eye,
+                                        size: 10,
+                                      ))),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide:
+                                const BorderSide(color: Colors.orangeAccent)))),
+              ),
+              const SizedBox(
+                height: 35,
+              ),
+              SizedBox(
+                width: 200,
+                height: 40,
+                child: ElevatedButton(
+                    onPressed: () async {
+                      frmPwdChgKey.currentState!.save();
+    
+                      if (frmPwdChgKey.currentState!.validate()) {
+                        changePassword(oAccount!.code, pwdOld, pwd1New);
+                      }
+                      //frmPwdChgKey.currentState!.reset();
+                    },
+                    child: const Text('เปลี่ยนรหัสผ่าน')),
+              ),
+            ],
+          ),
         ),
       ),
+      onWillPop: () async {
+        Get.offAllNamed('/');
+        return false;
+      },
     );
   }
 }

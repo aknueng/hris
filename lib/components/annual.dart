@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:isolate';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:hris/models/md_annual.dart';
 import 'package:intl/intl.dart';
@@ -27,7 +29,8 @@ class _AnnualScreenState extends State<AnnualScreen> {
     getValidateAccount().whenComplete(
       () {
         if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
-          Navigator.pushNamed(context, '/login');
+          // Navigator.pushNamed(context, '/login');
+          Get.offAllNamed('/login');
         }
 
         oAryANN = fetchANNUALData();
@@ -83,7 +86,8 @@ class _AnnualScreenState extends State<AnnualScreen> {
       return data;
     } else if (response.statusCode == 401) {
       if (context.mounted) {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
       throw ('failed to load data');
     } else {
@@ -99,88 +103,98 @@ class _AnnualScreenState extends State<AnnualScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('วันลาพักร้อน (Annual)'),
-        centerTitle: false,
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.surface,
-      ),
-      body: FutureBuilder<List<MAnnualInfo>>(
-        future: oAryANN,
-        builder: (context, snapshot) {
-          if (snapshot.hasData &&
-              snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.data!.isNotEmpty) {
-              return Column(
-                children: <Widget>[
-                  Expanded(
-                    child: ListView.separated(
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                              title: Row(
-                                children: [
-                                  const Text('ปี '),
-                                  Text(
-                                    snapshot.data![index].yearAnnual,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              subtitle: Row(
-                                children: [
-                                  const Text('ได้รับ: '),
-                                  Text(
-                                    snapshot.data![index].totalText,
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blue[900]),
-                                  ),
-                                  const Text(', ใช้ : '),
-                                  Expanded(
-                                      child: Text(
-                                    snapshot.data![index].useText,
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.amber[700]),
-                                  )),
-                                ],
-                              ),
-                              trailing: Column(
-                                children: [
-                                  const Text(
-                                    'คงเหลือ ',
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                  Text(snapshot.data![index].remainHr,
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('วันลาพักร้อน (Annual)'),
+          centerTitle: false,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.surface,
+          leading: IconButton(
+              icon: const Icon(FontAwesomeIcons.leftLong),
+              onPressed: () => Get.offAllNamed('/'),
+            ),
+        ),
+        body: FutureBuilder<List<MAnnualInfo>>(
+          future: oAryANN,
+          builder: (context, snapshot) {
+            if (snapshot.hasData &&
+                snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.data!.isNotEmpty) {
+                return Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: ListView.separated(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                                title: Row(
+                                  children: [
+                                    const Text('ปี '),
+                                    Text(
+                                      snapshot.data![index].yearAnnual,
                                       style: const TextStyle(
-                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                subtitle: Row(
+                                  children: [
+                                    const Text('ได้รับ: '),
+                                    Text(
+                                      snapshot.data![index].totalText,
+                                      style: TextStyle(
+                                          fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.green))
-                                ],
-                              ));
-                        },
-                        separatorBuilder: (context, index) {
-                          return const Divider();
-                        },
-                        itemCount: snapshot.data!.length),
-                  ),
-                ],
-              );
-            } else {
-              return const Text('ไม่พบข้อมูล');
+                                          color: Colors.blue[900]),
+                                    ),
+                                    const Text(', ใช้ : '),
+                                    Expanded(
+                                        child: Text(
+                                      snapshot.data![index].useText,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.amber[700]),
+                                    )),
+                                  ],
+                                ),
+                                trailing: Column(
+                                  children: [
+                                    const Text(
+                                      'คงเหลือ ',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    Text(snapshot.data![index].remainHr,
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.green))
+                                  ],
+                                ));
+                          },
+                          separatorBuilder: (context, index) {
+                            return const Divider();
+                          },
+                          itemCount: snapshot.data!.length),
+                    ),
+                  ],
+                );
+              } else {
+                return const Text('ไม่พบข้อมูล');
+              }
+            } else if (snapshot.hasError) {
+              return Text('err: ${snapshot.error}');
             }
-          } else if (snapshot.hasError) {
-            return Text('err: ${snapshot.error}');
-          }
-
-          return const Center(child: CircularProgressIndicator());
-        },
+    
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
       ),
+      onWillPop: () async {
+        Get.offAllNamed('/');
+        return false;
+      },
     );
   }
 }

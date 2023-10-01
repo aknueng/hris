@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -83,7 +84,8 @@ class _LVRequestScreenState extends State<LVRequestScreen>
     super.initState();
     getValidateAccount().whenComplete(() async {
       if (oAccount == null || oAccount!.code == '' || oAccount!.token == '') {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
     });
   }
@@ -232,7 +234,9 @@ class _LVRequestScreenState extends State<LVRequestScreen>
         }));
     if (response.statusCode == 200 || response.statusCode == 201) {
       if (context.mounted) {
-        Navigator.pushNamed(context, '/lv');
+        // Navigator.pushNamed(context, '/lv');
+        Get.offAllNamed('/lv');
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('บันทึกการลาเรียบร้อยแล้ว'),
@@ -244,7 +248,8 @@ class _LVRequestScreenState extends State<LVRequestScreen>
       }
     } else if (response.statusCode == 401) {
       if (context.mounted) {
-        Navigator.pushNamed(context, '/login');
+        // Navigator.pushNamed(context, '/login');
+        Get.offAllNamed('/login');
       }
       throw ('failed to load data');
     } else {
@@ -308,302 +313,312 @@ class _LVRequestScreenState extends State<LVRequestScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('ร้องขอวันลา (Leave Request)'),
-          centerTitle: false,
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: theme.colorScheme.surface,
-        ),
-        body: Column(
-          children: [
-            const SizedBox(
-              height: 15,
+    return WillPopScope(
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text('ร้องขอวันลา (Leave Request)'),
+            centerTitle: false,
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.surface,
+            leading: IconButton(
+              icon: const Icon(FontAwesomeIcons.leftLong),
+              onPressed: () => Get.offAllNamed('/lv'),
             ),
-            Container(
-              padding:
-                  const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
-              margin:
-                  const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(
-                      color: (selType == '' || selType == null)
-                          ? Colors.red[900]!
-                          : Colors.yellow[600]!,
-                      width: 1,
-                      strokeAlign: BorderSide.strokeAlignOutside,
-                      style: BorderStyle.solid),
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 1,
+          ),
+          body: Column(
+            children: [
+              const SizedBox(
+                height: 15,
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+                margin:
+                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(
                         color: (selType == '' || selType == null)
-                            ? Colors.red.withOpacity(0.1)
-                            : Colors.yellow.withOpacity(0.1),
-                        spreadRadius: 0)
-                  ]),
-              child: DropdownButton(
-                isExpanded: true,
-                items: oAryLVType,
-                value: selType ?? '',
-                onChanged: (value) {
-                  setState(() {
-                    selectDate = DateTime(1900, 1, 1);
-
-                    if (value != '') {
-                      selType = value;
-                      selTypeDay = 'ALL';
-
-                      if (value == 'ANNU') {
-                        initDate = 3;
-                        limitDate = 45;
-                        selReason = 'ANNU01';
-                      } else if (value == 'PERS') {
-                        initDate = 3;
-                        limitDate = 45;
-                        selReason = '';
-                      } else if (value == 'SICK') {
-                        initDate = 0;
-                        limitDate = 0;
-                        selReason = '';
-                      } else if (value == 'MARR') {
-                        initDate = 3;
-                        limitDate = 45;
-                        selReason = value;
+                            ? Colors.red[900]!
+                            : Colors.yellow[600]!,
+                        width: 1,
+                        strokeAlign: BorderSide.strokeAlignOutside,
+                        style: BorderStyle.solid),
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 1,
+                          color: (selType == '' || selType == null)
+                              ? Colors.red.withOpacity(0.1)
+                              : Colors.yellow.withOpacity(0.1),
+                          spreadRadius: 0)
+                    ]),
+                child: DropdownButton(
+                  isExpanded: true,
+                  items: oAryLVType,
+                  value: selType ?? '',
+                  onChanged: (value) {
+                    setState(() {
+                      selectDate = DateTime(1900, 1, 1);
+    
+                      if (value != '') {
+                        selType = value;
+                        selTypeDay = 'ALL';
+    
+                        if (value == 'ANNU') {
+                          initDate = 3;
+                          limitDate = 45;
+                          selReason = 'ANNU01';
+                        } else if (value == 'PERS') {
+                          initDate = 3;
+                          limitDate = 45;
+                          selReason = '';
+                        } else if (value == 'SICK') {
+                          initDate = 0;
+                          limitDate = 0;
+                          selReason = '';
+                        } else if (value == 'MARR') {
+                          initDate = 3;
+                          limitDate = 45;
+                          selReason = value;
+                        } else {
+                          initDate = 0;
+                          limitDate = 45;
+                          selReason = value;
+                        }
                       } else {
                         initDate = 0;
-                        limitDate = 45;
-                        selReason = value;
+                        // selReason = '';
                       }
-                    } else {
-                      initDate = 0;
-                      // selReason = '';
-                    }
-                  });
-                },
+                    });
+                  },
+                ),
               ),
-            ),
-            const Divider(),
-            Container(
-              width: double.infinity,
-              padding:
-                  const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
-              margin:
-                  const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(
-                      color: (selectDate.year < 2000)
-                          ? Colors.red[900]!
-                          : Colors.yellow[600]!,
-                      width: 1,
-                      strokeAlign: BorderSide.strokeAlignOutside,
-                      style: BorderStyle.solid),
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 1,
+              const Divider(),
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+                margin:
+                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(
                         color: (selectDate.year < 2000)
-                            ? Colors.red.withOpacity(0.1)
-                            : Colors.yellow.withOpacity(0.1),
-                        spreadRadius: 0)
-                  ]),
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Row(
-                    children: [
-                      const Text('ลางานวันที่ : '),
-                      (selectDate.year > 2000)
-                          ? Text(formatDMY.format(selectDate))
-                          : const Text('-')
-                    ],
-                  ),
-                  ElevatedButton.icon(
-                      onPressed: () {
-                        _restorableDatePickerRouteFuture.present();
-                      },
-                      icon: const Icon(Icons.date_range),
-                      label: const Text('เลือกวันที่ต้องการลางาน')),
-                ],
+                            ? Colors.red[900]!
+                            : Colors.yellow[600]!,
+                        width: 1,
+                        strokeAlign: BorderSide.strokeAlignOutside,
+                        style: BorderStyle.solid),
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 1,
+                          color: (selectDate.year < 2000)
+                              ? Colors.red.withOpacity(0.1)
+                              : Colors.yellow.withOpacity(0.1),
+                          spreadRadius: 0)
+                    ]),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Row(
+                      children: [
+                        const Text('ลางานวันที่ : '),
+                        (selectDate.year > 2000)
+                            ? Text(formatDMY.format(selectDate))
+                            : const Text('-')
+                      ],
+                    ),
+                    ElevatedButton.icon(
+                        onPressed: () {
+                          _restorableDatePickerRouteFuture.present();
+                        },
+                        icon: const Icon(Icons.date_range),
+                        label: const Text('เลือกวันที่ต้องการลางาน')),
+                  ],
+                ),
               ),
-            ),
-            const Divider(),
-            Container(
-              width: double.infinity,
-              padding:
-                  const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
-              margin:
-                  const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(
-                      color: (selTypeDay == '' || selTypeDay == null)
-                          ? Colors.red[900]!
-                          : Colors.yellow[600]!,
-                      width: 1,
-                      strokeAlign: BorderSide.strokeAlignOutside,
-                      style: BorderStyle.solid),
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 1,
+              const Divider(),
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+                margin:
+                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(
                         color: (selTypeDay == '' || selTypeDay == null)
-                            ? Colors.red.withOpacity(0.1)
-                            : Colors.yellow.withOpacity(0.1),
-                        spreadRadius: 0)
-                  ]),
-              child: DropdownButton(
-                isExpanded: true,
-                items: (selType == "ANNU" || selType == "PERS")
-                    ? oAryLVDay
-                    : oAryLVDayA,
-                value: selTypeDay ?? 'ALL',
-                onChanged: (value) {
-                  setState(() {
-                    selTypeDay = value;
-                  });
-                },
+                            ? Colors.red[900]!
+                            : Colors.yellow[600]!,
+                        width: 1,
+                        strokeAlign: BorderSide.strokeAlignOutside,
+                        style: BorderStyle.solid),
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 1,
+                          color: (selTypeDay == '' || selTypeDay == null)
+                              ? Colors.red.withOpacity(0.1)
+                              : Colors.yellow.withOpacity(0.1),
+                          spreadRadius: 0)
+                    ]),
+                child: DropdownButton(
+                  isExpanded: true,
+                  items: (selType == "ANNU" || selType == "PERS")
+                      ? oAryLVDay
+                      : oAryLVDayA,
+                  value: selTypeDay ?? 'ALL',
+                  onChanged: (value) {
+                    setState(() {
+                      selTypeDay = value;
+                    });
+                  },
+                ),
               ),
-            ),
-            const Divider(),
-            Container(
-              width: double.infinity,
-              padding:
-                  const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
-              margin:
-                  const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(
-                      color: (selReason == '' || selReason == null)
-                          ? Colors.red[900]!
-                          : Colors.yellow[600]!,
-                      width: 1,
-                      strokeAlign: BorderSide.strokeAlignOutside,
-                      style: BorderStyle.solid),
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 1,
+              const Divider(),
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+                margin:
+                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(
                         color: (selReason == '' || selReason == null)
-                            ? Colors.red.withOpacity(0.1)
-                            : Colors.yellow.withOpacity(0.1),
-                        spreadRadius: 0)
-                  ]),
-              child: DropdownButton(
-                isExpanded: true,
-                items: loadReason(),
-                value: selReason,
-                onChanged: (value) {
-                  setState(() {
-                    selReason = value;
-                    // print('$selReason | $value');
-                  });
-                },
+                            ? Colors.red[900]!
+                            : Colors.yellow[600]!,
+                        width: 1,
+                        strokeAlign: BorderSide.strokeAlignOutside,
+                        style: BorderStyle.solid),
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 1,
+                          color: (selReason == '' || selReason == null)
+                              ? Colors.red.withOpacity(0.1)
+                              : Colors.yellow.withOpacity(0.1),
+                          spreadRadius: 0)
+                    ]),
+                child: DropdownButton(
+                  isExpanded: true,
+                  items: loadReason(),
+                  value: selReason,
+                  onChanged: (value) {
+                    setState(() {
+                      selReason = value;
+                      // print('$selReason | $value');
+                    });
+                  },
+                ),
               ),
-            ),
-            const Divider(),
-            ((selectDate.year > 2000) &&
-                    (selType != '' && selType != null) &&
-                    (selTypeDay != '' && selTypeDay != null) &&
-                    (selReason != '' && selReason != null))
-                ? ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                        // primary: Colors.green,
-                        textStyle: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontStyle: FontStyle.normal),
-                        padding: const EdgeInsets.only(
-                            top: 15, bottom: 15, left: 35, right: 35)),
-                    onPressed: () async {
-                      if ((selectDate.year > 2000) &&
-                          (selType != '' && selType != null) &&
-                          (selTypeDay != '' && selTypeDay != null) &&
-                          (selReason != '' && selReason != null)) {
-                        String strFrom = "", strTo = "";
-                        if (selTypeDay == "ALL") {
-                          strFrom = "08:00";
-                          strTo = "17:45";
-                        } else if (selTypeDay == "HALF1") {
-                          strFrom = "08:00";
-                          strTo = "12:00";
-                        } else if (selTypeDay == "HALF2") {
-                          strFrom = "13:00";
-                          strTo = "17:45";
-                        }
-
-                        String strReason = "";
-                        if (selReason == "ANNU01") {
-                          strReason = 'ลาพักร้อน';
-                        } else if (selReason == "ANNU02") {
-                          strReason = 'เหตุจากระบบตั้งครรภ์(หญิงมีครรภ์)';
-                        } else if (selReason == "ANNU03") {
-                          strReason = 'ประสบอุบัติเหตุ(ปฏิบัติงานได้)';
-                        } else if (selReason == "ANNU04") {
-                          strReason =
-                              'สงสัยติดเชื้อหรือเข้าข่ายอาจติดเชื้อ (Covid-19)';
-                        } else if (selReason == "SICK01") {
-                          strReason = 'ไม่สบาย มีไข้';
-                        } else if (selReason == "SICK02") {
-                          strReason = 'ท้องเสีย ปวดท้อง';
-                        } else if (selReason == "SICK03") {
-                          strReason = 'ประสบอุบัติเหตุ';
-                        } else if (selReason == "SICK04") {
-                          strReason = 'กล้ามเนื้ออักเสบ';
-                        } else if (selReason == "SICK05") {
-                          strReason = 'ผ่าตัด';
-                        } else if (selReason == "SICK06") {
-                          strReason = 'ป่วยตามโรคประจำตัว';
-                        } else if (selReason == "MARR") {
-                          strReason = 'ลาแต่งงาน';
-                        } else if (selReason == "CARE") {
-                          strReason = 'ลาเพื่อดูแลภรรยาคลอดบุตร';
-                        } else if (selReason == "STER") {
-                          strReason = 'ลาทำหมัน';
-                        } else if (selReason == "FUNE") {
-                          strReason = 'ลางานศพ';
-                        } else if (selReason == "PERS01") {
-                          strReason = 'ติดต่อหน่วยงานราชการ';
-                        } else if (selReason == "PERS02") {
-                          strReason = 'ทำธุระส่วนตัว';
-                        } else if (selReason == "PERS03") {
-                          strReason = 'ดูแลคนในครอบครัว';
-                        } else if (selReason == "PERS04") {
-                          strReason = 'รถเสีย';
-                        } else if (selReason == "PERS05") {
-                          strReason = 'กลับต่างจังหวัด';
-                        } else if (selReason == "PERS06") {
-                          strReason = 'ปัญหาการจราจร';
-                        }
-
-                        // print('----------------------------------------------');
-                        // print(
-                        //     '$selectDate, $selType, $strFrom, $strTo, $strReason');
-                        // print('----------------------------------------------');
-                        if (selType == "ANNU") {
-                          if (await checkLV(selectDate, selType!, strFrom,
-                              strTo, strReason)) {
-                            requestLV(selectDate, selType!, strFrom, strTo,
-                                strReason);
+              const Divider(),
+              ((selectDate.year > 2000) &&
+                      (selType != '' && selType != null) &&
+                      (selTypeDay != '' && selTypeDay != null) &&
+                      (selReason != '' && selReason != null))
+                  ? ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                          // primary: Colors.green,
+                          textStyle: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontStyle: FontStyle.normal),
+                          padding: const EdgeInsets.only(
+                              top: 15, bottom: 15, left: 35, right: 35)),
+                      onPressed: () async {
+                        if ((selectDate.year > 2000) &&
+                            (selType != '' && selType != null) &&
+                            (selTypeDay != '' && selTypeDay != null) &&
+                            (selReason != '' && selReason != null)) {
+                          String strFrom = "", strTo = "";
+                          if (selTypeDay == "ALL") {
+                            strFrom = "08:00";
+                            strTo = "17:45";
+                          } else if (selTypeDay == "HALF1") {
+                            strFrom = "08:00";
+                            strTo = "12:00";
+                          } else if (selTypeDay == "HALF2") {
+                            strFrom = "13:00";
+                            strTo = "17:45";
+                          }
+    
+                          String strReason = "";
+                          if (selReason == "ANNU01") {
+                            strReason = 'ลาพักร้อน';
+                          } else if (selReason == "ANNU02") {
+                            strReason = 'เหตุจากระบบตั้งครรภ์(หญิงมีครรภ์)';
+                          } else if (selReason == "ANNU03") {
+                            strReason = 'ประสบอุบัติเหตุ(ปฏิบัติงานได้)';
+                          } else if (selReason == "ANNU04") {
+                            strReason =
+                                'สงสัยติดเชื้อหรือเข้าข่ายอาจติดเชื้อ (Covid-19)';
+                          } else if (selReason == "SICK01") {
+                            strReason = 'ไม่สบาย มีไข้';
+                          } else if (selReason == "SICK02") {
+                            strReason = 'ท้องเสีย ปวดท้อง';
+                          } else if (selReason == "SICK03") {
+                            strReason = 'ประสบอุบัติเหตุ';
+                          } else if (selReason == "SICK04") {
+                            strReason = 'กล้ามเนื้ออักเสบ';
+                          } else if (selReason == "SICK05") {
+                            strReason = 'ผ่าตัด';
+                          } else if (selReason == "SICK06") {
+                            strReason = 'ป่วยตามโรคประจำตัว';
+                          } else if (selReason == "MARR") {
+                            strReason = 'ลาแต่งงาน';
+                          } else if (selReason == "CARE") {
+                            strReason = 'ลาเพื่อดูแลภรรยาคลอดบุตร';
+                          } else if (selReason == "STER") {
+                            strReason = 'ลาทำหมัน';
+                          } else if (selReason == "FUNE") {
+                            strReason = 'ลางานศพ';
+                          } else if (selReason == "PERS01") {
+                            strReason = 'ติดต่อหน่วยงานราชการ';
+                          } else if (selReason == "PERS02") {
+                            strReason = 'ทำธุระส่วนตัว';
+                          } else if (selReason == "PERS03") {
+                            strReason = 'ดูแลคนในครอบครัว';
+                          } else if (selReason == "PERS04") {
+                            strReason = 'รถเสีย';
+                          } else if (selReason == "PERS05") {
+                            strReason = 'กลับต่างจังหวัด';
+                          } else if (selReason == "PERS06") {
+                            strReason = 'ปัญหาการจราจร';
+                          }
+    
+                          // print('----------------------------------------------');
+                          // print(
+                          //     '$selectDate, $selType, $strFrom, $strTo, $strReason');
+                          // print('----------------------------------------------');
+                          if (selType == "ANNU") {
+                            if (await checkLV(selectDate, selType!, strFrom,
+                                strTo, strReason)) {
+                              requestLV(selectDate, selType!, strFrom, strTo,
+                                  strReason);
+                            }
+                          } else {
+                            requestLV(
+                                selectDate, selType!, strFrom, strTo, strReason);
                           }
                         } else {
-                          requestLV(
-                              selectDate, selType!, strFrom, strTo, strReason);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('กรุณากรอกข้อมูลให้ครบ'),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              margin: EdgeInsets.all(30),
+                            ),
+                          );
                         }
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('กรุณากรอกข้อมูลให้ครบ'),
-                            backgroundColor: Colors.red,
-                            behavior: SnackBarBehavior.floating,
-                            margin: EdgeInsets.all(30),
-                          ),
-                        );
-                      }
-                    },
-                    icon: const Icon(FontAwesomeIcons.circleCheck),
-                    label: const Text('บันทึกการลางาน'))
-                : const Text('')
-          ],
-        ));
+                      },
+                      icon: const Icon(FontAwesomeIcons.circleCheck),
+                      label: const Text('บันทึกการลางาน'))
+                  : const Text('')
+            ],
+          )),
+          onWillPop: () async {
+            Get.offAllNamed('/lv');
+            return false;
+          },
+    );
   }
 }

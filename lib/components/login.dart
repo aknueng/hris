@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:get/get.dart';
 import 'package:hris/models/md_account.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -61,7 +62,10 @@ class _LogInScreenState extends State<LogInScreen> {
           prefs.setString('telephone', acc.telephone);
           prefs.setString('logInDate', acc.logInDate.toString());
 
-          if (context.mounted) Navigator.pushNamed(context, '/');
+          if (context.mounted) {
+            // Navigator.pushNamed(context, '/');
+            Get.offAllNamed('/');
+          }
         } else {
           if (context.mounted) {
             formKey.currentState!.validate();
@@ -122,11 +126,34 @@ class _LogInScreenState extends State<LogInScreen> {
               child: Column(
                 children: [
                   const SizedBox(
-                    height: 100,
+                    height: 70,
                   ),
                   const Image(
                     image: AssetImage('assets/dci_logo.png'),
                     width: 270,
+                  ),
+                  Container(
+                      alignment: Alignment.topCenter,
+                      child: Wrap(children: [
+                        Text(
+                          'DCI - HRIS',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 10.0, // shadow blur
+                                color: Colors.grey[500]!, // shadow color
+                                offset: const Offset(
+                                    2.0, 2.0), // how much shadow will be shown
+                              ),
+                            ],
+                          ),
+                        ),
+                      ])),
+                  const SizedBox(
+                    height: 20,
                   ),
                   Container(
                     margin: const EdgeInsets.only(top: 10, left: 50, right: 50),
@@ -252,17 +279,19 @@ class _LogInScreenState extends State<LogInScreen> {
                           return SizedBox(
                             width: 200,
                             height: 40,
-                            child: ElevatedButton(
-                                onPressed: () async {
-                                  if (formKey.currentState!.validate()) {
-                                    TextInput.finishAutofillContext();
+                            child: ElevatedButton.icon(
+                              onPressed: () async {
+                                if (formKey.currentState!.validate()) {
+                                  TextInput.finishAutofillContext();
 
-                                    formKey.currentState!.save();
-                                    checkLogin();
-                                  }
-                                  //formKey.currentState!.reset();
-                                },
-                                child: const Text('Login')),
+                                  formKey.currentState!.save();
+                                  checkLogin();
+                                }
+                                //formKey.currentState!.reset();
+                              },
+                              label: const Text('   Login'),
+                              icon: const Icon(FontAwesomeIcons.userLock),
+                            ),
                           );
                         }
                       }),

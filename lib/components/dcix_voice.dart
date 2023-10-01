@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:hris/api/speech_api.dart';
 import 'package:hris/api/utils.dart';
 import 'package:hris/models/md_account.dart';
@@ -37,7 +39,8 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
         if (oAccount == null ||
             oAccount!.code == '' ||
             oAccount!.code.isEmpty) {
-          Navigator.pushNamed(context, '/login');
+          // Navigator.pushNamed(context, '/login');
+          Get.offAllNamed('/login');
         }
       },
     );
@@ -123,51 +126,61 @@ class _AIVoiceScreenState extends State<AIVoiceScreen> {
 
     final isRunning = timer == null ? false : timer!.isActive;
 
-    return Scaffold(
-      appBar: AppBar(
-          title: const Text('DCI-X (VOICE)'),
-          centerTitle: false,
-          backgroundColor: theme.colorScheme.primary,
-          foregroundColor: theme.colorScheme.surface),
-      body: Column(
-        children: [
-          Text('DCI-X : บอกสิ่งที่ต้องการให้ช่วยเหลือ ?', style: fntTitle),
-          const SizedBox(height: 10),
-          (isRunning) ? buildTimer() : const Text(''),
-          (isRunning) ? const SizedBox(height: 10) : const Text(''),
-          Wrap(
-            children: [
-              Text(
-                listenText,
-                style: fntSmall,
-              ),
-            ],
-          )
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: AvatarGlow(
-        animate: onPress,
-        endRadius: 80,
-        repeat: true,
-        showTwoGlows: true,
-        glowColor: Theme.of(context).primaryColor,
-        child: FloatingActionButton(
-          onPressed: () {
-            startTimer();
-            toggleRecording().whenComplete(
-              () {
-                if (!isListening) {
-                  Future.delayed(const Duration(seconds: maxSecond), () {
-                    Utils.scanText(listenText);
-                  });
-                }
-              },
-            );
-          },
-          child: Icon((onPress) ? Icons.mic : Icons.mic_off, size: 36),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+            title: const Text('DCI-X (VOICE)'),
+            centerTitle: false,
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.surface,
+            leading: IconButton(
+              icon: const Icon(FontAwesomeIcons.leftLong),
+              onPressed: () => Get.offAllNamed('/'),
+            ),),
+        body: Column(
+          children: [
+            Text('DCI-X : บอกสิ่งที่ต้องการให้ช่วยเหลือ ?', style: fntTitle),
+            const SizedBox(height: 10),
+            (isRunning) ? buildTimer() : const Text(''),
+            (isRunning) ? const SizedBox(height: 10) : const Text(''),
+            Wrap(
+              children: [
+                Text(
+                  listenText,
+                  style: fntSmall,
+                ),
+              ],
+            )
+          ],
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: AvatarGlow(
+          animate: onPress,
+          endRadius: 80,
+          repeat: true,
+          showTwoGlows: true,
+          glowColor: Theme.of(context).primaryColor,
+          child: FloatingActionButton(
+            onPressed: () {
+              startTimer();
+              toggleRecording().whenComplete(
+                () {
+                  if (!isListening) {
+                    Future.delayed(const Duration(seconds: maxSecond), () {
+                      Utils.scanText(listenText);
+                    });
+                  }
+                },
+              );
+            },
+            child: Icon((onPress) ? Icons.mic : Icons.mic_off, size: 36),
+          ),
         ),
       ),
+      onWillPop: () async {
+        Get.offAllNamed('/');
+        return false;
+      },
     );
   }
 
