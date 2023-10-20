@@ -115,8 +115,6 @@ class _MedicalScreenState extends State<MedicalScreen> {
       fontSize: 18,
       fontWeight: FontWeight.bold,
     );
-    String tilte = 'นาย';
-    // String idno = '1-4799-00071-20-9';
 
     return WillPopScope(
       child: Scaffold(
@@ -155,7 +153,7 @@ class _MedicalScreenState extends State<MedicalScreen> {
                             padding: const EdgeInsets.only(
                                 left: 25, top: 5, bottom: 5, right: 25),
                             child: Text(
-                              '$tilte ${oAccount!.tFullName}',
+                              '  ${oAccount!.tFullName}',
                               //'$tilte ${oAccount!.tFullName}\nเลขที่บัตรประชาชน $idno ',
                               style: const TextStyle(
                                   fontSize: 15, color: Colors.black),
@@ -343,16 +341,16 @@ class _MedicalScreenState extends State<MedicalScreen> {
                   } else if (snapshot.hasError) {
                     return Text('Err: ${snapshot.error} ');
                   }
-    
+
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }),
           )),
-          onWillPop: () async {
-            Get.offAllNamed('/');
-            return false;
-          },
+      onWillPop: () async {
+        Get.offAllNamed('/');
+        return false;
+      },
     );
   }
 }

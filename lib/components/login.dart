@@ -210,8 +210,8 @@ class _LogInScreenState extends State<LogInScreen> {
                     child: TextFormField(
                         validator: MultiValidator([
                           RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
-                          MinLengthValidator(6,
-                              errorText: 'กรุณากรอกรหัสผ่าน 6 ตัวอักษรขึ้นไป')
+                          MinLengthValidator(3,
+                              errorText: 'กรุณากรอกรหัสผ่าน 3 ตัวอักษรขึ้นไป')
                         ]),
                         onSaved: (pwd) {
                           _password = pwd.toString();
@@ -249,18 +249,18 @@ class _LogInScreenState extends State<LogInScreen> {
                                 borderSide: const BorderSide(
                                     color: Colors.orangeAccent)))),
                   ),
-                  Container(
-                      alignment: Alignment.centerLeft,
-                      margin: const EdgeInsets.only(
-                        left: 40,
-                      ),
-                      child: TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            'ลืมรหัสผ่าน?',
-                            style:
-                                TextStyle(decoration: TextDecoration.underline),
-                          ))),
+                  // Container(
+                  //     alignment: Alignment.centerLeft,
+                  //     margin: const EdgeInsets.only(
+                  //       left: 40,
+                  //     ),
+                  //     child: TextButton(
+                  //         onPressed: () {},
+                  //         child: const Text(
+                  //           'ลืมรหัสผ่าน?',
+                  //           style:
+                  //               TextStyle(decoration: TextDecoration.underline),
+                  //         ))),
                   const SizedBox(
                     height: 30,
                   ),

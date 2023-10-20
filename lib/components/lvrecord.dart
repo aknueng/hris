@@ -139,7 +139,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
   //======== Cancel Leave Data ============
   Future cancelLV(String paramLVDate, String paramLVType, String paramLVFrom,
       String paramLVTo, String paramReason) async {
-    // print('>> $paramLVDate $paramLVType $paramLVFrom $paramLVTo $paramReason');
+    // debugPrint('>> $paramLVDate $paramLVType $paramLVFrom $paramLVTo $paramReason');
     final response = await http.post(
         Uri.parse('https://scm.dci.co.th/hrisapi/api/emp/cancellv'),
         headers: <String, String>{
@@ -179,9 +179,9 @@ class _LeaveScreenState extends State<LeaveScreen> {
         body: jsonEncode(<String, String>{
           'empCode': oAccount!.code,
           'dateStart': formatYMD
-              .format(DateTime.now().subtract(const Duration(days: 90))),
+              .format(DateTime.now().subtract(const Duration(days: 60))),
           'dateEnd':
-              formatYMD.format(DateTime.now().add(const Duration(days: 30)))
+              formatYMD.format(DateTime.now().add(const Duration(days: 60)))
         }));
 
     if (response.statusCode == 200) {
@@ -237,6 +237,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                           itemBuilder: (context, index) {
                             String lvtype = "", lvStatus = "";
                             Color? lvStatusCorlor;
+                            ButtonStyle? btnLVCancelStyle;
                             if (snapshot.data![index].type == "ANNU") {
                               lvtype = 'ลาพักร้อน';
                             } else if (snapshot.data![index].type == "SICK") {
@@ -259,7 +260,11 @@ class _LeaveScreenState extends State<LeaveScreen> {
                             } else if (snapshot.data![index].reqSTATUS ==
                                 "REQUEST") {
                               lvStatus = 'รอ';
-                              lvStatusCorlor = Colors.yellow[400]!;
+                              lvStatusCorlor = Colors.yellow[800];
+                              btnLVCancelStyle = TextButton.styleFrom(
+                                  backgroundColor: Colors.yellow[50],
+                                  side: BorderSide(
+                                      width: 3, color: Colors.yellow[400]!));
                             } else if (snapshot.data![index].reqSTATUS ==
                                 "REJECT") {
                               lvStatus = 'ไม่อนุมัติ';
@@ -301,6 +306,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                           snapshot.data![index], lvtype);
                                     }
                                   },
+                                  style: btnLVCancelStyle,
                                   child: Text(
                                     lvStatus,
                                     style: TextStyle(

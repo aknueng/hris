@@ -329,20 +329,24 @@ class _MainPageState extends State<MainPage> {
                           },
                           icon: const Icon(Icons.key),
                           label: const Text('เปลี่ยนรหัสผ่าน')),
-                      TextButton.icon(
-                          onPressed: () {
-                            // Navigator.pushNamed(context, '/voice');
-                            Get.offAllNamed('/voice');
-                          },
-                          icon: const Icon(FontAwesomeIcons.headset),
-                          label: const Text('DCI X (Voice)')),
-                      TextButton.icon(
-                          onPressed: () {
-                            // Navigator.pushNamed(context, '/chat');
-                            Get.offAllNamed('/chat');
-                          },
-                          icon: const Icon(FontAwesomeIcons.comments),
-                          label: const Text('DCI X (Chat)')),
+                      (oAccount!.role == "ADMIN")
+                          ? TextButton.icon(
+                              onPressed: () {
+                                // Navigator.pushNamed(context, '/voice');
+                                Get.offAllNamed('/voice');
+                              },
+                              icon: const Icon(FontAwesomeIcons.headset),
+                              label: const Text('DCI X (Voice)'))
+                          : const Text(''),
+                      (oAccount!.role == "ADMIN")
+                          ? TextButton.icon(
+                              onPressed: () {
+                                // Navigator.pushNamed(context, '/chat');
+                                Get.offAllNamed('/chat');
+                              },
+                              icon: const Icon(FontAwesomeIcons.comments),
+                              label: const Text('DCI X (Chat)'))
+                          : const Text(''),
                       (oAccount!.role == "ADMIN")
                           ? TextButton.icon(
                               onPressed: () {

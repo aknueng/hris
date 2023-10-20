@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hris/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PatternMain {
@@ -36,19 +34,22 @@ class PatternPeriod {
 class Utils {
   static void scanText(String rawText) {
     // final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-    BuildContext? context = NavigationService.navigatorKey.currentContext;
+    // BuildContext? context = NavigationService.navigatorKey.currentContext;
 
     final txtListen = rawText.toLowerCase();
     if (txtListen.contains(PatternMain.pd01)) {
-      final body = _getTextAfterCommand(text: txtListen, command: PatternMain.pd01);
+      final body =
+          _getTextAfterCommand(text: txtListen, command: PatternMain.pd01);
       // debugPrint('go to PD Result');
       openEmail(body: body);
     } else if (txtListen.contains(PatternMain.pd02)) {
-      final url = _getTextAfterCommand(text: txtListen, command: PatternMain.pd02);
+      final url =
+          _getTextAfterCommand(text: txtListen, command: PatternMain.pd02);
       // debugPrint('go to Andon');
       openLink(url: url);
     } else if (txtListen.contains(PatternMain.pd03)) {
-      final url = _getTextAfterCommand(text: txtListen, command: PatternMain.pd03);
+      final url =
+          _getTextAfterCommand(text: txtListen, command: PatternMain.pd03);
       // debugPrint('go to PD Plan');
       openLink(url: url);
     } else if (txtListen.contains(PatternMain.hrm01) ||

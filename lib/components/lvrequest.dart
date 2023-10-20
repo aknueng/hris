@@ -331,10 +331,10 @@ class _LVRequestScreenState extends State<LVRequestScreen>
                 height: 15,
               ),
               Container(
-                padding:
-                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
-                margin:
-                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+                padding: const EdgeInsets.only(
+                    left: 25, right: 25, top: 5, bottom: 5),
+                margin: const EdgeInsets.only(
+                    left: 25, right: 25, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
@@ -359,11 +359,11 @@ class _LVRequestScreenState extends State<LVRequestScreen>
                   onChanged: (value) {
                     setState(() {
                       selectDate = DateTime(1900, 1, 1);
-    
+
                       if (value != '') {
                         selType = value;
                         selTypeDay = 'ALL';
-    
+
                         if (value == 'ANNU') {
                           initDate = 3;
                           limitDate = 45;
@@ -396,10 +396,10 @@ class _LVRequestScreenState extends State<LVRequestScreen>
               const Divider(),
               Container(
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
-                margin:
-                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+                padding: const EdgeInsets.only(
+                    left: 25, right: 25, top: 5, bottom: 5),
+                margin: const EdgeInsets.only(
+                    left: 25, right: 25, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
@@ -440,10 +440,10 @@ class _LVRequestScreenState extends State<LVRequestScreen>
               const Divider(),
               Container(
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
-                margin:
-                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+                padding: const EdgeInsets.only(
+                    left: 25, right: 25, top: 5, bottom: 5),
+                margin: const EdgeInsets.only(
+                    left: 25, right: 25, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
@@ -477,10 +477,10 @@ class _LVRequestScreenState extends State<LVRequestScreen>
               const Divider(),
               Container(
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
-                margin:
-                    const EdgeInsets.only(left: 25, right: 25, top: 5, bottom: 5),
+                padding: const EdgeInsets.only(
+                    left: 25, right: 25, top: 5, bottom: 5),
+                margin: const EdgeInsets.only(
+                    left: 25, right: 25, top: 5, bottom: 5),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
@@ -540,7 +540,7 @@ class _LVRequestScreenState extends State<LVRequestScreen>
                             strFrom = "13:00";
                             strTo = "17:45";
                           }
-    
+
                           String strReason = "";
                           if (selReason == "ANNU01") {
                             strReason = 'ลาพักร้อน';
@@ -584,7 +584,7 @@ class _LVRequestScreenState extends State<LVRequestScreen>
                           } else if (selReason == "PERS06") {
                             strReason = 'ปัญหาการจราจร';
                           }
-    
+
                           // print('----------------------------------------------');
                           // print(
                           //     '$selectDate, $selType, $strFrom, $strTo, $strReason');
@@ -596,8 +596,8 @@ class _LVRequestScreenState extends State<LVRequestScreen>
                                   strReason);
                             }
                           } else {
-                            requestLV(
-                                selectDate, selType!, strFrom, strTo, strReason);
+                            requestLV(selectDate, selType!, strFrom, strTo,
+                                strReason);
                           }
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -615,10 +615,10 @@ class _LVRequestScreenState extends State<LVRequestScreen>
                   : const Text('')
             ],
           )),
-          onWillPop: () async {
-            Get.offAllNamed('/lv');
-            return false;
-          },
+      onWillPop: () async {
+        Get.offAllNamed('/lv');
+        return false;
+      },
     );
   }
 }

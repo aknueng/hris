@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:isolate';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -22,7 +21,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
   String? code, shortName, fullName, tFullName, posit, joinDate, token;
   MAccount? oAccount;
   Future<List<MTrainingInfo>>? oAryTraining;
-
+  TextEditingController searchCtrl = TextEditingController();
+  FocusNode? focSearch;
+  Color? colrSearch = Colors.white;
   @override
   void initState() {
     super.initState();
@@ -33,6 +34,15 @@ class _TrainingScreenState extends State<TrainingScreen> {
       }
 
       oAryTraining = fetchTraningData();
+
+      focSearch = FocusNode();
+      focSearch!.addListener(_onFocusChange);
+    });
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      colrSearch = (focSearch!.hasFocus) ? Colors.yellow[50]! : Colors.white;
     });
   }
 
@@ -40,6 +50,14 @@ class _TrainingScreenState extends State<TrainingScreen> {
     setState(() {
       oAryTraining = fetchTraningData();
     });
+  }
+
+  @override
+  void dispose() {
+    searchCtrl.dispose();
+    focSearch!.dispose();
+    focSearch!.removeListener(_onFocusChange);
+    super.dispose();
   }
 
   Future getValidateAccount() async {
@@ -72,7 +90,10 @@ class _TrainingScreenState extends State<TrainingScreen> {
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization': 'Bearer ${oAccount!.token}',
         },
-        body: jsonEncode(<String, String>{'empCode': oAccount!.code}));
+        body: jsonEncode(<String, String>{
+          'empCode': oAccount!.code,
+          'search': searchCtrl.text
+        }));
 
     if (response.statusCode == 200) {
       // on success, parse the JSON in the response body
@@ -99,14 +120,15 @@ class _TrainingScreenState extends State<TrainingScreen> {
     return WillPopScope(
       child: Scaffold(
         appBar: AppBar(
-            title: const Text('ฝึกอบรม (Training Record)'),
-            centerTitle: false,
-            backgroundColor: theme.colorScheme.primary,
-            foregroundColor: theme.colorScheme.surface,
-            leading: IconButton(
-              icon: const Icon(FontAwesomeIcons.leftLong),
-              onPressed: () => Get.offAllNamed('/'),
-            ),),          
+          title: const Text('ฝึกอบรม (Training Record)'),
+          centerTitle: false,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.surface,
+          leading: IconButton(
+            icon: const Icon(FontAwesomeIcons.leftLong),
+            onPressed: () => Get.offAllNamed('/'),
+          ),
+        ),
         body: FutureBuilder<List<MTrainingInfo>>(
           future: oAryTraining,
           builder: (context, snapshot) {
@@ -115,6 +137,32 @@ class _TrainingScreenState extends State<TrainingScreen> {
               if (snapshot.data!.isNotEmpty) {
                 return Column(
                   children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(40, 5, 40, 0),
+                      child: TextFormField(
+                        // autofocus: true,
+                        focusNode: focSearch,
+                        controller: searchCtrl,
+                        decoration: InputDecoration(
+                            fillColor: colrSearch,
+                            filled: true,
+                            border: const OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                gapPadding: 1,
+                                borderSide: BorderSide()),
+                            label: const Text('ค้นหา'),
+                            hintText: 'ค้นหา',
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  refreshData();
+                                },
+                                icon: const Icon(Icons.search))),
+                      ),
+                    ),
+                    const Divider(
+                      height: 10,
+                    ),
                     Expanded(
                       child: ListView.separated(
                           shrinkWrap: true,
@@ -155,7 +203,8 @@ class _TrainingScreenState extends State<TrainingScreen> {
                                 ),
                                 trailing: Column(
                                   children: [
-                                    (snapshot.data![index].evaluateResult == "P")
+                                    (snapshot.data![index].evaluateResult ==
+                                            "P")
                                         ? const Text('ผ่าน',
                                             style: TextStyle(
                                                 fontSize: 20,
@@ -182,7 +231,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
             } else if (snapshot.hasError) {
               return Text('err: ${snapshot.error}');
             }
-    
+
             return const Center(child: CircularProgressIndicator());
           },
         ),

@@ -18,7 +18,14 @@ class OTRecordScreen extends StatefulWidget {
 
 class _OTRecordScreenState extends State<OTRecordScreen> {
   Future<List<MOtInfo>>? oAryOT;
-  String? code, shortName, fullName, tFullName, posit, joinDate, token;
+  String? code,
+      shortName,
+      fullName,
+      tFullName,
+      posit,
+      joinDate,
+      token,
+      empShift;
   MAccount? oAccount;
 
   final formatYMD = DateFormat("yyyyMMdd");
@@ -51,6 +58,8 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
       }
 
       oAryOT = fetchDataOT();
+
+      getEmpShiftData();
     });
   }
 
@@ -247,6 +256,33 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
     });
   }
 
+  Future getEmpShiftData() async {
+    final response = await http.post(
+        Uri.parse('https://scm.dci.co.th/hrisapi/api/emp/checkshift'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer ${oAccount!.token}',
+        },
+        body: jsonEncode(<String, String>{
+          'empCode': oAccount!.code,
+          'cDate': formatYMD.format(DateTime.now())
+        }));
+
+    if (response.statusCode == 200) {
+      // debugPrint(response.body);
+      setState(() {
+        empShift = response.body;
+      });
+    } else if (response.statusCode == 401) {
+      if (context.mounted) {
+        Get.offAllNamed('/login');
+      }
+      throw ('failed to load shift data');
+    } else {
+      throw ('failed to load shift data');
+    }
+  }
+
   Future requestOT(
       String paramOTDate, String paramOTType, String paramOTJob) async {
     final response = await http.post(
@@ -377,13 +413,24 @@ class _OTRecordScreenState extends State<OTRecordScreen> {
                                   itemBuilder: (context, index) {
                                     bool canRequest = false;
 
-                                    if (snapshot.data![index].dateNow ==
-                                        "YES") {
-                                      canRequest = (DateTime.now().hour < 13)
-                                          ? true
-                                          : false;
+                                    //====== Shift Day && Night ====
+                                    if (empShift == "D" || empShift == "N") {
+                                      if (snapshot.data![index].dateNow ==
+                                          "YES") {
+                                        if (DateTime.now().hour >= 13) {
+                                          if (DateTime.now().minute <= 30) {
+                                            canRequest = true;
+                                          } else {
+                                            canRequest = false;
+                                          }
+                                        } else {
+                                          canRequest = true;
+                                        }
+                                      } else {
+                                        canRequest = true;
+                                      }
                                     } else {
-                                      canRequest = true;
+                                      canRequest = false;
                                     }
 
                                     String otType = "";
