@@ -129,112 +129,113 @@ class _TrainingScreenState extends State<TrainingScreen> {
             onPressed: () => Get.offAllNamed('/'),
           ),
         ),
-        body: FutureBuilder<List<MTrainingInfo>>(
-          future: oAryTraining,
-          builder: (context, snapshot) {
-            if (snapshot.hasData &&
-                snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.data!.isNotEmpty) {
-                return Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(40, 5, 40, 0),
-                      child: TextFormField(
-                        // autofocus: true,
-                        focusNode: focSearch,
-                        controller: searchCtrl,
-                        decoration: InputDecoration(
-                            fillColor: colrSearch,
-                            filled: true,
-                            border: const OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                gapPadding: 1,
-                                borderSide: BorderSide()),
-                            label: const Text('ค้นหา'),
-                            hintText: 'ค้นหา',
-                            suffixIcon: IconButton(
-                                onPressed: () {
-                                  refreshData();
-                                },
-                                icon: const Icon(Icons.search))),
-                      ),
-                    ),
-                    const Divider(
-                      height: 10,
-                    ),
-                    Expanded(
-                      child: ListView.separated(
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                                title: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        '${snapshot.data![index].courseCode} : ${snapshot.data![index].courseName}',
-                                        // style: const TextStyle(
-                                        //     fontWeight: FontWeight.bold),
+        body: Column(children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(40, 5, 40, 0),
+            child: TextFormField(
+              // autofocus: true,
+              focusNode: focSearch,
+              controller: searchCtrl,
+              decoration: InputDecoration(
+                  fillColor: colrSearch,
+                  filled: true,
+                  border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                      gapPadding: 1,
+                      borderSide: BorderSide()),
+                  label: const Text('ค้นหา'),
+                  hintText: 'ค้นหา',
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        refreshData();
+                      },
+                      icon: const Icon(Icons.search))),
+            ),
+          ),
+          const Divider(
+            height: 10,
+          ),
+          FutureBuilder<List<MTrainingInfo>>(
+            future: oAryTraining,
+            builder: (context, snapshot) {
+              if (snapshot.hasData &&
+                  snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.data!.isNotEmpty) {
+                  // return Column(
+                  //   children: <Widget>[
+                      return Expanded(
+                        child: ListView.separated(
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                  title: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          '${snapshot.data![index].courseCode} : ${snapshot.data![index].courseName}',
+                                          // style: const TextStyle(
+                                          //     fontWeight: FontWeight.bold),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                subtitle: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        '${snapshot.data![index].scheduleStart} - ${snapshot.data![index].scheduleEnd}',
-                                        // style: TextStyle(
-                                        //     fontSize: 14,
-                                        //     fontWeight: FontWeight.bold,
-                                        //     color: Colors.blue[900]),
+                                    ],
+                                  ),
+                                  subtitle: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          '${snapshot.data![index].scheduleStart} - ${snapshot.data![index].scheduleEnd}',
+                                          // style: TextStyle(
+                                          //     fontSize: 14,
+                                          //     fontWeight: FontWeight.bold,
+                                          //     color: Colors.blue[900]),
+                                        ),
                                       ),
-                                    ),
-                                    // const Text(', ใช้ : '),
-                                    // Expanded(
-                                    //     child: Text(
-                                    //   snapshot.data![index].useText,
-                                    //   style: TextStyle(
-                                    //       fontSize: 14,
-                                    //       fontWeight: FontWeight.bold,
-                                    //       color: Colors.amber[700]),
-                                    // )),
-                                  ],
-                                ),
-                                trailing: Column(
-                                  children: [
-                                    (snapshot.data![index].evaluateResult ==
-                                            "P")
-                                        ? const Text('ผ่าน',
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.green))
-                                        : const Text('ไม่ผ่าน',
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.red))
-                                  ],
-                                ));
-                          },
-                          separatorBuilder: (context, index) {
-                            return const Divider();
-                          },
-                          itemCount: snapshot.data!.length),
-                    ),
-                  ],
-                );
-              } else {
-                return const Text('ไม่พบข้อมูล');
+                                      // const Text(', ใช้ : '),
+                                      // Expanded(
+                                      //     child: Text(
+                                      //   snapshot.data![index].useText,
+                                      //   style: TextStyle(
+                                      //       fontSize: 14,
+                                      //       fontWeight: FontWeight.bold,
+                                      //       color: Colors.amber[700]),
+                                      // )),
+                                    ],
+                                  ),
+                                  trailing: Column(
+                                    children: [
+                                      (snapshot.data![index].evaluateResult ==
+                                              "P")
+                                          ? const Text('ผ่าน',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.green))
+                                          : const Text('ไม่ผ่าน',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.red))
+                                    ],
+                                  ));
+                            },
+                            separatorBuilder: (context, index) {
+                              return const Divider();
+                            },
+                            itemCount: snapshot.data!.length),
+                      );
+                  //   ],
+                  // );
+                } else {
+                  return const Text('ไม่พบข้อมูล', style: TextStyle(fontSize: 18),);
+                }
+              } else if (snapshot.hasError) {
+                return Text('err: ${snapshot.error}');
               }
-            } else if (snapshot.hasError) {
-              return Text('err: ${snapshot.error}');
-            }
 
-            return const Center(child: CircularProgressIndicator());
-          },
-        ),
+              return const Center(child: CircularProgressIndicator());
+            },
+          ),
+        ]),
       ),
       onWillPop: () async {
         Get.offAllNamed('/');
