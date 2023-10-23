@@ -66,6 +66,7 @@ dev_dependencies:
 
 flutter_icons:
   android: true
+  remove_alpha_ios: true
   ios: true
   #image_path: "assets/icon/daikin_icon.jpg"
   image_path: "assets/icon/hris_icon.png"

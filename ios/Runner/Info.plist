@@ -49,6 +49,8 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 
 	<key>NSAppTransportSecurity</key>
 	<dict>

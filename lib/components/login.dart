@@ -130,7 +130,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   ),
                   const Image(
                     image: AssetImage('assets/dci_logo.png'),
-                    width: 270,
+                    width: 120,
                   ),
                   Container(
                       alignment: Alignment.topCenter,
